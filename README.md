@@ -1,277 +1,355 @@
-# AI Healthcare Project Template
+# DownForce
 
-이 프로젝트는 AI 모델 추론(Inference) 워커와 FastAPI API 서버를 통합한 서비스 템플릿입니다.
-현대적인 Python 패키지 관리 도구인 `uv`와 컨테이너화 도구인 `Docker`를 활용하여 일관된 개발 및 배포 환경을 제공합니다.
-
----
-
-## 🚀 주요 특징
-
-- **FastAPI Framework**: 고성능 비동기 API 서버 구현.
-- **AI Worker**: 모델 추론 및 학습 작업을 API 서버와 분리하여 처리.
-- **UV Package Manager**: 매우 빠른 의존성 설치 및 가상환경 관리.
-- **Tortoise ORM**: 비동기 방식의 데이터베이스 모델링 및 쿼리 관리.
-- **Docker-Compose**: PostgreSQL, Redis, Nginx를 포함한 전체 서비스 스택을 한 번에 실행.
-- **CI/CD Scripts**: 코드 포맷팅(Ruff), 타입 체크(Mypy), 테스트(Pytest)를 위한 자동화 스크립트 제공.
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql&logoColor=white)
+![pgvector](https://img.shields.io/badge/pgvector-halfvec%20%2B%20HNSW-FF6F00)
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?logo=nextdotjs&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 
 ---
 
-## 📂 프로젝트 구조
+## 1. 서비스 소개
 
-```text
-.
-├── ai_worker/          # AI 모델 추론 및 학습 관련 코드 (Worker)
-│   ├── core/           # 워커 설정 및 로거
-│   ├── data/           # 약품 데이터 JSON (medicines.json)
-│   ├── models/         # AI 모델 파일 보관 (PyTorch 등)
-│   ├── tasks/          # 실제 처리할 작업 정의
-│   ├── utils/          # OCR, 청킹, RAG 유틸리티
-│   │   ├── ocr.py      # CLOVA OCR 호출 및 약 이름 추출
-│   │   ├── chunker.py  # JSON → 텍스트 청크 변환
-│   │   └── rag.py      # OpenAI 기반 복약 가이드 생성
-│   └── main.py         # 워커 진입점
-├── app/                # FastAPI 서버 코드
-│   ├── apis/           # API 라우터 (v1 버전 관리)
-│   ├── core/           # 서버 설정 (pydantic-settings)
-│   ├── db/             # 데이터베이스 초기화 및 마이그레이션 (Tortoise ORM)
-│   ├── dtos/           # 데이터 전송 객체 (Pydantic models)
-│   ├── models/         # DB 테이블 정의
-│   ├── services/       # 비즈니스 로직
-│   └── main.py         # FastAPI 애플리케이션 진입점
-├── envs/               # 환경 변수 설정 파일 (.env)
-├── nginx/              # Nginx 설정 파일 (리버스 프록시)
-├── scripts/            # 배포 및 CI용 쉘 스크립트
-├── docker-compose.yml  # 전체 서비스 실행 설정
-└── pyproject.toml      # uv 기반 의존성 관리 설정
-```
+### 서비스 개요
 
----
+- **진행 기간**
+  - 팀 프로젝트 기간: 2026-03-30 ~ 2026-05-05 (PR #140 머지)
+  - 개인 개선 프로젝트 (v2.x): 2026-05 ~ 진행 중
+- **한 줄 소개**: 처방전 사진 한 장으로 OCR 복약 등록 · 회수 의약품 필터 · 복약 가이드를 받고, 가족 단위로 건강 데이터를 함께 관리하는 24시간 AI 헬스케어 챗봇지원 웹 사이트
+- **서비스 명**: DownForce
 
-## ⚙️ 사전 준비 사항
+### 원본 / 포트폴리오 분기
 
-- **Python**: 3.13 이상 (로컬 개발 환경용)
-- **UV**: Python 패키지 매니저 ([설치 가이드](https://github.com/astral-sh/uv))
-- **Docker & Docker-Compose**: 전체 서비스 실행용
+본 레포는 부트캠프 4인 팀 프로젝트 DownForce(`v1.0.0-team-final`)를 fork하여 **개인 프로젝트**로 전환했다. 팀 작업 이후 개인적으로 찾은 개선점에 대한 보완을 위한 프로젝트다.
 
----
+- 원본 팀 레포 (read-only): https://github.com/AI-HealthCare-02/AI_02_06
+- 팀 종료 시점 스냅샷: [v1.0.0-team-final Release](https://github.com/kimyeongbin-dev/DownForce/releases/tag/v1.0.0-team-final)
+- 개인 개선 로드맵 (v2.x): [ROADMAP.md](./ROADMAP.md)
 
-## 개발 환경 초기 세팅 (필수)
+### 기획 배경
 
-프로젝트를 Clone하거나 최신 main 브랜치를 Pull 받은 직후, 아래 명령어를 **반드시 1회 실행**해야 합니다.
+2026년 현재, 일반인들이 처방전과 약 봉투의 정보만으로 **부작용·상호작용·회수 여부**를 지속적으로 추적하기 어렵다. 특히, 가족 중 복약 관리가 필요한 노약자나 영유아가 있으면, 보호자가 이들의 관리를 도와야 한다. 처방 직후엔 의사·약사 설명에 의존하지만, 그 이후 복약 중인 약이 어디까지 안전한지 환자나 보호자가 장기적으로 실시간으로 직접 확인할 수단이 사실상 없다.
 
-```bash
-uv run pre-commit install
-```
+이 문제를 **가족 단위 보호자 시나리오**를 포함하여 이 프로젝트에서 끝까지 풀어보고자 했다:
 
-이 명령어는 Git 훅(hook)을 로컬 저장소에 설치합니다. 이후 `git commit` 실행 시 자동으로 다음 검사가 수행됩니다:
+- 처방전 사진 한 장으로 약 정보 추출 (OCR)
+- 식약처 회수 데이터와 자동 매칭해 회수 의약품 사전 알림
+- 부작용·금기·복약 가이드는 LLM 챗봇이 사용자 정보 기반 안전한 응답 형식으로 안내
+- 가족 구성원의 약·증상·생활 습관을 한 사이트에서 통합 관리
 
-- **Ruff Check**: 코드 린트 검사 및 자동 수정
-- **Ruff Format**: 코드 포맷팅 자동 적용
+### 서비스 화면
 
-이를 통해 GitHub Actions CI에서 발생하는 린트/포맷 오류를 커밋 단계에서 사전 차단할 수 있습니다.
+> v2.x 배포 이후 GIF · 스크린샷 · 데모 URL 추가 예정.
+
+### 팀 구성
+
+- 개발자 4인 + 멘토 1인 (오즈코딩스쿨 AI 헬스케어 02기)
+- 초기 프로젝트 템플릿(`ai_worker`· `FastAPI 스캐폴드` · `Docker 베이스`)은 **부트캠프 제공 공통 스타터킷**
+- 본 작업 시작 전, 팀 기술 스택(PostgreSQL · pgvector · aerich 등)에 맞춰 **베이스 재구조화** 후, 그 위에서 본 작업 시작
 
 ---
 
-## 설치 및 설정
+## 2. 기획
 
-### 1. 가상환경 구축 및 의존성 설치
+### 시스템 아키텍처
 
-`uv`를 사용하여 프로젝트에 필요한 패키지를 설치합니다.
-
-```bash
-# 의존성 설치 (가상환경 자동 생성)
-uv sync
-
-# 특정 그룹의 의존성만 설치하려는 경우
-uv sync --group app  # API 서버용
-uv sync --group ai   # AI 워커용
+```mermaid
+flowchart LR
+    User(["사용자"]) --> FE["Next.js Frontend"]
+    FE -->|HTTPS| NX["Nginx"]
+    NX --> API["FastAPI API"]
+    API <--> PG[("PostgreSQL<br/>pg_trgm · pgvector")]
+    API <--> RD[("Redis<br/>queue · cache")]
+    API -->|enqueue| W["AI Worker<br/>RQ + RAG"]
+    W --> PG
+    W --> RD
+    W --> OAI["OpenAI"]
+    W --> CLV["CLOVA OCR"]
+    W -.->|정기 동기화| DSA["식약처<br/>회수 데이터"]
 ```
 
-### 2. 환경 변수 설정
+### AI 챗봇 파이프라인 — RAG 3-stage (의도 분기형)
 
-`envs/` 디렉토리에 있는 예시 파일을 복사하여 `.env` 파일을 생성합니다.
-- 로컬용
-    ```bash
-    cp envs/example.local.env envs/.local.env
-    ```
-- 배포용
-    ```bash
-    cp envs/example.prod.env envs/.prod.env
-    ```
+```mermaid
+flowchart TD
+    Q["사용자 질의"] --> S1["1. Query Rewriter<br/>의도 분류 · 표준화"]
+    S1 --> D{"의도 유형"}
+    D -->|정보 검색| S2["2-A. Hybrid Retriever<br/>BM25 + Vector + pg_trgm"]
+    D -->|기능 호출| S3["2-B. Tool Calling<br/>약품 조회 · 회수 검사 · 가족 컨텍스트"]
+    S2 --> S4["3. Response Composer<br/>Structured Output · 인용 포함"]
+    S3 --> S4
+    S4 --> A["최종 답변"]
+```
 
-생성된 `env` 파일 내의 환경변수들은 프로젝트 상황에 맞게 수정하세요.
+| Stage                 | 역할                                                               |
+| --------------------- | ---------------------------------------------------------------- |
+| 1. Query Rewriter     | 모호한 질의를 의도별로 분류 · 검색 키워드로 표준화                                    |
+| 2-A. Hybrid Retriever | 메타데이터 사전 필터 + 키워드(BM25) + 임베딩(halfvec/HNSW) + 오탈자 보정(pg_trgm) 결합 |
+| 2-B. Tool Calling     | 약품 정보 · 회수 상태 · 가족 컨텍스트를 함수형 도구로 결합 호출                           |
+| 3. Response Composer  | OpenAI Structured Output으로 일관된 응답 스키마 + 인용 메타 포함                 |
 
 ---
 
-## 🏃 실행 방법
+## 3. 기술 스택
 
-### 1. 로컬 및 개발 환경
+### Backend
 
-#### Docker Compose로 전체 스택 실행
+- FastAPI
+- pydantic · uv
+- Tortoise ORM · aerich (migration)
 
-모든 서비스(API, Worker, DB, Redis, Nginx)를 한 번에 실행합니다.
+### AI
 
-```bash
-docker-compose up -d --build
-```
+- OpenAI (Structured Output + Tool Calling)
+- CLOVA OCR
+- Sentence-Transformers
+- 자체 RAG 4-stage hybrid pipeline
 
-실행 후 다음 주소로 접속 가능합니다:
-- **API 서버**: [http://localhost/api/docs](http://localhost/api/docs) (Swagger UI)
-- **Nginx**: 80 포트를 통해 API 서버로 요청을 전달합니다.
+### Data
 
-#### 로컬에서 개별 실행 (개발용)
+- PostgreSQL 16 (pg_trgm · pgvector halfvec + HNSW)
+- Redis (cache · queue)
 
-**FastAPI 서버 실행:**
-```bash
-uv run uvicorn app.main:app --reload
-# or
-docker compose up -d --build app
-```
+### Workers
 
-**AI Worker 실행:**
-```bash
-uv run python -m ai_worker.main
-# or
-docker compose up -d --build ai_worker
-```
+- RQ (Redis Queue)
+- SSE long-poll 스트리밍
 
-### 2. EC2 배포 환경 (Production)
+### Frontend
 
-제공된 쉘 스크립트를 사용하여 AWS EC2 환경에 이미지를 빌드, 푸시 및 배포할 수 있습니다.
+- Next.js 15 · React
+- TanStack Query v5
 
-#### 사전 준비
-- EC2 인스턴스 (Ubuntu 권장)
-- SSH 키 페어 (`~/.ssh/` 경로에 위치)
-- 도커 허브(Docker Hub) 계정 및 Personal Access Token
-- 배포용 환경 변수 설정 (`envs/.prod.env`)
-- 도메인 구매 (Gabia, GoDaddy, AWS Route53 등)
+### Infra
 
-#### 자동 배포 스크립트 실행
-`scripts/deployment.sh`는 도커 이미지 빌드, 레포지토리 푸시, EC2 접속 및 컨테이너 실행 과정을 자동화합니다.
-
-```bash
-chmod +x scripts/deployment.sh
-./scripts/deployment.sh
-```
-스크립트 실행 시 다음 정보를 입력해야 합니다:
-1. 도커 허브 계정 정보 (Username, PAT)
-2. 이미지를 업로드할 레포지토리 이름
-3. 배포할 서비스 선택 (FastAPI, AI-Worker) 및 버전(Tag)
-4. SSH 키 파일명 및 EC2 IP 주소
-5. https 사용여부
-   - 5-1. https인 경우 도메인 추가 입력
-
-#### SSL(HTTPS) 설정 (Certbot)
-도메인을 연결하고 HTTPS를 적용하려면 `scripts/certbot.sh`를 사용합니다.
-
-```bash
-chmod +x scripts/certbot.sh
-./scripts/certbot.sh
-```
-1. 도메인 주소 및 이메일 입력
-2. SSH 키 파일명 및 EC2 IP 주소 입력
-3. Let's Encrypt를 통한 인증서 발급 및 Nginx 설정 자동 갱신 적용
+- Docker Compose (dev / prod 분리)
+- Nginx (reverse proxy)
+- AWS EC2 (팀 시점, 현재 종료 → v2.x에서 무료 스택으로 마이그레이션 예정)
+- GitHub Actions CI/CD
 
 ---
 
-## 🧪 테스트 및 품질 관리
+## 4. 프로젝트 진행
 
-제공된 스크립트를 사용하여 코드의 품질을 검증할 수 있습니다.
+### Git 운영
 
-### 통합 품질 검사 (권장)
-```bash
-# 모든 품질 검사를 한 번에 실행 (2025-2026 표준)
-chmod +x scripts/ci/quality_check.sh
-./scripts/ci/quality_check.sh
-```
+- 단일 `main` + 단기 feature 브랜치
 
-### 개별 검사 도구
-```bash
-# 코드 포맷팅 및 린팅 (Ruff - Black + isort + flake8 대체)
-./scripts/ci/code_fommatting.sh
+- PR 리뷰 → main 머지
 
-# 정적 타입 검사 (MyPy - 엄격한 타입 체크)
-./scripts/ci/check_mypy.sh
+- Commit convention — Conventional Commits 형식
 
-# 테스트 실행
-./scripts/ci/run_test.sh
-```
+  ```
+  <type>(<scope>): <description>
+  ```
 
-### 2025-2026 Python 표준 도구
-- **Ruff**: 초고속 린터/포매터 (Black, isort, flake8, pyupgrade 통합)
-- **MyPy**: 엄격한 정적 타입 검사
-- **Bandit**: 보안 취약점 스캔
-- **pytest**: 현대적 테스트 프레임워크
-- **UV**: 고속 Python 패키지 매니저
-#세준 04-06일 12시 13분
----
+  - **type**: `feat` · `fix` · `refactor` · `perf` · `docs` · `test` · `chore` · `style`
+  - **scope** (선택): `rag` · `chat` · `ocr` · `medication` · `lifestyle-guide` · `ci` · `db` 등
+  - 예시: `feat(rag): 3-stage hybrid retriever 도입`, `fix(ocr): LLM 응답 None safe`
 
-##  RAG 파이프라인 (AI Worker)
+- GitHub Actions로 push/PR 시 자동 lint · test 실행, main 머지 시 deploy 트리거
 
-오늘 추가된 파일들로 구성된 복약 가이드 생성 흐름입니다.
+### 협업
 
-```
-[약 봉투 이미지]
-      ↓
- ocr.py (CLOVA OCR 호출)
-      ↓
- extract_medicine_names() (약 이름 추출)
-      ↓
- chunker.py (medicines.json → 텍스트 청크)
-      ↓
- rag.py (OpenAI GPT로 복약 가이드 생성)
-      ↓
-[최종 답변 반환]
-```
+- PR 리뷰 → 모듈 책임 명확화 + 작은 단위 PR 운영으로 머지 충돌 최소화
+- 멘토 피드백 사이클 (예: 단순 vector → hybrid 검색 구조로 리팩토링)
+- 본인 작업 영역(RAG · 챗봇 · 마이그레이션)은 단독 책임, 도메인 모델은 팀 공유
 
-### 추가된 파일 설명
-
-| 파일 | 설명 |
-|------|------|
-| `ai_worker/data/medicines.json` | 50개 약품 데이터 (성분, 용도, 면책사항, 병용금기 약물/음식) |
-| `ai_worker/utils/ocr.py` | CLOVA OCR API 호출, 경로 탐색 공격 방지, 약 이름 매칭 |
-| `ai_worker/utils/chunker.py` | JSON 데이터를 약품별 텍스트 청크 리스트로 변환 |
-| `ai_worker/utils/rag.py` | OpenAI API로 복약 가이드 생성 (개발: gpt-4o-mini / 배포: gpt-4o) |
-
-### 필요한 환경 변수
-
-`envs/.local.env`에 아래 항목을 추가하세요.
-
-```env
-CLOVA_OCR_INVOKE_URL=<네이버 콘솔 URL>
-CLOVA_OCR_SECRET_KEY=<네이버 콘솔 Key>
-OPENAI_API_KEY=<OpenAI API Key>
-APP_ENV=dev         # 배포 시 prod로 변경
-ALLOWED_IMAGE_DIR=/tmp/ocr_images  # OCR 이미지 허용 경로
-```
-
->  `.env` 파일은 `.gitignore`에 포함되어 있어 Git에 업로드되지 않습니다. 절대 키를 코드에 직접 입력하지 마세요.
-
-### 사용 예시
-
-```python
-from ai_worker.utils.ocr import call_clova_ocr, extract_text_from_ocr, extract_medicine_names
-from ai_worker.utils.chunker import DataChunker
-from ai_worker.utils.rag import RAGGenerator
-
-# 1. OCR로 약 이름 추출
-ocr_result = call_clova_ocr("/tmp/ocr_images/prescription.jpg")
-ocr_text = extract_text_from_ocr(ocr_result)
-
-# 2. 약품 데이터 로드 및 매칭
-data = DataChunker.load_json("ai_worker/data/medicines.json")
-matched = extract_medicine_names(ocr_text, data)
-
-# 3. 청크 변환 후 복약 가이드 생성
-chunks = DataChunker.json_to_chunks(matched)
-guide = RAGGenerator().generate_guide(matched, chunks)
-print(guide)
-```
+> 로컬에서 직접 띄워 보고 싶으면 `v1.0.0-team-final` 태그 시점 README와 `docs/` 폴더의 setup 가이드 참고.
 
 ---
 
-##  개발 가이드
+## 5. 본인 기여
 
-- **API 추가**: `app/apis/v1/` 아래에 새로운 라우터 파일을 생성하고 `app/apis/v1/__init__.py`에 등록하세요.
-- **DB 모델 추가**: `app/models/`에 Tortoise 모델을 정의하고 `app/db/databases.py`의 `MODELS` 리스트에 추가하세요.
-- **AI 로직 추가**: `ai_worker/tasks/`에 새로운 처리 로직을 작성하고 `ai_worker/main.py`에서 호출하도록 구성하세요.
+> 팀 작업 기간 동안 나는 이 팀 프로젝트에서 무엇을, 얼마나 했는가?
+
+### 5.1 정량 기여
+
+| 지표      | 값                                    |
+| ------- | ------------------------------------ |
+| 팀 작업 기간 | 2026-03-30 ~ 2026-05-05 (PR #140 머지) |
+| 본인 커밋   | **582 / 823 (71%)**                  |
+| Git 이름  | `kimyeongbin-dev`                    |
+
+### 5.2 주요 작업 회고
+
+> 본인이 주도한 영역들. **시작점 → 접근·사고 흐름 → 구현 → 결과** 순으로 정리.
+
+#### A. 초기 베이스 재구조화 — MySQL → PostgreSQL, ERD 전면 개편
+
+**시작점.** 부트캠프 스타터킷은 `FastAPI + MySQL + Tortoise + alembic` 조합. 팀이 결정한 기술 스택은 `PostgreSQL + pgvector + aerich` — RAG 본격 도입을 위해 벡터 DB가 필요했다.
+
+**접근 · 사고 흐름.**
+
+- DB 엔진: MySQL → PostgreSQL (pgvector 호환 위해)
+- 마이그레이션 도구: alembic → aerich (Tortoise 공식)
+- ERD: 가족 단위 권한 · 채팅 세션 · 챗 메시지 메타 등 본 작업 요구사항 반영해 처음부터 재설계
+
+**구현.**
+
+- `MySQL → PostgreSQL 전환` (`b800dde`)
+- `ERD 전면 개편에 따른 인증/캐시 모델 재구성` (`bdd93b1`)
+- `pre-commit 자동화 + .gitattributes 설정` (`5249a92`)
+- 마이그레이션 32+개 누적 (halfvec · pg_trgm · drug_recalls · jsonb 등 핵심 단계 본인 작성)
+
+**결과.** 팀 본 작업이 즉시 RAG/벡터 검색을 도입할 수 있는 상태에서 출발. 도메인 요구사항(가족 단위, 챗 세션 메타)이 ERD에 처음부터 반영돼 후속 작업 마찰이 적었다.
+
+---
+
+#### B. RAG Hybrid 파이프라인 (3-stage 의도 분기형)
+
+**시작점.** 초기엔 단순 벡터 검색만으로 RAG. **한글 약품명 검색에서 retrieval 누락**이 잦았다. 사용자가 "타이레놀"이라 입력해도 "타이레놀정 500mg" 청크가 안 잡히거나, 오탈자가 있으면 즉시 빠졌다.
+
+**접근 · 사고 흐름.**
+
+- 단일 vector → 표면 어휘 불일치에 약함
+- **BM25** 결합 → 키워드 직접 매칭 보완
+- **pg_trgm** → 한글 오탈자 / 부분 매칭 보완
+- 3개 신호를 hybrid scoring으로 합성
+- 의도 분기: 정보 검색 → Hybrid Retriever / 기능 호출 → Tool Calling
+
+**구현.**
+
+- `pgvector halfvec` 도입 (3072차 vector → halfvec, 인덱스 메모리 절감)
+- `HNSW` 인덱스 (`m`, `ef_construction` 튜닝)
+- BM25 (Postgres tsvector + `ts_rank`)
+- `pg_trgm` extension + GIN 인덱스 (`feat(api): GET /api/v1/medicines/suggest`)
+- 임베딩 토큰 최적화: HTML 태그·엔티티 정제로 **토큰 60% 절감**
+- OpenAI Batch API 통합 → 임베딩 비용 **추가 50% 절감**
+
+**구조도.** 위 [AI 챗봇 파이프라인 다이어그램](#ai-챗봇-파이프라인--rag-3-stage-의도-분기형) 참고.
+
+**결과.** 약품명 매칭 정확도가 체감 수준에서 개선. halfvec + Batch API로 비용·메모리 부담도 동시에 감소.
+
+---
+
+#### C. 챗봇 코어 — Tool Calling + Structured Output + SSE 스트리밍
+
+**시작점.** LLM이 자유 텍스트로 응답하면 (1) 프런트엔드 파싱·검증 코드가 무거워지고, (2) 인용 메타가 응답마다 일관성 없고, (3) 도메인 안전 룰(예: 임신·수유 컨텍스트 금지 표현)을 적용하기 어려웠다. 스트리밍을 WebSocket으로 깔자니 인프라 부담이 컸다.
+
+**접근 · 사고 흐름.**
+
+- OpenAI **Structured Output** → JSON 스키마 강제로 응답 구조 고정
+- **Tool Calling** → 약품 조회 · 회수 검사 · 가족 컨텍스트 · 위치 검색 같은 도메인 함수를 LLM이 명시적으로 호출
+- **intent_orchestrator** → 사용자 의도 분기 (`recall_check`, `location_search` 등)
+- 스트리밍은 WebSocket 대신 **SSE long-poll** → Nginx 한 단계만 거치면 됨, 모바일 안정적
+
+**구현.**
+
+- 응답 스키마 + 인용 메타 정의
+- Tool 함수: `drug_info_lookup` · `recall_check` · `family_context_fetch` · `medicine_search` · `location_search` (카카오 맵 연동)
+- `_PERSONA_AND_RULES` — 의료 안전 룰 명시 ("일반적으로 안전" 류 절대 금지)
+- RED 테스트 (`test(chat): recall_check 의도 분류 + 분기`)
+- `message_service.py` orchestration — RAG 결과 + Tool 결과 + Structured Output 합성
+
+**결과.** 응답 후처리가 단순해지고 인용 출처 일관성 확보. 안전 룰 위반 응답 감소. 인프라 한 단계 단순화 (WebSocket 인프라 회피).
+
+---
+
+#### D. 카카오 OAuth + 가족 권한 모델
+
+**시작점.** 가족 단위 헬스케어 = "본인" 외 "가족 구성원"의 약·증상·챌린지를 보호자가 함께 관리. 어떤 데이터가 어느 프로필 소속인지 명확히 분리돼야 했다 (노약자·영유아 대리 시나리오).
+
+**접근 · 사고 흐름.**
+
+- 카카오 OAuth 전체 플로우 (콜백 → 신규는 설문 onboarding, 기존은 메인)
+- `User : Profile = 1 : N` 관계 — SELF / FAMILY 구분
+- `ChatSession`이 어떤 `profile_id` 기반인지 명시 (가족 약 조회 시)
+
+**구현.**
+
+- `services/oauth.py` + `apis/v1/oauth_routers.py` + `dtos/oauth.py`
+- `profile_relation_v2` 마이그레이션 (가족 관계 정합성)
+- 카카오 콜백 redirect 분기 (`fix(auth): 첫 로그인 시 /survey -> /main?showSurvey=true`)
+- ChatModal에서 현재 active profile 컨텍스트를 LLM 호출에 전달
+
+**결과.** 보호자가 가족 구성원의 약·증상·생활 습관을 한 곳에서 관리. 도메인 차별화 포인트 (단순 약 관리 앱과의 결정적 차이).
+
+---
+
+#### E. 인프라 구축 · 운영 — Docker · CI/CD · 환경 분리
+
+**시작점.** 4명 동시 개발에서 dev 환경 일관성이 깨지면 마찰이 컸다. 배포는 동시 머지로 중복 deploy가 우려됐고, 환경변수 / DB 호스트 / 로그 경로를 dev/prod 분리해야 했다.
+
+**접근 · 사고 흐름.**
+
+- **Docker Compose dev/prod 분리** — 동일 코드, 다른 env/볼륨
+- **GitHub Actions CI/CD** — PR 시 lint + test, 머지 시 deploy 트리거
+- main push **concurrency 차단** — 중복 deploy 방지
+- **Nginx reverse proxy** — HTTPS + SSE long-poll 패스스루
+- 컨테이너 로그를 호스트 볼륨에 마운트 + 배포 시 한 세대 백업
+
+**구현.**
+
+- `docker-compose.yml` / `docker-compose.prod.yml` (dev 88% · prod 100% 본인)
+- `.github/workflows/deploy.yml` — `concurrency: cancel-in-progress`
+- aerich migration 자동 적용 (deploy 단계 `aerich upgrade`)
+- pre-commit (ruff lint/format)
+- `RotatingFileHandler` + `logs.prev` 백업 사이클
+
+**결과.** 4인 동시 개발에서 환경 마찰 최소화, 배포 안정성 확보. v2.x 무료 스택(Oracle ARM · Vercel · Neon · Upstash) 마이그레이션도 같은 패턴으로 옮길 수 있는 베이스 마련.
+
+---
+
+### 5.3 협업 · 의사결정 사례
+
+- 4인 팀에서 PR 리뷰 · 머지 운영 (`.github/workflows`, `PULL_REQUEST_TEMPLATE.md`)
+- 멘토 피드백 기반 RAG 구조 개편 (단순 vector → hybrid) — 동작하는 코드를 갈아엎는 결정의 기준을 학습
+- 모듈 책임 명확화 + 작은 단위 PR로 충돌 최소화
+- 통합 PR (`integration/team-prs-2026-05-04` 등) 운영으로 회귀 잡고 컨벤션 정리
+
+---
+
+## 6. 개선 로드맵 (v2.x)
+
+팀 작업이 끝난 뒤에도 "이건 다음에 꼭 다시 보자" 싶었던 것들이 남았다. v2.x로 버전을 끊어서 차근차근 개선하는 중.
+
+- **v2.0 — 일단 다시 띄우기.** 팀 시점에 쓰던 EC2가 종료돼서, 무료 스택(Oracle Cloud ARM + Vercel + Neon + Upstash)으로 옮겨서 다시 살리기.
+- **v2.1 — 보이는 만큼 고친다.** 로깅 · 메트릭 · 트레이싱 깔기. RAG p50, OCR 정확도, halfvec 도입 전후 메모리 차이 같은 숫자를 일단 손에 쥐기.
+- **v2.2 — 마지막 주에 회귀 잡느라 고생했던 거 풀기.** 테스트 커버리지 + 타입 보강. 다음 변경에 자신 갖고 들어가게.
+- **v2.3 — 본격 기능 · 성능 개선.** v2.1에서 본 측정값을 보고 우선순위 정해서.
+
+> 자세한 계획은 [ROADMAP.md](./ROADMAP.md), 매듭지은 버전은 [Releases](https://github.com/kimyeongbin-dev/DownForce/releases) 페이지에 정리.
+
+---
+
+## 7. 느낀점
+
+### 처음 풀고 싶었던 문제
+
+가까운 가족이 약을 새로 받아 오면 약 봉투를 같이 들여다보는 게 일이었다. 의사·약사가 설명을 해주는데도, 그 약을 며칠 더 먹어도 괜찮은지 / 다른 약·음식과 같이 먹으면 안 되는 게 뭔지 / 회수 의약품 명단에 올라간 적 있는지를 일반인이 정리된 형태로 들고 있을 방법이 없었다. 약마다 매번 검색해 보는 것도 쉽지 않다. **그 갭을 가족 단위로 묶어서 풀어보고 싶었다.**
+
+### 기술적으로 막힌 곳 / 풀어낸 곳
+
+처음엔 단순 벡터 검색만으로 RAG를 돌렸는데, **한글 약품명의 오탈자나 동의어**에 약해서 사용자가 검색했다고 생각한 약이 retrieval에서 빠지는 경우가 잦았다. 멘토 피드백을 받아 **BM25 + 벡터 + pg_trgm**을 결합한 hybrid 구조로 옮겼고, 약품명 일치도가 체감 수준에서 개선되었다.
+
+다음 고민은 **인덱스 메모리와 빌드 시간**. full vector(3072차) 그대로 들고 가니 인덱스가 무거웠는데, **halfvec + HNSW**로 옮기면서 메모리·빌드 시간을 줄이면서도 검색 품질 손실은 작았다. 비용 효율 측면에서 가장 큰 결정이었다.
+
+LLM 응답 일관성은 **Structured Output + Tool Calling**으로 잡았다. 자유 텍스트 응답을 JSON 스키마로 강제하면서 프런트엔드의 응답 처리·검증 코드가 단순해졌고, 인용 메타도 안정적으로 따라붙었다.
+
+스트리밍은 WebSocket 대신 **SSE long-poll**로. 인프라가 한 단계 단순해졌고 (Nginx만 거치면 됨), 모바일 환경에서도 안정적이었다.
+
+### 협업에서 배운 것
+
+4인 팀이라 PR 충돌 관리가 생각보다 큰 비용이었다. **모듈 책임을 명확히 나누고 작은 단위로 자주 머지**하는 패턴이 효과가 컸다. 큰 PR은 리뷰 정체를 만들고, 정체된 PR은 또 다른 PR과 충돌해서 일이 누적되는 식이었다.
+
+멘토 피드백을 받아 **이미 돌아가는 코드를 갈아엎는 결정**(vector → hybrid)을 내린 게 가장 값진 경험이었다. "지금 코드가 동작하긴 하지만 다음 단계에서 더 큰 비용을 만들 거다"는 판단 기준을 그때 처음 명확히 다듬은 것 같다.
+
+### 다음에 또 하면 달리 할 것
+
+- **정량 지표를 처음부터 측정**하기. RAG p50, OCR 매칭 정확도, halfvec 도입 전후 메모리 절감 % 등을 측정 인프라 같이 깔고 시작했어야 했다. v2.x에서는 관측성·메트릭부터 깔고 갈 계획.
+- **테스트 커버리지를 처음부터**. 마지막 주에 회귀 잡느라 시간을 많이 썼다.
+- **배포 환경을 처음부터 무료/저비용 스택으로**. EC2가 종료된 지금 다시 띄우려면 또 손이 간다 — v2.x에서 Oracle ARM + Vercel + Neon + Upstash 조합으로 갈 예정.
+
+---
+
+## 8. 크레딧 · 라이선스
+
+- **팀 구성**: 개발자 4인 + 멘토 1인 (오즈코딩스쿨 AI 헬스케어 02기 6팀).
+- **초기 템플릿**: 부트캠프 제공 공통 스타터 템플릿
+- **부트캠프**: OZ Coding School (오즈코딩스쿨) AI 헬스케어
+- **데이터 출처**: 공공데이터포털 (식약처 의약품 목록, 식약처 의약품 회수 데이터 등)
+- **AI 외부 서비스**: OpenAI · CLOVA OCR
+
+> 본 fork는 본인의 학습 · 포트폴리오 목적이며, 원본 팀 작업물의 권리는 팀 구성원에게 있습니다.
