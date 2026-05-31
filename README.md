@@ -303,14 +303,17 @@ flowchart TD
 
 ## 6. 개선 로드맵 (v2.x)
 
-팀 작업이 끝난 뒤에도 "이건 다음에 꼭 다시 보자" 싶었던 것들이 남았다. v2.x로 버전을 끊어서 차근차근 개선하는 중.
+팀 작업이 끝난 뒤에도 "이건 다음에 꼭 다시 보자" 싶었던 것들이 남았다. v2.x로 버전을 끊어서 차근차근 개선하는 중. 각 버전 시작 전에는 `PLAN_v2_X.md`로 사전 설계.
 
 - **v2.0 — 일단 다시 띄우기.** 팀 시점에 쓰던 EC2가 종료돼서, 무료 스택(Oracle Cloud ARM + Vercel + Neon + Upstash)으로 옮겨서 다시 살리기.
-- **v2.1 — 보이는 만큼 고친다.** 로깅 · 메트릭 · 트레이싱 깔기. RAG p50, OCR 정확도, halfvec 도입 전후 메모리 차이 같은 숫자를 일단 손에 쥐기.
-- **v2.2 — 마지막 주에 회귀 잡느라 고생했던 거 풀기.** 테스트 커버리지 + 타입 보강. 다음 변경에 자신 갖고 들어가게.
-- **v2.3 — 본격 기능 · 성능 개선.** v2.1에서 본 측정값을 보고 우선순위 정해서.
+- **v2.1 — Quick wins.** 루트에 남은 팀 시점 잔재(`PLAN_*.md`, `.sql` dump, `.pem`, 로그) 정리. AI 에이전트 지침(CLAUDE/AGENTS/GEMINI) 단일 source로 묶기.
+- **v2.2 — 모노레포 구조 재설계.** 2026 기준 best example 참조해서 디렉토리 layout 갱신. `app/core` ↔ `ai_worker/core` 중복도 같이 정리.
+- **v2.3 — 회귀 안전망.** v2.0~v2.2 직후라 가장 위험한 구간. 핵심 user flow 5종 Playwright E2E + 백엔드 coverage 60% + mypy strict 확대.
+- **v2.4 — 백엔드 성능.** 단계별 p50/p95 측정 인프라부터 깔고, 핫스팟 1~3개 개선. halfvec HNSW 튜닝 + N+1 정리.
+- **v2.5 — 클린 코드.** 현재 `pyproject.toml` 에 ignore된 룰 점진 해제. 300줄 초과 파일 분할. per-file ignore 해소.
+- **v2.6 — FE UX.** SSE streaming UX, 모바일 반응형, 접근성(axe-core), Lighthouse mobile ≥ 90.
 
-> 자세한 계획은 [ROADMAP.md](./ROADMAP.md), 매듭지은 버전은 [Releases](https://github.com/kimyeongbin-dev/DownForce/releases) 페이지에 정리.
+> 상세 계획 · 체크박스 · DoD는 [ROADMAP.md](./ROADMAP.md), 매듭지은 버전은 [Releases](https://github.com/kimyeongbin-dev/DownForce/releases) 페이지에 정리.
 
 ---
 
@@ -338,7 +341,7 @@ LLM 응답 일관성은 **Structured Output + Tool Calling**으로 잡았다. �
 
 ### 다음에 또 하면 달리 할 것
 
-- **정량 지표를 처음부터 측정**하기. RAG p50, OCR 매칭 정확도, halfvec 도입 전후 메모리 절감 % 등을 측정 인프라 같이 깔고 시작했어야 했다. v2.x에서는 관측성·메트릭부터 깔고 갈 계획.
+- **정량 지표를 처음부터 측정**하기. RAG p50, OCR 매칭 정확도, halfvec 도입 전후 메모리 절감 % 등을 측정 인프라 같이 깔고 시작했어야 했다. v2.4(백엔드 성능) 단계에서 측정 인프라부터 깔고 핫스팟을 잡을 계획.
 - **테스트 커버리지를 처음부터**. 마지막 주에 회귀 잡느라 시간을 많이 썼다.
 - **배포 환경을 처음부터 무료/저비용 스택으로**. EC2가 종료된 지금 다시 띄우려면 또 손이 간다 — v2.x에서 Oracle ARM + Vercel + Neon + Upstash 조합으로 갈 예정.
 
