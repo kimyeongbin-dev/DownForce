@@ -148,14 +148,21 @@ flowchart LR
 
 ### PR-3 — deploy.yml 실 배포 + 첫 ARM 배포 (자동화)
 
-**파일 변경**:
-- `.github/workflows/deploy.yml`: secrets 교체 (`EC2_HOST` → `ORACLE_HOST` 등)
-- GitHub Secrets에 새 값 등록
-- ghcr.io org 이전에 따른 image path 갱신
+> PR-1 에서 deploy.yml 코드는 이미 ARM 가정으로 갱신됨. PR-3 는 GitHub Secrets/Variables 등록 + 게이트 해제 + 첫 배포 실행.
+
+**작업**:
+- GitHub **Secrets** 등록 (Settings > Secrets and variables > Actions > Secrets)
+  - `ORACLE_HOST`: Reserve Public IP
+  - `ORACLE_USER`: `ubuntu`
+  - `ORACLE_SSH_KEY`: PR-2 에서 생성한 private key
+- GitHub **Variables** 등록 (Settings > Secrets and variables > Actions > Variables)
+  - `ENABLE_DEPLOY=true` — PR-1 의 게이팅 (build-and-push / deploy / health-check) 해제
+- `main` push (또는 workflow_dispatch) → 첫 자동 배포 실행 + 로그 모니터링
 
 **검증**:
-- `main` push → CI green → ARM에 deploy 성공
-- `curl http://<oracle-ip>:8000/api/v1/health` → 200
+- CI 모든 job green (test → build-and-push → deploy → health-check)
+- ghcr.io 에 `kimyeongbin-dev/downforce-fastapi`, `downforce-ai-worker` 이미지 ARM64 tag 확인
+- `curl http://<oracle-ip>:8000/api/v1/health` → 200 (Caddy 셋업 전 단계 — 내부 IP 직접 확인)
 
 ### PR-4 — FE Vercel 배포 + CORS
 

@@ -57,6 +57,9 @@ jobs:
   build-and-push:
     name: Build & Push to ghcr.io
     needs: test
+    # v2.0 PR-2 끝에 repo variable `ENABLE_DEPLOY=true` 등록 시 활성화.
+    # 그 전까지는 인프라(secrets/host) 미완 상태라 build/push 도 무의미하므로 skip.
+    if: vars.ENABLE_DEPLOY == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -105,6 +108,9 @@ jobs:
   deploy:
     name: Deploy to Oracle ARM
     needs: build-and-push
+    # build-and-push 가 ENABLE_DEPLOY 로 게이팅되므로 needs 만으로도 자동 skip 되지만,
+    # 명시적으로 동일 게이트 추가해 의도를 분명히 한다.
+    if: vars.ENABLE_DEPLOY == 'true'
     runs-on: ubuntu-latest
 
     steps:
@@ -203,6 +209,7 @@ jobs:
   health-check:
     name: Health Check
     needs: deploy
+    if: vars.ENABLE_DEPLOY == 'true'
     runs-on: ubuntu-latest
 
     steps:
