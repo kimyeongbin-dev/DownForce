@@ -16,9 +16,10 @@ envs/
 
 | 항목 | local | dev | prod |
 |------|-------|-----|------|
-| Backend | 로컬 Docker | 로컬 Docker | EC2 Docker |
+| Backend | 로컬 Docker | 로컬 Docker | Oracle ARM Docker (self-host) |
 | Frontend | localhost:3000 | localhost:3000 | Vercel |
-| DB | 로컬 Docker | 로컬 Docker | EC2 Docker |
+| DB | 로컬 Docker | 로컬 Docker | Oracle ARM Docker (self-host) |
+| Redis | 로컬 Docker | 로컬 Docker | Oracle ARM Docker (self-host) |
 | Dev 로그인 버튼 | O | X | X |
 | Docker Compose | docker-compose.yml | docker-compose.yml | docker-compose.prod.yml |
 
@@ -81,23 +82,23 @@ cd medication-frontend && npm run dev
 
 ---
 
-## EC2 배포
+## Oracle ARM 배포
 
 ### 최초 설정
 
 ```bash
-# EC2 접속
-ssh ubuntu@52.78.62.12
+# Oracle ARM 접속 (Reserve Public IP)
+ssh ubuntu@<oracle-arm-public-ip>
 
-# 프로젝트 클론
-git clone https://github.com/AI-HealthCare-02/AH_02_06.git
-cd AH_02_06
+# 프로젝트 클론 (fork 본인 namespace)
+git clone https://github.com/kimyeongbin-dev/DownForce.git
+cd DownForce
 
 # 환경변수 설정
 cp envs/example.prod.env envs/.prod.env
-vi envs/.prod.env  # 실제 값 입력
+vi envs/.prod.env  # 실제 값 입력 (SECRET_KEY, DB_PASSWORD, KAKAO_*, DOMAIN 등)
 
-# .env로 복사
+# .env로 복사 (docker-compose 가 .env 로 읽음)
 cp envs/.prod.env .env
 
 # Docker 실행 (prod용)
@@ -107,11 +108,13 @@ docker compose -f docker-compose.prod.yml up -d
 ### 이후 배포
 
 ```bash
-ssh ubuntu@52.78.62.12
-cd AH_02_06
+ssh ubuntu@<oracle-arm-public-ip>
+cd DownForce
 git pull
 docker compose -f docker-compose.prod.yml up -d --build
 ```
+
+> 자동 배포는 `main` push 시 GitHub Actions (`.github/workflows/deploy.yml`)가 SSH로 처리. 수동 배포는 위 명령만 사용.
 
 ---
 
@@ -123,7 +126,7 @@ Vercel Dashboard에서 환경변수 설정:
 Settings > Environment Variables
 
 NEXT_PUBLIC_ENV = prod                              (Production)
-NEXT_PUBLIC_API_BASE_URL = https://ai-02-06.duckdns.org  (Production & Preview)
+NEXT_PUBLIC_API_BASE_URL = https://downforce.duckdns.org  (Production & Preview)
 NEXT_PUBLIC_KAKAO_CLIENT_ID = <카카오 REST API 키>    (All)
 ```
 
@@ -148,12 +151,13 @@ Repository > Settings > Secrets and variables > Actions
 - OPENAI_API_KEY
 ```
 
-### EC2에 필요한 파일
+### Oracle ARM에 필요한 파일
 
 ```
-EC2:/home/ubuntu/AH_02_06/
+Oracle ARM:/home/ubuntu/DownForce/
 ├── .env                      # envs/.prod.env 복사본
 ├── docker-compose.prod.yml   # prod용 Docker Compose
+├── logs/                     # 호스트 볼륨 마운트 (fastapi/ai-worker 로그)
 └── (나머지 소스코드)
 ```
 
@@ -163,10 +167,10 @@ EC2:/home/ubuntu/AH_02_06/
 
 | 항목 | docker-compose.yml | docker-compose.prod.yml |
 |------|-------------------|------------------------|
-| 용도 | 로컬 개발 | EC2 배포 |
-| 리소스 | 넉넉함 | t3.micro 최적화 |
+| 용도 | 로컬 개발 | Oracle ARM 배포 |
+| 리소스 | 넉넉함 | Oracle ARM Ampere A1 (4 OCPU + 24GB) 기준 |
 | 포트 노출 | 5432, 6379, 8000, 80 | 80, 443 |
-| Nginx 설정 | default.conf | prod_https.conf |
+| Nginx 설정 | default.conf | prod_https.conf (v2.0 PR-5 에서 Caddy 로 교체 예정) |
 | SSL | X | Let's Encrypt (DuckDNS) |
 | 재시작 정책 | 없음 | unless-stopped |
 

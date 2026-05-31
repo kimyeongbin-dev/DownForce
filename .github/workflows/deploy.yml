@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to Oracle ARM
 
 on:
   push:
@@ -53,7 +53,7 @@ jobs:
 
   # ── 이미지 빌드 + ghcr.io 푸시 ──────────────────────────────────────────
   # 흐름: GitHub Actions runner (4 vCPU) 에서 buildx 로 빌드 -> ghcr.io push
-  # EC2 는 pull 만 하므로 6~10분 build 시간이 GHA runner 로 이전 + cache 활용
+  # ARM 인스턴스는 pull 만 하므로 6~10분 build 시간이 GHA runner 로 이전 + cache 활용
   build-and-push:
     name: Build & Push to ghcr.io
     needs: test
@@ -82,9 +82,10 @@ jobs:
           context: .
           file: app/Dockerfile.prod
           push: true
+          platforms: linux/arm64
           tags: |
-            ghcr.io/ai-healthcare-02/ai_02_06-fastapi:latest
-            ghcr.io/ai-healthcare-02/ai_02_06-fastapi:${{ github.sha }}
+            ghcr.io/kimyeongbin-dev/downforce-fastapi:latest
+            ghcr.io/kimyeongbin-dev/downforce-fastapi:${{ github.sha }}
           cache-from: type=gha,scope=fastapi
           cache-to: type=gha,scope=fastapi,mode=max
 
@@ -94,30 +95,31 @@ jobs:
           context: .
           file: ai_worker/Dockerfile.prod
           push: true
+          platforms: linux/arm64
           tags: |
-            ghcr.io/ai-healthcare-02/ai_02_06-ai-worker:latest
-            ghcr.io/ai-healthcare-02/ai_02_06-ai-worker:${{ github.sha }}
+            ghcr.io/kimyeongbin-dev/downforce-ai-worker:latest
+            ghcr.io/kimyeongbin-dev/downforce-ai-worker:${{ github.sha }}
           cache-from: type=gha,scope=ai-worker
           cache-to: type=gha,scope=ai-worker,mode=max
 
   deploy:
-    name: Deploy to EC2
+    name: Deploy to Oracle ARM
     needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to EC2 via SSH
+      - name: Deploy to Oracle ARM via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.ORACLE_HOST }}
+          username: ${{ secrets.ORACLE_USER }}
+          key: ${{ secrets.ORACLE_SSH_KEY }}
           port: 22
-          # build 가 GHA 에서 끝났으므로 EC2 작업은 pull + up + migrate 중심 — 여유 15m
+          # build 가 GHA 에서 끝났으므로 ARM 작업은 pull + up + migrate 중심 — 여유 15m
           command_timeout: "15m"
           script: |
             set -e
-            cd ~/AI_02_06
+            cd ~/DownForce
 
             echo "=== [1/7] Pull latest code ==="
             git fetch origin main
@@ -133,16 +135,16 @@ jobs:
             #   가 3시간마다 회전 + 백업 2개 유지 = 활성 1 + 백업 2 = 3개 파일.
             #   가장 오래된 백업은 9시간 시점에 자동 삭제. cron 의존 없음.
             # - JSON 텍스트 로그는 gzip 90% 이상 압축 → archive 약 12MB 수준.
-            sudo rm -f ~/AI_02_06/logs.prev.tar.gz
+            sudo rm -f ~/DownForce/logs.prev.tar.gz
             # 옛 정책 잔재 정리 — logs.prev/ 디렉터리 / logs.archive/ (cron 실험)
-            sudo rm -rf ~/AI_02_06/logs.prev ~/AI_02_06/logs.archive
-            if [ -d ~/AI_02_06/logs ]; then
-              sudo tar -C ~/AI_02_06 -czf ~/AI_02_06/logs.prev.tar.gz logs \
-                && sudo rm -rf ~/AI_02_06/logs \
+            sudo rm -rf ~/DownForce/logs.prev ~/DownForce/logs.archive
+            if [ -d ~/DownForce/logs ]; then
+              sudo tar -C ~/DownForce -czf ~/DownForce/logs.prev.tar.gz logs \
+                && sudo rm -rf ~/DownForce/logs \
                 || echo "WARN: logs archive failed — keeping logs/ as-is for safety"
             fi
-            mkdir -p ~/AI_02_06/logs/fastapi ~/AI_02_06/logs/ai-worker
-            ls -lah ~/AI_02_06/logs.prev.tar.gz 2>/dev/null || echo "No previous archive (first deploy)"
+            mkdir -p ~/DownForce/logs/fastapi ~/DownForce/logs/ai-worker
+            ls -lah ~/DownForce/logs.prev.tar.gz 2>/dev/null || echo "No previous archive (first deploy)"
 
             echo "=== [3/8] Pre-pull prune (옛 ghcr tag 누적 영구 차단) ==="
             # 2026-05-01 EC2 사고 회귀 가드 — 그날 9개 이미지 20.45GB 누적으로
@@ -209,7 +211,7 @@ jobs:
 
       - name: Check API Health
         env:
-          DOMAIN: ai-02-06.duckdns.org
+          DOMAIN: downforce.duckdns.org
         run: |
           echo "Checking https://${DOMAIN}/api/v1/health"
           for i in 1 2 3 4 5; do
@@ -225,7 +227,7 @@ jobs:
           exit 1
 
       - name: Check Nginx Health
-        run: curl -sf https://ai-02-06.duckdns.org/health && echo "Nginx OK"
+        run: curl -sf https://downforce.duckdns.org/health && echo "Nginx OK"
 
   notify-failure:
     name: Notify Failure

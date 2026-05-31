@@ -1,12 +1,17 @@
-# Production Docker Compose (t3.medium, 4GB RAM, 2 vCPU)
-# Next.js 는 Vercel 별도 배포. EC2 에는 API 서버 + 의존 인프라만.
+# Production Docker Compose (Oracle Cloud ARM Ampere A1, 4 OCPU + 24GB RAM)
+# Next.js 는 Vercel 별도 배포. ARM 인스턴스에는 API 서버 + 의존 인프라
+# (postgres/redis self-host) 만. 리소스 limit 은 팀 시점 t3.medium 기준을
+# 그대로 보존 (총 ~2.5 OCPU / ~3.4GB) — ARM 24GB 안에서 여유 충분.
+# 필요 시 v2.0 PR-3 단계에서 ARM 풀스펙(4 OCPU / 24GB)에 맞춰 상향 조정.
+#
 # 보안: backend 네트워크는 internal=true 로 인터넷 차단. postgres/redis 는
-# 호스트 포트 매핑 없음 — Docker 내부 전용.
+# 호스트 포트 매핑 없음 — Docker 내부 전용. 외부 노출은 caddy/nginx 80/443 만.
 
 services:
   # PostgreSQL + pgvector — 내부 전용, 인터넷 차단.
-  # 127.0.0.1 바인딩으로 EC2 외부에선 접근 불가, 호스트 SSH 터널(DBeaver)만 허용.
-  # 공식 pgvector image (PG15 + pgvector 0.7+) — RAG 임베딩 검색의 vector 컬럼 필수.
+  # 127.0.0.1 바인딩으로 ARM 인스턴스 외부에선 접근 불가, 호스트 SSH 터널(DBeaver)만 허용.
+  # 공식 pgvector image (PG15 + pgvector 0.7+) — multi-arch (linux/amd64 + linux/arm64)
+  # 지원, ARM Ampere A1 에서 native 동작. RAG 임베딩 검색의 vector 컬럼 필수.
   # 마이그레이션 #8 의 ``CREATE EXTENSION vector`` 가 통과하려면 base image 에 extension 이 포함돼야 함.
   postgres:
     image: pgvector/pgvector:pg15
@@ -40,8 +45,10 @@ services:
         max-size: "20m"
         max-file: "3"
 
-  # Redis — 내부 전용, 인터넷 차단.
-  # 127.0.0.1 바인딩으로 EC2 외부 접근 차단, 호스트에서는 redis-cli 로 점검 가능.
+  # Redis — 내부 전용, 인터넷 차단. (v2.0: Upstash 가정 폐기 → ARM self-host 확정)
+  # 127.0.0.1 바인딩으로 ARM 외부 접근 차단, 호스트에서는 redis-cli 로 점검 가능.
+  # RQ broker — idle 시에도 분당 60+ BRPOP polling 발생 (~ 일 86K command).
+  # Upstash free tier (10K cmd/day) 로는 절대 부족, self-host 가 유일 옵션.
   redis:
     image: redis:alpine
     container_name: redis
@@ -74,7 +81,7 @@ services:
   # FastAPI API 서버 — ML 추론은 ai-worker 에 위임
   fastapi:
     container_name: fastapi
-    image: ghcr.io/ai-healthcare-02/ai_02_06-fastapi:${IMAGE_TAG:-latest}
+    image: ghcr.io/kimyeongbin-dev/downforce-fastapi:${IMAGE_TAG:-latest}
     pull_policy: always
     build:
       context: .
@@ -115,10 +122,12 @@ services:
         max-file: "5"
 
   # AI Worker — ko-sroberta 상주 + PyTorch CPU + OpenAI async + 병렬 버퍼
-  # 피크 메모리 약 1.8GB. t3.medium 기준 2GB 한도.
+  # 피크 메모리 약 1.8GB. 팀 시점 t3.medium 2GB 한도 그대로 보존 — ARM 24GB 안에선 여유.
+  # ARM wheel: torch CPU + sentence-transformers 모두 PyPI 에 linux/arm64 휠 제공
+  # (torch 2.x+, sentence-transformers 2.x+) — 빌드 시 추가 컴파일 불필요.
   ai-worker:
     container_name: ai-worker
-    image: ghcr.io/ai-healthcare-02/ai_02_06-ai-worker:${IMAGE_TAG:-latest}
+    image: ghcr.io/kimyeongbin-dev/downforce-ai-worker:${IMAGE_TAG:-latest}
     pull_policy: always
     build:
       context: .

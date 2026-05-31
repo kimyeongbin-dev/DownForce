@@ -201,7 +201,7 @@ flowchart LR
 
 | 영역 | 파일 |
 |---|---|
-| 환경 변수 | `envs/example.prod.env`, `medication-frontend/.env.production` (신규) |
+| 환경 변수 | `envs/example.prod.env`, `envs/README.md`, `medication-frontend/.env.production` (신규) |
 | Compose | `docker-compose.prod.yml` (ARM 리소스 + multi-arch 확인) |
 | CI/CD | `.github/workflows/deploy.yml` (secrets + ghcr.io org + SSH target) |
 | 앱 코드 | `app/main.py` (CORS), `app/core/config.py` (ALLOWED_ORIGINS env) |
