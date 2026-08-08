@@ -18,6 +18,89 @@
 
 ---
 
+## 0.5 개정 이력 (2026-08-08) — 재조사 후 스택 확정 변경
+
+> 2026-05-31 최초 계획(§1.0) 이후 무료 티어 정책이 바뀌었고, 교차 출처 인증에
+> 치명적 결함이 발견되어 아래처럼 결정을 갱신한다. **이 절이 §1.0/§2 의 DuckDNS·
+> Vercel·ARM 24GB 전제를 대체(supersede)한다.** §1 이하는 최초 결정 근거 기록으로 보존.
+
+### 변경된 결정 (사용자 확정 2026-08-08)
+
+| 항목 | 최초(2026-05-31) | 변경(2026-08-08) | 사유 |
+| --- | --- | --- | --- |
+| 도메인 | DuckDNS + Caddy | **Cloudflare Registrar 커스텀 도메인** (`api.<도메인>`) + Caddy | 무료 도메인(PSL 등재)은 교차 사이트 쿠키 문제 해결 불가 (F-1) |
+| FE 호스팅 | Vercel Hobby | **Cloudflare Pages** (`app.<도메인>`) | Vercel Hobby 는 비상업 전용 약관 — 향후 개인 앱/웹 출시 계획과 충돌 |
+| 인증 쿠키 | (미검토) | **`COOKIE_DOMAIN=.<도메인>`** 로 same-site 화, `SameSite=Lax` 유지 | FE·API 를 같은 등록도메인의 서브도메인으로 두면 현 쿠키 코드 무수정 동작 |
+| ARM 스펙 전제 | 4 OCPU / 24GB | **2 OCPU / 12GB** | Oracle Always Free ARM 2026-06-15 반토막 (F-2) |
+| DB / Redis | Oracle ARM self-host | (유지) | 변경 없음 |
+
+### 재조사 핵심 발견 (2026-08 웹 검증 + 코드 확인)
+
+- **F-1 (치명) — 교차 출처 쿠키 인증 붕괴**: 백엔드가 인증 쿠키를 `SameSite=Lax`
+  로 하드코딩(`app/apis/v1/oauth_routers.py`). Lax 쿠키는 **교차 사이트 XHR 에
+  실리지 않는다.** `*.vercel.app` 과 `*.duckdns.org` 는 둘 다 Public Suffix List
+  등재 → 서로 다른 사이트 → **모든 인증 API 가 401**. `SameSite=None` 으로 바꾸면
+  서드파티 쿠키가 되어 Safari 전면 차단·Chrome 차단 대상. → **해법: FE·API 를 같은
+  커스텀 도메인의 서브도메인(`app.` / `api.`)으로 두어 same-site 로 만든다.**
+  이 경우 현 `SameSite=Lax` 코드가 그대로 동작하고 `COOKIE_DOMAIN=.<도메인>` 만 설정.
+  (최초 계획의 "CORS 미들웨어로 처리"는 CORS ≠ 쿠키 SameSite 라 오답이었음.)
+- **F-2 — Oracle Always Free ARM 반토막**: 2026-06-15부로 4 OCPU/24GB →
+  **2 OCPU/12GB**, 초과 인스턴스 2026-08-18 자동 종료. prod 실사용 합계 ~2.35GB
+  라 **12GB 로도 충분**하나, `docker-compose.prod.yml` 상단 주석의 "24GB 8배 여유"
+  전제는 폐기. 추가로 **idle 회수**(7일간 CPU 95백분위 <20% → 회수) 리스크 존재 —
+  저트래픽 데모 대비 완화책 필요(§7 리스크에 반영).
+- **F-3 — Neon 무료 부적합 확정**: 컴퓨트는 scale-to-zero 상태에서만 무료,
+  상시가동 시 100 CU-h/월 초과 + 저장 0.5GB. → self-host PG(ARM) 결정이 옳음.
+
+### 확정 아키텍처 (개정판)
+
+```mermaid
+flowchart LR
+    User(["사용자"]) -->|HTTPS| CP["Cloudflare Pages<br/>app.&lt;도메인&gt;<br/>Next.js FE"]
+    CP -->|"same-site XHR (쿠키 동반)"| API["api.&lt;도메인&gt;<br/>→ Oracle ARM IP"]
+    API --> CA["Caddy<br/>Let's Encrypt 자동"]
+    CA --> FA["FastAPI"]
+    FA <--> PG[("PostgreSQL 15<br/>pgvector self-host")]
+    FA <--> RD[("Redis<br/>self-host")]
+    FA -->|enqueue| W["AI Worker<br/>RQ + RAG"]
+    W --> OAI["OpenAI / CLOVA OCR"]
+
+    subgraph "Oracle Cloud Always Free (ARM Ampere A1, 2 OCPU + 12GB)"
+        CA
+        FA
+        PG
+        RD
+        W
+    end
+    subgraph "Cloudflare (Registrar + Pages + DNS, 통합)"
+        CP
+    end
+```
+
+핵심: **`app.` 과 `api.` 가 같은 등록도메인** → 브라우저 관점 same-site → 쿠키 인증
+무수정 동작. 도메인·DNS·FE 를 Cloudflare 한곳에 통합, API 만 Oracle ARM.
+
+### PR 계획에 대한 영향 (§3 갱신 지침)
+
+- **PR-1**: `envs/example.prod.env` 에 `COOKIE_DOMAIN=.<도메인>` + `ALLOWED_ORIGINS`
+  (`https://app.<도메인>`) 추가. compose 리소스 limit 은 ARM **12GB** 기준 재산정.
+- **PR-4** (구 "Vercel 배포"): **Cloudflare Pages 배포**로 대체. CORS `allow_origins`
+  에 `https://app.<도메인>` 등록. `COOKIE_DOMAIN` 검증(로그인→인증 API 200 확인).
+- **PR-5** (구 "DuckDNS"): **Cloudflare Registrar 도메인 구입 + DNS 레코드**
+  (`app` CNAME→Pages, `api` A→Oracle 공인 IP)로 대체. Caddy 는 `api.<도메인>` 인증서
+  자동 발급. DuckDNS 60일 만료 리스크 제거됨.
+
+### 비용 (개정판)
+
+| 항목 | 비용 |
+| --- | --- |
+| Oracle ARM (2 OCPU/12GB) + PG/Redis self-host | 0원 |
+| Cloudflare Pages (FE) + DNS | 0원 |
+| **Cloudflare Registrar 도메인** | **~$10/년 (≈월 ₩1,000)** — 유일한 고정비 |
+| OpenAI / CLOVA OCR | 사용량분 (개발 중 Groq/Gemini 무료 티어로 억제 가능) |
+
+---
+
 ## 1. 핵심 결정 사항
 
 ### 1.0 사용자 확정 결정 (2026-05-31)
