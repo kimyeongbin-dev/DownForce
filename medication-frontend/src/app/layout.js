@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import Script from "next/script";
 import "./globals.css";
 import Navigation from '@/components/layout/Navigation'
 import BottomNav from '@/components/layout/BottomNav'
@@ -50,6 +51,10 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="min-h-full flex flex-col">
+        {/* FOUC 방지: 저장된 테마를 하이드레이션 전에 <html>에 적용 */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`}
+        </Script>
         <QueryProvider>
           <ConfirmProvider>
           <GlobalAuthGuard>

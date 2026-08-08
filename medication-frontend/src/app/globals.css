@@ -1,29 +1,157 @@
 @import "tailwindcss";
 
+/* ══════════════════════════════════════════════════════════════════════
+   Doseph 디자인 토큰 (3-Tier)
+   - 모든 디자인 결정은 이 파일 한 곳에 응집.
+   - 컴포넌트/페이지는 시맨틱 유틸(bg-surface, text-ink, rounded-card…)만 사용.
+   - 다크모드는 이 계층에서만 값이 바뀜 → 컴포넌트에 dark: 클래스 불필요.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── Tier 2: 시맨틱 토큰 (라이트 = 기본값) ── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
   color-scheme: light;
+
+  --bg: #f5f7f4;          /* 그린 편향 오프화이트 */
+  --surface: #ffffff;     /* 카드 면 */
+  --surface-2: #eef1ec;   /* 낮은 강조 면 */
+  --ink: #13201b;         /* 본문 텍스트 */
+  --muted: #55625b;       /* 보조 텍스트 (bg 대비 4.5:1↑) */
+  --line: #e2e7e0;        /* 경계선 */
+
+  --accent: #0e6e53;      /* 주 색 · 딥 틸그린 */
+  --accent-ink: #ffffff;  /* accent 위 텍스트 */
+  --accent-soft: #dceee6; /* accent 틴트 배경 */
+  --warm: #b45d2e;        /* 보조 · 애프리콧 */
+  --warm-soft: #f6e8db;
+
+  --success: #1e7a4d;
+  --warning: #8a5a00;
+  --critical: #b4382e;
+
+  --radius-card: 24px;
+  --shadow-card: 0 1px 2px rgba(19, 32, 27, 0.04), 0 2px 8px rgba(19, 32, 27, 0.05);
+  --shadow-pop: 0 4px 12px rgba(19, 32, 27, 0.06), 0 12px 32px rgba(19, 32, 27, 0.08);
+  --grain-opacity: 0.035;
 }
 
+/* ── 다크: OS 선호(단, 사용자가 라이트로 강제하면 제외) ── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --bg: #0d1310;
+    --surface: #141c17;
+    --surface-2: #1b241e;
+    --ink: #e9f0eb;
+    --muted: #98a69e;
+    --line: #27312b;
+
+    --accent: #58d3ab;
+    --accent-ink: #06231a;
+    --accent-soft: #16271f;
+    --warm: #f1a868;
+    --warm-soft: #26201a;
+
+    --success: #5fd39b;
+    --warning: #e7b860;
+    --critical: #f08a7e;
+
+    --grain-opacity: 0.05;
+    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 10px rgba(0, 0, 0, 0.35);
+    --shadow-pop: 0 6px 18px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ── 다크: 사용자 수동 토글(양방향 override) ── */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0d1310;
+  --surface: #141c17;
+  --surface-2: #1b241e;
+  --ink: #e9f0eb;
+  --muted: #98a69e;
+  --line: #27312b;
+
+  --accent: #58d3ab;
+  --accent-ink: #06231a;
+  --accent-soft: #16271f;
+  --warm: #f1a868;
+  --warm-soft: #26201a;
+
+  --success: #5fd39b;
+  --warning: #e7b860;
+  --critical: #f08a7e;
+
+  --grain-opacity: 0.05;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 2px 10px rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 6px 18px rgba(0, 0, 0, 0.4), 0 16px 40px rgba(0, 0, 0, 0.5);
+}
+/* data-theme="light" 는 :root 기본값(라이트)과 동일 → 별도 블록 불필요 */
+
+/* ── Tier 3: Tailwind 유틸 노출 (런타임 var 참조 → 자동 테마 대응) ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-warm: var(--warm);
+  --color-warm-soft: var(--warm-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+
+  /* 하위호환: 기존 background/foreground 참조 대비 */
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+
+  --radius-card: var(--radius-card);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */ 라이트 모드 고정
-
+/* ══ 베이스 ══ */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+  /* 한글: 어절 단위 줄바꿈(단어 중간 안 잘림) / 영어: 단어 유지 */
+  word-break: keep-all;
+  /* 아주 긴 토큰(URL 등)만 예외적으로 분리 */
+  overflow-wrap: break-word;
+}
+
+/* 제목·본문 줄바꿈 품질 */
+h1, h2, h3, h4 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* ══ 그레인 텍스처 (정적 오버레이 · 클릭 방해 없음 · 모달 아래) ══ */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* 모션 존중 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @keyframes chatDotBounce {
