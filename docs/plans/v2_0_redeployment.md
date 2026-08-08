@@ -28,9 +28,9 @@
 
 | 항목 | 최초(2026-05-31) | 변경(2026-08-08) | 사유 |
 | --- | --- | --- | --- |
-| 도메인 | DuckDNS + Caddy | **Cloudflare Registrar 커스텀 도메인** (`api.<도메인>`) + Caddy | 무료 도메인(PSL 등재)은 교차 사이트 쿠키 문제 해결 불가 (F-1) |
-| FE 호스팅 | Vercel Hobby | **Cloudflare Pages** (`app.<도메인>`) | Vercel Hobby 는 비상업 전용 약관 — 향후 개인 앱/웹 출시 계획과 충돌 |
-| 인증 쿠키 | (미검토) | **`COOKIE_DOMAIN=.<도메인>`** 로 same-site 화, `SameSite=Lax` 유지 | FE·API 를 같은 등록도메인의 서브도메인으로 두면 현 쿠키 코드 무수정 동작 |
+| 도메인 | DuckDNS + Caddy | **Cloudflare Registrar 커스텀 도메인** (`api.doseph.com`) + Caddy | 무료 도메인(PSL 등재)은 교차 사이트 쿠키 문제 해결 불가 (F-1) |
+| FE 호스팅 | Vercel Hobby | **Cloudflare Pages** (`app.doseph.com`) | Vercel Hobby 는 비상업 전용 약관 — 향후 개인 앱/웹 출시 계획과 충돌 |
+| 인증 쿠키 | (미검토) | **`COOKIE_DOMAIN=.doseph.com`** 로 same-site 화, `SameSite=Lax` 유지 | FE·API 를 같은 등록도메인의 서브도메인으로 두면 현 쿠키 코드 무수정 동작 |
 | ARM 스펙 전제 | 4 OCPU / 24GB | **2 OCPU / 12GB** | Oracle Always Free ARM 2026-06-15 반토막 (F-2) |
 | DB / Redis | Oracle ARM self-host | (유지) | 변경 없음 |
 
@@ -42,7 +42,7 @@
   등재 → 서로 다른 사이트 → **모든 인증 API 가 401**. `SameSite=None` 으로 바꾸면
   서드파티 쿠키가 되어 Safari 전면 차단·Chrome 차단 대상. → **해법: FE·API 를 같은
   커스텀 도메인의 서브도메인(`app.` / `api.`)으로 두어 same-site 로 만든다.**
-  이 경우 현 `SameSite=Lax` 코드가 그대로 동작하고 `COOKIE_DOMAIN=.<도메인>` 만 설정.
+  이 경우 현 `SameSite=Lax` 코드가 그대로 동작하고 `COOKIE_DOMAIN=.doseph.com` 만 설정.
   (최초 계획의 "CORS 미들웨어로 처리"는 CORS ≠ 쿠키 SameSite 라 오답이었음.)
 - **F-2 — Oracle Always Free ARM 반토막**: 2026-06-15부로 4 OCPU/24GB →
   **2 OCPU/12GB**, 초과 인스턴스 2026-08-18 자동 종료. prod 실사용 합계 ~2.35GB
@@ -56,8 +56,8 @@
 
 ```mermaid
 flowchart LR
-    User(["사용자"]) -->|HTTPS| CP["Cloudflare Pages<br/>app.&lt;도메인&gt;<br/>Next.js FE"]
-    CP -->|"same-site XHR (쿠키 동반)"| API["api.&lt;도메인&gt;<br/>→ Oracle ARM IP"]
+    User(["사용자"]) -->|HTTPS| CP["Cloudflare Pages<br/>app.doseph.com<br/>Next.js FE"]
+    CP -->|"same-site XHR (쿠키 동반)"| API["api.doseph.com<br/>→ Oracle ARM IP"]
     API --> CA["Caddy<br/>Let's Encrypt 자동"]
     CA --> FA["FastAPI"]
     FA <--> PG[("PostgreSQL 15<br/>pgvector self-host")]
@@ -82,12 +82,12 @@ flowchart LR
 
 ### PR 계획에 대한 영향 (§3 갱신 지침)
 
-- **PR-1**: `envs/example.prod.env` 에 `COOKIE_DOMAIN=.<도메인>` + `ALLOWED_ORIGINS`
-  (`https://app.<도메인>`) 추가. compose 리소스 limit 은 ARM **12GB** 기준 재산정.
+- **PR-1**: `envs/example.prod.env` 에 `COOKIE_DOMAIN=.doseph.com` + `ALLOWED_ORIGINS`
+  (`https://app.doseph.com`) 추가. compose 리소스 limit 은 ARM **12GB** 기준 재산정.
 - **PR-4** (구 "Vercel 배포"): **Cloudflare Pages 배포**로 대체. CORS `allow_origins`
-  에 `https://app.<도메인>` 등록. `COOKIE_DOMAIN` 검증(로그인→인증 API 200 확인).
+  에 `https://app.doseph.com` 등록. `COOKIE_DOMAIN` 검증(로그인→인증 API 200 확인).
 - **PR-5** (구 "DuckDNS"): **Cloudflare Registrar 도메인 구입 + DNS 레코드**
-  (`app` CNAME→Pages, `api` A→Oracle 공인 IP)로 대체. Caddy 는 `api.<도메인>` 인증서
+  (`app` CNAME→Pages, `api` A→Oracle 공인 IP)로 대체. Caddy 는 `api.doseph.com` 인증서
   자동 발급. DuckDNS 60일 만료 리스크 제거됨.
 
 ### 비용 (개정판)
