@@ -138,32 +138,32 @@ const handleTestLogin = async () => {
   // 인증 상태 확인 중이면 로딩 표시
   if (isCheckingAuth) {
     return (
-      <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <main className="flex flex-col items-center justify-center min-h-screen bg-bg">
         <div className="flex flex-col items-center gap-4">
           <LoadingSpinner size="lg" />
-          <p className="text-gray-600 font-medium">로그인 상태 확인 중...</p>
+          <p className="text-muted font-medium">로그인 상태 확인 중...</p>
         </div>
       </main>
     )
   }
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <main className="flex flex-col items-center justify-center min-h-screen bg-bg px-4">
 
-      <div className="bg-white p-10 rounded-2xl shadow-sm w-96 text-center">
+      <div className="bg-surface p-10 rounded-2xl shadow-[var(--shadow-card)] border border-line w-96 max-w-full text-center">
 
         {/* 로고 */}
-        <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Pill size={32} className="text-blue-500" />
+        <div className="w-16 h-16 bg-accent-soft rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <Pill size={32} className="text-accent" />
         </div>
-        <h1 className="text-3xl font-bold mb-2">복약 안내</h1>
-        <p className="text-gray-500 text-base mb-8">내 약을 안전하게 관리하세요</p>
+        <h1 className="text-3xl font-black text-ink mb-2">Doseph</h1>
+        <p className="text-muted text-base mb-8">내 약을 안전하게 관리하세요</p>
 
         {/* 카카오 버튼 */}
         <button
           onClick={() => handleKakaoLogin()}
           disabled={isLoading}
-          className="w-full bg-yellow-400 py-3 rounded-xl font-semibold text-sm mb-3 cursor-pointer hover:bg-yellow-500 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-yellow-400 text-black/85 py-3 rounded-xl font-semibold text-sm mb-3 cursor-pointer hover:bg-yellow-500 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? '연결 중...' : '카카오로 로그인'}
         </button>
@@ -173,7 +173,7 @@ const handleTestLogin = async () => {
           <button
             onClick={handleTestLogin}
             disabled={isLoading}
-            className="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold text-sm mb-3 cursor-pointer hover:bg-black transition-all disabled:opacity-50"
+            className="w-full bg-ink text-bg py-3 rounded-xl font-semibold text-sm mb-3 cursor-pointer hover:opacity-90 transition-all disabled:opacity-50"
           >
             개발자로 로그인 ({config.ENV})
           </button>
@@ -181,9 +181,9 @@ const handleTestLogin = async () => {
 
         {/* 구분선 */}
         <div className="flex items-center gap-3 my-4">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-gray-400 text-xs">또는</span>
-          <div className="flex-1 h-px bg-gray-200" />
+          <div className="flex-1 h-px bg-line" />
+          <span className="text-muted text-xs">또는</span>
+          <div className="flex-1 h-px bg-line" />
         </div>
 
         {/* 네이버 버튼 */}
@@ -192,7 +192,7 @@ const handleTestLogin = async () => {
         </button>
 
         {/* 하단 약관 */}
-        <p className="text-gray-400 text-sm mt-8">
+        <p className="text-muted text-sm mt-8">
           로그인 시 서비스 이용약관에 동의하게 됩니다
         </p>
 

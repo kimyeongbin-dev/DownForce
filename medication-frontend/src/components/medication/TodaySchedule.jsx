@@ -171,15 +171,15 @@ export default function TodaySchedule({ medications, profileId }) {
 
   // 3. 로딩 및 빈 데이터 처리 (Hook 호출 이후에 위치해야 함)
   if (!medications || !Array.isArray(medications)) {
-    return <div className="py-10 text-center text-gray-400">복약 정보를 불러오는 중...</div>;
+    return <div className="py-10 text-center text-muted">복약 정보를 불러오는 중...</div>;
   }
 
   if (medications.length === 0) {
     return (
-      <div className="py-12 text-center bg-gray-50 rounded-[32px] border border-dashed border-gray-200">
-        <Pill size={32} className="mx-auto text-gray-300 mb-3" />
-        <p className="text-gray-400 text-sm font-bold">오늘 등록된 복약 정보가 없습니다.</p>
-        <button onClick={() => router.push('/medication')} className="mt-4 text-xs font-black text-blue-600 hover:underline">
+      <div className="py-12 text-center bg-surface-2 rounded-card border border-dashed border-line">
+        <Pill size={32} className="mx-auto text-muted mb-3" />
+        <p className="text-muted text-sm font-bold">오늘 등록된 복약 정보가 없습니다.</p>
+        <button onClick={() => router.push('/medication')} className="mt-4 text-xs font-black text-accent hover:underline">
           약 등록하러 가기 →
         </button>
       </div>
@@ -193,16 +193,16 @@ export default function TodaySchedule({ medications, profileId }) {
   )
 
   return (
-    <section className="bg-white rounded-[32px] p-8 border border-gray-100 mb-6">
+    <section className="bg-surface rounded-card p-6 sm:p-8 border border-line mb-6">
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gray-100 rounded-2xl flex items-center justify-center">
-            <Clock size={20} className="text-gray-900" />
+          <div className="w-10 h-10 bg-accent-soft rounded-2xl flex items-center justify-center">
+            <Clock size={20} className="text-accent" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900">오늘의 복약</h2>
+          <h2 className="text-2xl font-bold text-ink">오늘의 복약</h2>
         </div>
         {totalItems > 0 && (
-          <span className="text-base font-bold text-gray-400">
+          <span className="text-base font-bold text-muted">
             {takenItems}/{totalItems} 완료
           </span>
         )}
@@ -210,9 +210,9 @@ export default function TodaySchedule({ medications, profileId }) {
 
       {totalItems > 0 && (
         <div className="mt-4 mb-6">
-          <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-surface-2 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gray-900 rounded-full transition-all duration-500"
+              className="h-full bg-accent rounded-full transition-all duration-500"
               style={{ width: `${Math.round((takenItems / totalItems) * 100)}%` }}
             />
           </div>
@@ -227,17 +227,17 @@ export default function TodaySchedule({ medications, profileId }) {
           const blockLoading = items.some(({ med, time }) => takingKeys.has(`${med.id}__${time}`))
 
           return (
-            <div key={key} className={`rounded-2xl p-4 border transition-all ${isActive ? 'border-gray-900 bg-gray-50' : 'border-gray-100 bg-white'}`}>
+            <div key={key} className={`rounded-2xl p-4 border transition-all ${isActive ? 'border-accent bg-accent-soft' : 'border-line bg-surface'}`}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <Icon size={16} className={isActive ? 'text-gray-900' : 'text-gray-400'} />
-                  <span className={`text-sm font-bold ${isActive ? 'text-gray-900' : 'text-gray-400'}`}>{label}</span>
+                  <Icon size={16} className={isActive ? 'text-accent' : 'text-muted'} />
+                  <span className={`text-sm font-bold ${isActive ? 'text-ink' : 'text-muted'}`}>{label}</span>
                 </div>
                 {items.length > 0 && (
                   <button
                     onClick={() => handleCheckAll(items)}
                     disabled={allTaken || blockLoading}
-                    className={`text-xs font-bold transition-colors cursor-pointer disabled:cursor-default ${allTaken ? 'text-gray-300' : 'text-gray-400 hover:text-gray-700'}`}
+                    className={`text-xs font-bold transition-colors cursor-pointer disabled:cursor-default ${allTaken ? 'text-muted' : 'text-muted hover:text-ink'}`}
                   >
                     {allTaken ? '완료' : blockLoading ? '처리중...' : '전체 완료'}
                   </button>
@@ -245,7 +245,7 @@ export default function TodaySchedule({ medications, profileId }) {
               </div>
 
               {items.length === 0 ? (
-                <p className="text-sm text-gray-300 font-bold">-</p>
+                <p className="text-sm text-muted font-bold">-</p>
               ) : (
                 <ul className="space-y-2.5">
                   {items.map(({ med, time }) => {
@@ -256,7 +256,7 @@ export default function TodaySchedule({ medications, profileId }) {
                         <button
                           onClick={() => taken ? handleUncheck(med, time) : handleCheck(med, time)}
                           disabled={loading}
-                          className={`mt-0.5 shrink-0 transition-all cursor-pointer disabled:cursor-not-allowed group/btn ${taken ? 'text-gray-900 hover:text-red-400' : 'text-gray-300 hover:text-gray-600'}`}
+                          className={`mt-0.5 shrink-0 transition-all cursor-pointer disabled:cursor-not-allowed group/btn ${taken ? 'text-accent hover:text-critical' : 'text-muted hover:text-ink'}`}
                         >
                           {taken ? (
                             <><CheckCircle2 size={16} className="group-hover/btn:hidden" /><XCircle size={16} className="hidden group-hover/btn:block" /></>
@@ -265,9 +265,9 @@ export default function TodaySchedule({ medications, profileId }) {
                           )}
                         </button>
                         <div className="min-w-0">
-                          <p className={`text-sm font-bold leading-snug truncate transition-all ${taken ? 'text-gray-400 line-through' : 'text-gray-900'}`}>{med.medicine_name}</p>
+                          <p className={`text-sm font-bold leading-snug truncate transition-all ${taken ? 'text-muted line-through' : 'text-ink'}`}>{med.medicine_name}</p>
                           {(med.dose_per_intake || med.intake_instruction) && (
-                            <p className="text-xs text-gray-400 mt-0.5">{[med.dose_per_intake && `1회 ${med.dose_per_intake}`, med.intake_instruction].filter(Boolean).join(' · ')}</p>
+                            <p className="text-xs text-muted mt-0.5">{[med.dose_per_intake && `1회 ${med.dose_per_intake}`, med.intake_instruction].filter(Boolean).join(' · ')}</p>
                           )}
                         </div>
                       </li>
@@ -281,17 +281,17 @@ export default function TodaySchedule({ medications, profileId }) {
       </div>
 
       {unset.length > 0 && (
-        <div className="mt-4 rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-5 py-4">
+        <div className="mt-4 rounded-2xl border border-dashed border-line bg-surface-2 px-5 py-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Clock size={15} className="text-gray-400" />
-              <span className="text-sm font-bold text-gray-400">복약 시간 미설정</span>
+              <Clock size={15} className="text-muted" />
+              <span className="text-sm font-bold text-muted">복약 시간 미설정</span>
             </div>
-            <button onClick={() => router.push('/medication')} className="text-xs font-bold text-gray-400 hover:text-gray-700 transition-colors cursor-pointer">설정하기 →</button>
+            <button onClick={() => router.push('/medication')} className="text-xs font-bold text-muted hover:text-ink transition-colors cursor-pointer">설정하기 →</button>
           </div>
           <div className="flex flex-wrap gap-2">
             {unset.map((med) => (
-              <span key={med.id} className="text-sm text-gray-500 bg-white border border-gray-200 px-3 py-1.5 rounded-xl font-bold">{med.medicine_name}</span>
+              <span key={med.id} className="text-sm text-muted bg-surface border border-line px-3 py-1.5 rounded-xl font-bold">{med.medicine_name}</span>
             ))}
           </div>
         </div>

@@ -6,6 +6,7 @@ import { Home, FileText, Trophy, Pill, User, MessageCircle, LogOut } from 'lucid
 import LogoutModal, { useLogout } from '@/components/auth/LogoutModal'
 import ChatModal from '@/components/chat/ChatModal'
 import ProfileSwitcher from '@/components/layout/ProfileSwitcher'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useProfile } from '@/contexts/ProfileContext'
 import { useOcrEntryNavigator } from '@/contexts/OcrDraftContext'
 
@@ -42,19 +43,19 @@ export default function Navigation() {
       {showChat && <ChatModal onClose={() => setShowChat(false)} profileId={selectedProfileId} />}
       {showLogoutModal && <LogoutModal onClose={() => setShowLogoutModal(false)} onConfirm={handleLogout} />}
 
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-200 border-b
-        ${scrolled
-          ? 'bg-white/90 backdrop-blur-xl border-gray-200/80'
-          : 'bg-white border-gray-200'}`}>
+      <nav
+        className={`fixed top-0 w-full z-50 transition-all duration-200 border-b
+        ${scrolled ? 'bg-surface/90 backdrop-blur-xl border-line' : 'bg-surface border-line'}`}
+      >
         <div className="max-w-[1400px] mx-auto px-6 flex justify-between items-center h-14">
 
           <div className="flex items-center gap-10">
             {/* 로고 */}
             <Link href={isLanding ? '/' : '/main'} className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-7 h-7 bg-gray-900 rounded-md flex items-center justify-center text-white">
+              <div className="w-7 h-7 bg-accent rounded-md flex items-center justify-center text-accent-ink">
                 <Pill size={14} />
               </div>
-              <span className="font-semibold text-[15px] tracking-tight text-gray-900">Downforce</span>
+              <span className="font-semibold text-[15px] tracking-tight text-ink">Doseph</span>
             </Link>
 
             {/* 앱 내부 페이지 데스크탑 네비게이션.
@@ -68,8 +69,8 @@ export default function Navigation() {
                     : pathname === menu.path
                   const className = `px-4 py-1.5 text-[13px] rounded-lg transition-all
                     ${isActive
-                      ? 'text-gray-900 font-bold bg-gray-50'
-                      : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50/50'}`
+                      ? 'text-ink font-bold bg-surface-2'
+                      : 'text-muted hover:text-ink hover:bg-surface-2/60'}`
                   if (menu.path === '/ocr') {
                     return (
                       <button key={menu.path} onClick={goToOcrEntry} className={`${className} cursor-pointer`}>
@@ -87,42 +88,39 @@ export default function Navigation() {
             )}
           </div>
 
-          {/* 오른쪽 버튼 영역 */}
-          <div className="hidden md:flex items-center gap-2">
+          {/* 오른쪽 버튼 영역 (테마 토글은 모바일 포함 항상 노출) */}
+          <div className="flex items-center gap-2">
             {isLanding ? (
               <>
+                <ThemeToggle />
                 <button
                   onClick={() => router.push('/login')}
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors cursor-pointer px-3.5 py-1.5 hover:bg-gray-100 rounded-md">
+                  className="hidden sm:block text-sm text-muted hover:text-ink transition-colors cursor-pointer px-3.5 py-1.5 hover:bg-surface-2 rounded-md">
                   로그인
                 </button>
                 <button
                   onClick={() => router.push('/login')}
-                  className="text-sm bg-gray-900 text-white font-medium cursor-pointer px-4 py-1.5 rounded-lg hover:bg-gray-700 transition-colors">
+                  className="text-sm bg-accent text-accent-ink font-medium cursor-pointer px-4 py-1.5 rounded-lg hover:brightness-110 transition-all">
                   시작하기
                 </button>
               </>
-            ) : (isAuthPage ? (<></>) : (
+            ) : isAuthPage ? (
+              <ThemeToggle />
+            ) : (
               <>
-                <ProfileSwitcher />
-                <div className="w-px h-4 bg-gray-200" />
-                <button onClick={() => setShowLogoutModal(true)}
-                className="text-sm text-gray-500 hover:text-gray-900 transition-colors cursor-pointer px-3.5 py-1.5 hover:bg-gray-100 rounded-md flex items-center gap-1.5">
-                  <LogOut size={15} />
-                  로그아웃
-                </button>
+                <div className="hidden md:flex items-center gap-2">
+                  <ProfileSwitcher />
+                  <div className="w-px h-4 bg-line" />
+                  <button onClick={() => setShowLogoutModal(true)}
+                    className="text-sm text-muted hover:text-ink transition-colors cursor-pointer px-3.5 py-1.5 hover:bg-surface-2 rounded-md flex items-center gap-1.5">
+                    <LogOut size={15} />
+                    로그아웃
+                  </button>
+                </div>
+                <ThemeToggle />
               </>
-            ))}
+            )}
           </div>
-
-          {/* 모바일: 랜딩은 로그인 버튼, 앱 페이지는 표시 없음 (하단 네비게이션 사용) */}
-          {isLanding && (
-            <button
-              onClick={() => router.push('/login')}
-              className="md:hidden text-sm bg-gray-900 text-white font-medium cursor-pointer px-4 py-1.5 rounded-lg">
-              로그인
-            </button>
-          )}
         </div>
       </nav>
 
@@ -130,7 +128,7 @@ export default function Navigation() {
       {!isLanding && !isAuthPage && (
         <button
           onClick={() => setShowChat(true)}
-          className="fixed bottom-24 right-6 z-[60] w-12 h-12 bg-gray-900 rounded-2xl shadow-lg flex items-center justify-center text-white cursor-pointer hover:bg-gray-700 hover:scale-105 transition-all active:scale-95">
+          className="fixed bottom-24 right-6 z-[60] w-12 h-12 bg-accent rounded-2xl shadow-lg flex items-center justify-center text-accent-ink cursor-pointer hover:brightness-110 hover:scale-105 transition-all active:scale-95">
           <MessageCircle size={20} />
         </button>
       )}

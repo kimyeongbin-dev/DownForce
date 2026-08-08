@@ -22,7 +22,7 @@ export default function BottomNav() {
   ]
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-lg border-t border-gray-100 flex py-3 px-2 z-50 shadow-[0_-5px_30px_rgba(0,0,0,0.06)] rounded-t-[32px]">
+    <nav className="md:hidden fixed bottom-0 left-0 w-full bg-surface/95 backdrop-blur-lg border-t border-line flex py-3 px-2 z-50 shadow-[0_-5px_30px_rgba(0,0,0,0.08)] rounded-t-[28px]">
       {tabs.map(({ label, path, Icon, onClick }) => {
         const isActive = path === '/ocr' ? pathname.startsWith('/ocr') : pathname === path
         return (
@@ -31,11 +31,11 @@ export default function BottomNav() {
             onClick={onClick}
             className="flex-1 flex flex-col items-center justify-center gap-1.5 group cursor-pointer"
           >
-            <div className={`p-1 transition-all duration-300 ${isActive ? 'scale-110 text-gray-900' : 'text-gray-300'}`}>
+            <div className={`p-1 transition-all duration-300 ${isActive ? 'scale-110 text-accent' : 'text-muted'}`}>
               <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
             </div>
             <span className={`text-[10px] tracking-tight transition-all duration-300
-              ${isActive ? 'text-gray-900 font-black' : 'text-gray-400 font-bold'}`}>
+              ${isActive ? 'text-ink font-black' : 'text-muted font-bold'}`}>
               {label}
             </span>
           </button>
