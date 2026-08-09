@@ -38,10 +38,10 @@ export default function AuthGuard({ children }) {
 
 function AuthSkeleton() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-surface-2">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 bg-gray-200 rounded-xl animate-pulse" />
-        <div className="w-24 h-3 bg-gray-200 rounded-full animate-pulse" />
+        <div className="w-10 h-10 bg-surface-2 rounded-xl animate-pulse" />
+        <div className="w-24 h-3 bg-surface-2 rounded-full animate-pulse" />
       </div>
     </div>
   )

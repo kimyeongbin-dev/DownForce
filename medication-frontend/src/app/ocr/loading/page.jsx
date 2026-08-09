@@ -46,18 +46,18 @@ async function* watchDraftStatus(draftId, profileId, signal) {
 function MedCardSkeleton({ delay = 0 }) {
   return (
     <div
-      className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 animate-pulse"
+      className="bg-surface rounded-2xl p-6 shadow-sm border border-line animate-pulse"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex justify-between items-center mb-5">
-        <div className="h-5 w-40 bg-gray-200 rounded-lg" />
-        <div className="w-5 h-5 bg-gray-100 rounded" />
+        <div className="h-5 w-40 bg-surface-2 rounded-lg" />
+        <div className="w-5 h-5 bg-surface-2 rounded" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {[0, 1, 2, 3].map((j) => (
-          <div key={j} className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-            <div className="h-2.5 w-12 bg-gray-200 rounded mb-2" />
-            <div className="h-3.5 w-10 bg-gray-200 rounded" />
+          <div key={j} className="bg-surface-2 p-2 rounded-xl border border-line">
+            <div className="h-2.5 w-12 bg-surface-2 rounded mb-2" />
+            <div className="h-3.5 w-10 bg-surface-2 rounded" />
           </div>
         ))}
       </div>
@@ -67,12 +67,12 @@ function MedCardSkeleton({ delay = 0 }) {
 
 function SuccessOverlay() {
   return (
-    <div className="fixed inset-0 bg-white flex flex-col items-center justify-center z-50 animate-in fade-in duration-300">
-      <div className="w-20 h-20 bg-gray-900 rounded-full flex items-center justify-center mb-6">
-        <CheckCircle size={36} className="text-white" strokeWidth={1.5} />
+    <div className="fixed inset-0 bg-surface flex flex-col items-center justify-center z-50 animate-in fade-in duration-300">
+      <div className="w-20 h-20 bg-accent rounded-full flex items-center justify-center mb-6">
+        <CheckCircle size={36} className="text-accent-ink" strokeWidth={1.5} />
       </div>
-      <h2 className="text-xl font-bold text-gray-900 mb-2">분석 완료!</h2>
-      <p className="text-sm text-gray-400">처방전 내용을 확인해주세요</p>
+      <h2 className="text-xl font-bold text-ink mb-2">분석 완료!</h2>
+      <p className="text-sm text-muted">처방전 내용을 확인해주세요</p>
     </div>
   )
 }
@@ -81,26 +81,26 @@ function PrescriptionSkeleton({ step }) {
   const progress = ((step + 1) / STEPS.length) * 100
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
+    <div className="min-h-screen bg-surface-2 pb-32">
       {/* 헤더 */}
-      <div className="bg-white border-b border-gray-100 px-10 py-4 flex items-center gap-4 animate-pulse">
-        <div className="w-6 h-6 bg-gray-200 rounded-full" />
+      <div className="bg-surface border-b border-line px-10 py-4 flex items-center gap-4 animate-pulse">
+        <div className="w-6 h-6 bg-surface-2 rounded-full" />
         <div className="flex-1">
-          <div className="h-4 w-36 bg-gray-200 rounded-lg mb-2" />
-          <div className="h-3 w-48 bg-gray-100 rounded-lg" />
+          <div className="h-4 w-36 bg-surface-2 rounded-lg mb-2" />
+          <div className="h-3 w-48 bg-surface-2 rounded-lg" />
         </div>
       </div>
 
       {/* 진행 상태 안내 */}
-      <div className="bg-white border-b border-gray-100 px-10 py-3">
+      <div className="bg-surface border-b border-line px-10 py-3">
         <div className="max-w-3xl mx-auto">
           <div className="flex justify-between items-center mb-2">
-            <p className="text-xs font-medium text-gray-500">{STEPS[step]}</p>
-            <p className="text-xs text-gray-300">{step + 1} / {STEPS.length}</p>
+            <p className="text-xs font-medium text-muted">{STEPS[step]}</p>
+            <p className="text-xs text-muted">{step + 1} / {STEPS.length}</p>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-1 overflow-hidden">
+          <div className="w-full bg-surface-2 rounded-full h-1 overflow-hidden">
             <div
-              className="h-1 rounded-full bg-gray-400 transition-all duration-700 ease-out"
+              className="h-1 rounded-full bg-surface-2 transition-all duration-700 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -124,8 +124,8 @@ function PrescriptionSkeleton({ step }) {
 
         {/* 하단 버튼 */}
         <div className="flex gap-3 pt-2 animate-pulse">
-          <div className="flex-1 h-14 bg-white border border-gray-200 rounded-xl" />
-          <div className="flex-1 h-14 bg-gray-200 rounded-xl" />
+          <div className="flex-1 h-14 bg-surface border border-line rounded-xl" />
+          <div className="flex-1 h-14 bg-surface-2 rounded-xl" />
         </div>
       </div>
     </div>
@@ -223,10 +223,10 @@ export default function OcrLoadingPage() {
     <>
       <button
         onClick={handleClose}
-        className="fixed top-4 right-4 z-30 w-10 h-10 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm hover:bg-gray-50 cursor-pointer"
+        className="fixed top-4 right-4 z-30 w-10 h-10 bg-surface border border-line rounded-full flex items-center justify-center shadow-sm hover:bg-surface-2 cursor-pointer"
         aria-label="닫고 메인으로 이동"
       >
-        <X size={18} className="text-gray-600" />
+        <X size={18} className="text-muted" />
       </button>
       <PrescriptionSkeleton step={step} />
     </>

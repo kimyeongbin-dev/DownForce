@@ -19,15 +19,15 @@ import TimeSlotPicker from '@/components/medication/TimeSlotPicker'
 // 가독성 확보). 약품 상세 panel 안에서 BE 응답의 plain text 또는 ** **, - 을
 // 자연스럽게 렌더.
 const MD_COMPONENTS = {
-  p: ({ children }) => <p className="text-sm text-gray-600 leading-relaxed mb-2 last:mb-0">{children}</p>,
+  p: ({ children }) => <p className="text-sm text-muted leading-relaxed mb-2 last:mb-0">{children}</p>,
   ul: ({ children }) => <ul className="list-disc pl-5 mb-2 last:mb-0 space-y-1">{children}</ul>,
   ol: ({ children }) => <ol className="list-decimal pl-5 mb-2 last:mb-0 space-y-1">{children}</ol>,
-  li: ({ children }) => <li className="text-sm text-gray-600 leading-relaxed">{children}</li>,
-  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+  li: ({ children }) => <li className="text-sm text-muted leading-relaxed">{children}</li>,
+  strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
   em: ({ children }) => <em className="italic">{children}</em>,
-  h1: ({ children }) => <h1 className="font-bold text-sm mt-2 mb-1 first:mt-0 text-gray-900">{children}</h1>,
-  h2: ({ children }) => <h2 className="font-bold text-sm mt-2 mb-1 first:mt-0 text-gray-900">{children}</h2>,
-  h3: ({ children }) => <h3 className="font-semibold text-xs mt-1.5 mb-1 first:mt-0 text-gray-700">{children}</h3>,
+  h1: ({ children }) => <h1 className="font-bold text-sm mt-2 mb-1 first:mt-0 text-ink">{children}</h1>,
+  h2: ({ children }) => <h2 className="font-bold text-sm mt-2 mb-1 first:mt-0 text-ink">{children}</h2>,
+  h3: ({ children }) => <h3 className="font-semibold text-xs mt-1.5 mb-1 first:mt-0 text-ink">{children}</h3>,
   a: ({ href, children }) => (
     <a
       href={href}
@@ -39,7 +39,7 @@ const MD_COMPONENTS = {
     </a>
   ),
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-gray-300 pl-3 my-2 text-gray-600 text-sm">{children}</blockquote>
+    <blockquote className="border-l-4 border-line pl-3 my-2 text-muted text-sm">{children}</blockquote>
   ),
 }
 
@@ -85,7 +85,7 @@ function DrugInfoSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="h-14 bg-gray-100 rounded-xl" />
+        <div key={i} className="h-14 bg-surface-2 rounded-xl" />
       ))}
     </div>
   )
@@ -94,28 +94,28 @@ function DrugInfoSkeleton() {
 function DeleteConfirmModal({ medicineName, onConfirm, onCancel, isDeleting }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 px-4 pb-6">
-      <div className="bg-white rounded-2xl w-full max-w-sm p-6 space-y-4">
+      <div className="bg-surface rounded-2xl w-full max-w-sm p-6 space-y-4">
         <div className="text-center space-y-1">
           <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-3">
             <Trash2 size={20} className="text-red-500" />
           </div>
-          <p className="font-bold text-gray-900">약품을 삭제할까요?</p>
-          <p className="text-sm text-gray-400 leading-relaxed">
-            <span className="font-bold text-gray-700">{medicineName}</span> 복용 기록이<br />영구적으로 삭제됩니다.
+          <p className="font-bold text-ink">약품을 삭제할까요?</p>
+          <p className="text-sm text-muted leading-relaxed">
+            <span className="font-bold text-ink">{medicineName}</span> 복용 기록이<br />영구적으로 삭제됩니다.
           </p>
         </div>
         <div className="flex gap-2 pt-1">
           <button
             onClick={onCancel}
             disabled={isDeleting}
-            className="flex-1 py-3 rounded-xl text-sm font-bold text-gray-500 bg-gray-100 cursor-pointer hover:bg-gray-200 transition-colors disabled:opacity-50"
+            className="flex-1 py-3 rounded-xl text-sm font-bold text-muted bg-surface-2 cursor-pointer hover:bg-surface-2 transition-colors disabled:opacity-50"
           >
             취소
           </button>
           <button
             onClick={onConfirm}
             disabled={isDeleting}
-            className="flex-1 py-3 rounded-xl text-sm font-bold text-white bg-red-500 cursor-pointer hover:bg-red-600 transition-colors disabled:opacity-50"
+            className="flex-1 py-3 rounded-xl text-sm font-bold text-accent-ink bg-red-500 cursor-pointer hover:bg-red-600 transition-colors disabled:opacity-50"
           >
             {isDeleting ? '삭제 중...' : '삭제'}
           </button>
@@ -220,7 +220,7 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
 
   if (!id) {
     return (
-      <div className="flex items-center justify-center h-full text-sm text-gray-400 py-12">
+      <div className="flex items-center justify-center h-full text-sm text-muted py-12">
         약을 선택하면 상세 정보가 표시됩니다.
       </div>
     )
@@ -229,16 +229,16 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
   if (isLoading) {
     return (
       <div className="px-6 py-6 space-y-4 animate-pulse">
-        <div className="h-32 bg-gray-900 rounded-2xl opacity-80" />
-        <div className="h-10 bg-white rounded-xl border border-gray-100" />
-        <div className="h-48 bg-white rounded-2xl border border-gray-100" />
+        <div className="h-32 bg-accent rounded-2xl opacity-80" />
+        <div className="h-10 bg-surface rounded-xl border border-line" />
+        <div className="h-48 bg-surface rounded-2xl border border-line" />
       </div>
     )
   }
 
   if (!med) {
     return (
-      <div className="flex items-center justify-center h-full text-sm text-gray-400 py-12">
+      <div className="flex items-center justify-center h-full text-sm text-muted py-12">
         약품 정보를 찾을 수 없습니다.
       </div>
     )
@@ -269,11 +269,11 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
   return (
     <div className="space-y-4">
       {/* 약품명 카드 + 편집/삭제 버튼 */}
-      <div className="bg-gray-900 rounded-2xl p-6 text-white relative">
+      <div className="bg-accent rounded-2xl p-6 text-accent-ink relative">
         <div className="absolute top-4 right-4 flex items-center gap-1">
           <button
             onClick={() => router.push(`/medication/edit?ids=${id}`)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-blue-300 hover:bg-gray-800 transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-muted hover:text-blue-300 hover:brightness-110 transition-colors cursor-pointer"
             aria-label="약품 정보 수정"
             title="이 약 정보 수정"
           >
@@ -281,7 +281,7 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
           </button>
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-red-400 hover:bg-gray-800 transition-colors cursor-pointer"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-muted hover:text-red-400 hover:brightness-110 transition-colors cursor-pointer"
             aria-label="약품 삭제"
           >
             <Trash2 size={16} />
@@ -290,25 +290,25 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
         <div className="flex items-start justify-between gap-4 pr-20">
           <div className="flex-1">
             {med.category && (
-              <span className="text-xs font-bold text-gray-400 bg-gray-800 px-3 py-1 rounded-full mb-3 inline-block">
+              <span className="text-xs font-bold text-muted bg-accent px-3 py-1 rounded-full mb-3 inline-block">
                 {med.category}
               </span>
             )}
             <h2 className="text-xl font-black leading-snug mt-1 break-keep [overflow-wrap:anywhere]">
               {med.medicine_name}
             </h2>
-            <p className="text-gray-400 text-sm mt-2 flex items-center flex-wrap gap-x-3">
+            <p className="text-muted text-sm mt-2 flex items-center flex-wrap gap-x-3">
               <span>
                 남은 복용 {med.remaining_intake_count} / {med.total_intake_count}회
               </span>
               {med.dispensed_date && (
-                <span className="text-gray-500">· 처방일 {med.dispensed_date.replace(/-/g, '.')}</span>
+                <span className="text-muted">· 처방일 {med.dispensed_date.replace(/-/g, '.')}</span>
               )}
             </p>
           </div>
           <div
             className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 ${
-              med.is_active ? 'bg-green-500/20 text-green-400' : 'bg-gray-700 text-gray-400'
+              med.is_active ? 'bg-green-500/20 text-green-400' : 'bg-surface-2 text-muted'
             }`}
           >
             {med.is_active ? '복용중' : '완료'}
@@ -317,7 +317,7 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
         {med.is_active && (
           <button
             onClick={handleDeactivate}
-            className="mt-4 w-full py-2.5 rounded-xl text-xs font-bold text-gray-400 bg-gray-800 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer"
+            className="mt-4 w-full py-2.5 rounded-xl text-xs font-bold text-muted bg-accent hover:brightness-110 hover:text-accent-ink transition-colors cursor-pointer"
           >
             복용 완료로 변경
           </button>
@@ -325,14 +325,14 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
       </div>
 
       {/* 탭 */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        <div className="flex border-b border-gray-100">
+      <div className="bg-surface rounded-2xl border border-line overflow-hidden">
+        <div className="flex border-b border-line">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`flex-1 py-3 text-xs font-bold cursor-pointer transition-colors ${
-                activeTab === tab ? 'text-gray-900 border-b-2 border-gray-900' : 'text-gray-400'
+                activeTab === tab ? 'text-ink border-b-2 border-accent' : 'text-muted'
               }`}
             >
               {tab}
@@ -344,18 +344,18 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
           {activeTab === '용법' && (
             <div className="space-y-3 animate-in fade-in duration-200">
               {compactItems.length === 0 && fullRowItems.length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-6">복용 정보가 없습니다.</p>
+                <p className="text-sm text-muted text-center py-6">복용 정보가 없습니다.</p>
               ) : (
                 <>
                   {/* 1회 복용량 / 복용 방법 — 자유 텍스트라 full row */}
                   {fullRowItems.map(({ icon: Icon, label, value }) => (
-                    <div key={label} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                      <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center border border-gray-100 shrink-0">
-                        <Icon size={16} className="text-gray-500" />
+                    <div key={label} className="flex items-center gap-4 p-4 bg-surface-2 rounded-xl">
+                      <div className="w-9 h-9 bg-surface rounded-xl flex items-center justify-center border border-line shrink-0">
+                        <Icon size={16} className="text-muted" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">{label}</p>
-                        <p className="font-bold text-sm text-gray-900">{value}</p>
+                        <p className="text-xs text-muted">{label}</p>
+                        <p className="font-bold text-sm text-ink">{value}</p>
                       </div>
                     </div>
                   ))}
@@ -365,14 +365,14 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
                       {compactItems.map(({ icon: Icon, label, value }) => (
                         <div
                           key={label}
-                          className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl"
+                          className="flex items-center gap-3 p-4 bg-surface-2 rounded-xl"
                         >
-                          <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center border border-gray-100 shrink-0">
-                            <Icon size={16} className="text-gray-500" />
+                          <div className="w-9 h-9 bg-surface rounded-xl flex items-center justify-center border border-line shrink-0">
+                            <Icon size={16} className="text-muted" />
                           </div>
                           <div className="min-w-0">
-                            <p className="text-xs text-gray-400">{label}</p>
-                            <p className="font-bold text-sm text-gray-900 truncate">{value}</p>
+                            <p className="text-xs text-muted">{label}</p>
+                            <p className="font-bold text-sm text-ink truncate">{value}</p>
                           </div>
                         </div>
                       ))}
@@ -382,10 +382,10 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
               )}
 
               {/* 복용 시간대 — 토글 시 PATCH /medications/{id} + 홈 TodaySchedule 즉시 반영 */}
-              <div className="mt-4 p-4 bg-gray-50 rounded-xl space-y-2">
-                <p className="text-xs text-gray-400">복용 시간대</p>
+              <div className="mt-4 p-4 bg-surface-2 rounded-xl space-y-2">
+                <p className="text-xs text-muted">복용 시간대</p>
                 <TimeSlotPicker medication={med} />
-                <p className="text-[11px] text-gray-400">
+                <p className="text-[11px] text-muted">
                   선택한 시간대는 홈 화면의 시간대별 복용 알림에 표시됩니다.
                 </p>
               </div>
@@ -407,7 +407,7 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
               ) : drugInfo?.warnings?.length > 0 ? (
                 drugInfo.warnings.map((section) => (
                   <div key={section.category}>
-                    <h3 className="text-xs font-black text-gray-700 mb-2 uppercase tracking-wide">
+                    <h3 className="text-xs font-black text-ink mb-2 uppercase tracking-wide">
                       {section.category}
                     </h3>
                     <div className="space-y-2">
@@ -423,7 +423,7 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-400 text-center py-6">주의사항 정보를 불러올 수 없습니다.</p>
+                <p className="text-sm text-muted text-center py-6">주의사항 정보를 불러올 수 없습니다.</p>
               )}
             </div>
           )}
@@ -450,7 +450,7 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
                   </div>
                 </>
               ) : (
-                <p className="text-sm text-gray-400 text-center py-6">부작용 정보를 불러올 수 없습니다.</p>
+                <p className="text-sm text-muted text-center py-6">부작용 정보를 불러올 수 없습니다.</p>
               )}
             </div>
           )}
@@ -464,20 +464,20 @@ export default function MedicationDetailPanel({ medicationId, onDeleted }) {
                   <div key={i} className="flex gap-3 p-4 bg-orange-50 rounded-xl">
                     <Ban size={16} className="text-orange-500 shrink-0 mt-0.5" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-bold text-gray-800 mb-1">{item.drug}</p>
+                      <p className="text-sm font-bold text-ink mb-1">{item.drug}</p>
                       <CollapsibleText>{item.description}</CollapsibleText>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-gray-400 text-center py-6">상호작용 정보를 불러올 수 없습니다.</p>
+                <p className="text-sm text-muted text-center py-6">상호작용 정보를 불러올 수 없습니다.</p>
               )}
             </div>
           )}
         </div>
       </div>
 
-      <p className="text-xs text-gray-300 text-center leading-relaxed px-2">
+      <p className="text-xs text-muted text-center leading-relaxed px-2">
         이 정보는 AI가 생성한 참고용 정보입니다. 정확한 복약 지도는 반드시 전문 의료인과 상의하십시오.
       </p>
 

@@ -82,23 +82,23 @@ export function ConfirmProvider({ children }) {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
+            className="bg-surface rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden"
           >
             <div className="px-6 pt-6 pb-3">
-              <h3 id="confirm-dialog-title" className="text-base font-black text-gray-900">
+              <h3 id="confirm-dialog-title" className="text-base font-black text-ink">
                 {opts.title}
               </h3>
               {opts.message && (
-                <p className="mt-2 text-sm text-gray-600 leading-relaxed break-keep whitespace-pre-line">
+                <p className="mt-2 text-sm text-muted leading-relaxed break-keep whitespace-pre-line">
                   {opts.message}
                 </p>
               )}
             </div>
-            <div className="flex border-t border-gray-100">
+            <div className="flex border-t border-line">
               <button
                 type="button"
                 onClick={() => close(false)}
-                className="flex-1 py-3.5 text-sm font-bold text-gray-500 hover:bg-gray-50 cursor-pointer transition-colors"
+                className="flex-1 py-3.5 text-sm font-bold text-muted hover:bg-surface-2 cursor-pointer transition-colors"
               >
                 {opts.cancelLabel}
               </button>
@@ -106,10 +106,10 @@ export function ConfirmProvider({ children }) {
                 type="button"
                 autoFocus
                 onClick={() => close(true)}
-                className={`flex-1 py-3.5 text-sm font-bold cursor-pointer transition-colors border-l border-gray-100 ${
+                className={`flex-1 py-3.5 text-sm font-bold cursor-pointer transition-colors border-l border-line ${
                   opts.danger
                     ? 'text-red-500 hover:bg-red-50'
-                    : 'text-gray-900 hover:bg-gray-50'
+                    : 'text-ink hover:bg-surface-2'
                 }`}
               >
                 {opts.confirmLabel}

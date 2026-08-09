@@ -41,13 +41,13 @@ function CustomSymptomInput({ onAdd }) {
         }}
         placeholder="증상 직접 입력 (Enter 또는 추가)"
         maxLength={MAX_CUSTOM_SYMPTOM_LEN}
-        className="flex-1 text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-orange-300"
+        className="flex-1 text-sm border border-line rounded-xl px-3 py-2 focus:outline-none focus:border-orange-300"
       />
       <button
         type="button"
         onClick={submit}
         disabled={!draft.trim()}
-        className="px-4 rounded-xl text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-4 rounded-xl text-xs font-bold bg-surface-2 text-ink hover:bg-surface-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
         추가
       </button>
@@ -134,7 +134,7 @@ export default function SymptomLogForm({ profileId, initialSymptoms, initialNote
   return (
     <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="mt-4 space-y-4">
       <div>
-        <p className="text-xs font-bold text-gray-500 mb-2">오늘의 증상 선택</p>
+        <p className="text-xs font-bold text-muted mb-2">오늘의 증상 선택</p>
         <Controller
           control={control}
           name="symptoms"
@@ -160,8 +160,8 @@ export default function SymptomLogForm({ profileId, initialSymptoms, initialNote
                         }
                         className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
                           isOn
-                            ? 'bg-orange-500 text-white border-orange-500'
-                            : 'bg-white text-gray-500 border-gray-200 hover:border-orange-300'
+                            ? 'bg-orange-500 text-accent-ink border-orange-500'
+                            : 'bg-surface text-muted border-line hover:border-orange-300'
                         }`}
                       >
                         {s}
@@ -176,14 +176,14 @@ export default function SymptomLogForm({ profileId, initialSymptoms, initialNote
                     {customSelected.map((s) => (
                       <span
                         key={s}
-                        className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full text-xs font-bold border bg-orange-500 text-white border-orange-500"
+                        className="inline-flex items-center gap-1 pl-3 pr-1 py-1 rounded-full text-xs font-bold border bg-orange-500 text-accent-ink border-orange-500"
                       >
                         {s}
                         <button
                           type="button"
                           aria-label={`'${s}' 증상 삭제`}
                           onClick={() => field.onChange(selected.filter((v) => v !== s))}
-                          className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-white/20 cursor-pointer"
+                          className="w-5 h-5 flex items-center justify-center rounded-full hover:bg-surface/20 cursor-pointer"
                         >
                           ×
                         </button>
@@ -208,13 +208,13 @@ export default function SymptomLogForm({ profileId, initialSymptoms, initialNote
       </div>
 
       <div>
-        <p className="text-xs font-bold text-gray-500 mb-1">메모 (선택)</p>
+        <p className="text-xs font-bold text-muted mb-1">메모 (선택)</p>
         <textarea
           {...register('note')}
           placeholder="오늘 몸 상태를 자유롭게 적어보세요"
           maxLength={512}
           rows={3}
-          className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-orange-300"
+          className="w-full text-sm border border-line rounded-xl px-3 py-2 resize-none focus:outline-none focus:border-orange-300"
         />
         <FormError name="note" errors={errors} />
       </div>
@@ -224,8 +224,8 @@ export default function SymptomLogForm({ profileId, initialSymptoms, initialNote
         disabled={isSubmitting}
         className={`w-full py-3 rounded-xl text-sm font-bold transition-colors ${
           isSubmitting
-            ? 'bg-gray-100 text-gray-400 cursor-wait'
-            : 'bg-orange-500 text-white hover:bg-orange-600 cursor-pointer'
+            ? 'bg-surface-2 text-muted cursor-wait'
+            : 'bg-orange-500 text-accent-ink hover:bg-orange-600 cursor-pointer'
         }`}
       >
         {isSubmitting ? '저장 중...' : '오늘 증상 기록하기'}

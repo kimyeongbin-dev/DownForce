@@ -23,17 +23,17 @@ import {
 function Modal({ title, children, onClose, onSave, saveDisabled }) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-      <div className="bg-white rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
-        <div className="flex justify-between items-center p-8 border-b border-gray-50">
-          <h3 className="text-xl font-black text-gray-900">{title}</h3>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer">
-            <X size={24} className="text-gray-400" />
+      <div className="bg-surface rounded-[40px] w-full max-w-lg overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+        <div className="flex justify-between items-center p-8 border-b border-line">
+          <h3 className="text-xl font-black text-ink">{title}</h3>
+          <button onClick={onClose} className="p-2 hover:bg-surface-2 rounded-full transition-colors cursor-pointer">
+            <X size={24} className="text-muted" />
           </button>
         </div>
         <div className="p-8 max-h-[70vh] overflow-y-auto">{children}</div>
         <div className="p-8 pt-4 flex gap-3">
-          <button onClick={onClose} className="flex-1 py-4 rounded-2xl bg-gray-50 text-gray-500 font-bold hover:bg-gray-100 transition-all cursor-pointer">취소</button>
-          <button onClick={onSave} disabled={saveDisabled} className="flex-1 py-4 rounded-2xl bg-gray-900 text-white font-black hover:bg-gray-800 transition-all shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">저장하기</button>
+          <button onClick={onClose} className="flex-1 py-4 rounded-2xl bg-surface-2 text-muted font-bold hover:bg-surface-2 transition-all cursor-pointer">취소</button>
+          <button onClick={onSave} disabled={saveDisabled} className="flex-1 py-4 rounded-2xl bg-accent text-accent-ink font-black hover:brightness-110 transition-all shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">저장하기</button>
         </div>
       </div>
     </div>
@@ -59,12 +59,12 @@ function BasicInfoModal({ info, onClose, onSave }) {
     <Modal title="계정 정보 수정" onClose={onClose} onSave={handleSubmit(onSubmit)} saveDisabled={!isValid}>
       <div className="space-y-6">
         <div>
-          <label className="text-xs font-black text-gray-400 mb-2 block ml-1">닉네임</label>
+          <label className="text-xs font-black text-muted mb-2 block ml-1">닉네임</label>
           <input
             type="text"
             {...register('nickname')}
-            className={`w-full px-6 py-4 bg-gray-50 border focus:bg-white rounded-2xl outline-none font-bold text-gray-800 transition-all ${
-              errors.nickname ? 'border-red-500' : 'border-transparent focus:border-gray-200'
+            className={`w-full px-6 py-4 bg-surface-2 border focus:bg-surface rounded-2xl outline-none font-bold text-ink transition-all ${
+              errors.nickname ? 'border-red-500' : 'border-transparent focus:border-line'
             }`}
           />
           <FormError name="nickname" errors={errors} />
@@ -126,19 +126,19 @@ function FamilyModal({ member, onClose, onSave }) {
     <Modal title={member ? '가족 정보 수정' : '가족 추가하기'} onClose={onClose} onSave={handleSubmit(onSubmit)} saveDisabled={!isValid}>
       <div className="space-y-6">
         <div>
-          <label className="text-xs font-black text-gray-400 mb-2 block ml-1">이름</label>
+          <label className="text-xs font-black text-muted mb-2 block ml-1">이름</label>
           <input
             type="text"
             placeholder="이름을 입력하세요"
             {...register('name')}
-            className={`w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 border transition-colors ${
+            className={`w-full px-6 py-4 bg-surface-2 rounded-2xl outline-none font-bold text-ink border transition-colors ${
               errors.name ? 'border-red-500' : 'border-transparent'
             }`}
           />
           <FormError name="name" errors={errors} />
         </div>
         <div>
-          <label className="text-xs font-black text-gray-400 mb-2 block ml-1">관계</label>
+          <label className="text-xs font-black text-muted mb-2 block ml-1">관계</label>
           <Controller
             control={control}
             name="relation_type"
@@ -146,7 +146,7 @@ function FamilyModal({ member, onClose, onSave }) {
               <select
                 value={field.value}
                 onChange={(e) => handleRelationChange(e.target.value)}
-                className="w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 appearance-none"
+                className="w-full px-6 py-4 bg-surface-2 rounded-2xl outline-none font-bold text-ink appearance-none"
               >
                 {FAMILY_RELATION_OPTIONS.map(({ value, label }) => (
                   <option key={value} value={value}>
@@ -159,7 +159,7 @@ function FamilyModal({ member, onClose, onSave }) {
           <FormError name="relation_type" errors={errors} />
         </div>
         <div>
-          <label className="text-xs font-black text-gray-400 mb-2 block ml-1">성별</label>
+          <label className="text-xs font-black text-muted mb-2 block ml-1">성별</label>
           <Controller
             control={control}
             name="gender"
@@ -172,8 +172,8 @@ function FamilyModal({ member, onClose, onSave }) {
                     onClick={() => field.onChange(g)}
                     className={`flex-1 py-4 rounded-2xl text-sm font-bold border transition-all cursor-pointer ${
                       field.value === g
-                        ? 'bg-gray-900 text-white border-gray-900'
-                        : 'bg-gray-50 text-gray-500 border-gray-100 hover:bg-gray-100'
+                        ? 'bg-accent text-accent-ink border-accent'
+                        : 'bg-surface-2 text-muted border-line hover:bg-surface-2'
                     }`}
                   >
                     {g === 'MALE' ? '남성' : '여성'}
@@ -190,11 +190,11 @@ function FamilyModal({ member, onClose, onSave }) {
 
 function MyPageSkeleton() {
   return (
-    <div className="max-w-[1400px] mx-auto w-full px-8 py-12 min-h-screen bg-slate-50">
-      <div className="h-32 bg-white rounded-[40px] mb-10 animate-pulse" />
+    <div className="max-w-[1400px] mx-auto w-full px-8 py-12 min-h-screen bg-surface-2">
+      <div className="h-32 bg-surface rounded-[40px] mb-10 animate-pulse" />
       <div className="grid md:grid-cols-12 gap-8">
-        <div className="md:col-span-4 space-y-6"><div className="h-64 bg-white rounded-[40px] animate-pulse" /><div className="h-80 bg-white rounded-[40px] animate-pulse" /></div>
-        <div className="md:col-span-8"><div className="h-full bg-white rounded-[40px] animate-pulse" /></div>
+        <div className="md:col-span-4 space-y-6"><div className="h-64 bg-surface rounded-[40px] animate-pulse" /><div className="h-80 bg-surface rounded-[40px] animate-pulse" /></div>
+        <div className="md:col-span-8"><div className="h-full bg-surface rounded-[40px] animate-pulse" /></div>
       </div>
     </div>
   )
@@ -383,47 +383,47 @@ export default function MyPage() {
   }
 
   return (
-    <main className={`max-w-[1400px] mx-auto w-full px-8 py-12 min-h-screen bg-slate-50 relative transition-opacity duration-200 ${isRefreshing ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
-      <div className="flex justify-between items-end mb-10 bg-white p-10 rounded-[40px] shadow-sm border border-gray-100">
+    <main className={`max-w-[1400px] mx-auto w-full px-8 py-12 min-h-screen bg-surface-2 relative transition-opacity duration-200 ${isRefreshing ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+      <div className="flex justify-between items-end mb-10 bg-surface p-10 rounded-[40px] shadow-sm border border-line">
         <div>
-          <p className="text-gray-400 text-sm font-bold mb-2">내 설정 및 관리</p>
-          <h1 className="text-4xl font-black text-gray-900">마이페이지</h1>
+          <p className="text-muted text-sm font-bold mb-2">내 설정 및 관리</p>
+          <h1 className="text-4xl font-black text-ink">마이페이지</h1>
         </div>
         <div className="hidden md:flex items-center gap-10">
-          <button onClick={() => router.push('/main')} className="flex items-center gap-2 text-gray-400 font-bold hover:text-gray-900 transition-all cursor-pointer"><Home size={18} /> 홈</button>
-          <button className="flex items-center gap-2 text-gray-900 font-black"><User size={18} /> 마이페이지</button>
+          <button onClick={() => router.push('/main')} className="flex items-center gap-2 text-muted font-bold hover:text-ink transition-all cursor-pointer"><Home size={18} /> 홈</button>
+          <button className="flex items-center gap-2 text-ink font-black"><User size={18} /> 마이페이지</button>
         </div>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
         <div className="md:col-span-4 space-y-6">
-          <div className="bg-white rounded-[40px] shadow-sm p-8 border border-gray-100">
+          <div className="bg-surface rounded-[40px] shadow-sm p-8 border border-line">
             <div className="flex flex-col items-center text-center">
-              <div className="w-24 h-24 bg-gray-900 rounded-full flex items-center justify-center shadow-lg mb-4 border-4 border-white"><User size={40} className="text-white" /></div>
-              <h2 className="text-xl font-black text-gray-900 mb-1">{userProfile?.name.split('(')[0]}님</h2>
+              <div className="w-24 h-24 bg-accent rounded-full flex items-center justify-center shadow-lg mb-4 border-4 border-surface"><User size={40} className="text-accent-ink" /></div>
+              <h2 className="text-xl font-black text-ink mb-1">{userProfile?.name.split('(')[0]}님</h2>
               {/* [수정] 상단 프로필 요약 관계 표시 상세화 */}
-              <p className="text-gray-400 text-xs font-bold mb-6">{getDetailRelation(userProfile)}</p>
+              <p className="text-muted text-xs font-bold mb-6">{getDetailRelation(userProfile)}</p>
               <div className="grid grid-cols-3 gap-3 w-full">
-                <div className="bg-gray-50 p-4 rounded-[24px] border border-gray-100">
-                  <p className="text-[10px] font-black text-gray-500 mb-1">연속 복약</p>
-                  <p className="text-lg font-black text-gray-800">{streakDays}일째 🔥</p>
+                <div className="bg-surface-2 p-4 rounded-[24px] border border-line">
+                  <p className="text-[10px] font-black text-muted mb-1">연속 복약</p>
+                  <p className="text-lg font-black text-ink">{streakDays}일째 🔥</p>
                 </div>
-                <div className={`p-4 rounded-[24px] border ${todayTakenCount > 0 ? 'bg-green-50 border-green-100' : 'bg-gray-50 border-gray-100'}`}>
-                  <p className={`text-[10px] font-black mb-1 ${todayTakenCount > 0 ? 'text-green-600' : 'text-gray-500'}`}>오늘 복약</p>
-                  <p className="text-lg font-black text-gray-800">{todayTakenCount > 0 ? `${todayTakenCount}종 완료` : '-'}</p>
+                <div className={`p-4 rounded-[24px] border ${todayTakenCount > 0 ? 'bg-green-50 border-green-100' : 'bg-surface-2 border-line'}`}>
+                  <p className={`text-[10px] font-black mb-1 ${todayTakenCount > 0 ? 'text-green-600' : 'text-muted'}`}>오늘 복약</p>
+                  <p className="text-lg font-black text-ink">{todayTakenCount > 0 ? `${todayTakenCount}종 완료` : '-'}</p>
                 </div>
                 <div className="bg-orange-50 p-4 rounded-[24px] border border-orange-100">
                   <p className="text-[10px] font-black text-orange-500 mb-1">진행 챌린지</p>
-                  <p className="text-lg font-black text-gray-800">{ongoingCount}개 🏆</p>
+                  <p className="text-lg font-black text-ink">{ongoingCount}개 🏆</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-[40px] shadow-sm p-4 border border-gray-100">
+          <div className="bg-surface rounded-[40px] shadow-sm p-4 border border-line">
             <nav className="flex flex-col space-y-2">
               {menuItems.map((item) => (
-                <button key={item.id} onClick={() => setActiveMenu(item.id)} className={`flex items-center gap-4 px-6 py-4 rounded-[24px] transition-all ${activeMenu === item.id ? 'bg-gray-900 text-white font-black shadow-lg' : 'text-gray-500 hover:bg-gray-50 font-bold'}`}>
+                <button key={item.id} onClick={() => setActiveMenu(item.id)} className={`flex items-center gap-4 px-6 py-4 rounded-[24px] transition-all ${activeMenu === item.id ? 'bg-accent text-accent-ink font-black shadow-lg' : 'text-muted hover:bg-surface-2 font-bold'}`}>
                   <span>{item.icon}</span><span className="text-sm">{item.label}</span>
                 </button>
               ))}
@@ -432,30 +432,30 @@ export default function MyPage() {
         </div>
 
         <div className="md:col-span-8">
-          <div className="bg-white rounded-[40px] shadow-sm p-10 border border-gray-100 h-full min-h-[600px]">
+          <div className="bg-surface rounded-[40px] shadow-sm p-10 border border-line h-full min-h-[600px]">
             {activeMenu === '기본정보' && (
               <div className="space-y-8 h-full flex flex-col">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-2xl font-black text-gray-900">계정 정보</h3>
-                  <button onClick={() => { setSelectedFamilyMember(null); setModalType('basic') }} className="text-xs font-bold text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all border border-gray-200 cursor-pointer">정보 수정</button>
+                  <h3 className="text-2xl font-black text-ink">계정 정보</h3>
+                  <button onClick={() => { setSelectedFamilyMember(null); setModalType('basic') }} className="text-xs font-bold text-muted hover:bg-surface-2 px-4 py-2 rounded-xl transition-all border border-line cursor-pointer">정보 수정</button>
                 </div>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center p-6 bg-slate-50 rounded-[28px]">
-                    <span className="text-sm text-gray-400 font-black">닉네임</span>
-                    <span className="text-base font-black text-gray-800">{userProfile?.name.split('(')[0]}</span>
+                  <div className="flex justify-between items-center p-6 bg-surface-2 rounded-[28px]">
+                    <span className="text-sm text-muted font-black">닉네임</span>
+                    <span className="text-base font-black text-ink">{userProfile?.name.split('(')[0]}</span>
                   </div>
-                  <div className="flex justify-between items-center p-6 bg-slate-50 rounded-[28px]">
-                    <span className="text-sm text-gray-400 font-black">관계</span>
-                    <div className="bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20">
+                  <div className="flex justify-between items-center p-6 bg-surface-2 rounded-[28px]">
+                    <span className="text-sm text-muted font-black">관계</span>
+                    <div className="bg-accent-soft px-3 py-1.5 rounded-full border border-accent/20">
                       {/* [수정] 기본 정보 탭 관계 표시 상세화 */}
-                      <span className="text-sm font-black text-blue-700">{getDetailRelation(userProfile).replace('부모님', '부모').replace('계정', '')}</span>
+                      <span className="text-sm font-black text-accent">{getDetailRelation(userProfile).replace('부모님', '부모').replace('계정', '')}</span>
                     </div>
                   </div>
                 </div>
                 <div className="mt-auto pt-10 space-y-6">
-                  <button onClick={() => setShowLogoutModal(true)} className="w-full bg-white border-2 border-gray-100 text-gray-400 py-5 rounded-[28px] text-sm font-black hover:bg-gray-50 cursor-pointer transition-all">로그아웃</button>
+                  <button onClick={() => setShowLogoutModal(true)} className="w-full bg-surface border-2 border-line text-muted py-5 rounded-[28px] text-sm font-black hover:bg-surface-2 cursor-pointer transition-all">로그아웃</button>
                   <div className="flex items-center justify-center">
-                    <button onClick={() => setShowDeleteModal(true)} className="text-xs text-gray-300 hover:text-red-400 transition-colors cursor-pointer underline underline-offset-2">회원 탈퇴</button>
+                    <button onClick={() => setShowDeleteModal(true)} className="text-xs text-muted hover:text-red-400 transition-colors cursor-pointer underline underline-offset-2">회원 탈퇴</button>
                   </div>
                 </div>
               </div>
@@ -464,16 +464,16 @@ export default function MyPage() {
             {activeMenu === '건강정보' && (
               <div className="space-y-8">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-2xl font-black text-gray-900">건강 프로필</h3>
-                  <button onClick={() => setModalType('health')} className="text-xs font-black text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-xl transition-all border border-gray-200 cursor-pointer">수정하기</button>
+                  <h3 className="text-2xl font-black text-ink">건강 프로필</h3>
+                  <button onClick={() => setModalType('health')} className="text-xs font-black text-muted hover:bg-surface-2 px-4 py-2 rounded-xl transition-all border border-line cursor-pointer">수정하기</button>
                 </div>
                 <div className="grid sm:grid-cols-2 gap-6">
-                  <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100"><p className="text-xs font-black text-gray-400 mb-2">나이</p><p className="text-xl font-black text-gray-800">{userProfile?.health_survey?.age ? `${userProfile.health_survey.age}세` : '-'}</p></div>
-                  <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100"><p className="text-xs font-black text-gray-400 mb-2">성별</p><p className="text-xl font-black text-gray-800">{(() => { const g = userProfile?.gender ?? userProfile?.health_survey?.gender; return g === 'MALE' ? '남성' : g === 'FEMALE' ? '여성' : '-' })()}</p></div>
-                  <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100"><p className="text-xs font-black text-gray-400 mb-2">키 / 몸무게</p><p className="text-xl font-black text-gray-800">{userProfile?.health_survey?.height ? `${userProfile.health_survey.height}cm` : '-'} / {userProfile?.health_survey?.weight ? `${userProfile.health_survey.weight}kg` : '-'}</p></div>
-                  <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100"><p className="text-xs font-black text-gray-400 mb-2">흡연 / 음주</p><p className="text-xl font-black text-gray-800">{userProfile?.health_survey?.is_smoking === true ? '흡연' : userProfile?.health_survey?.is_smoking === false ? '비흡연' : '-'} / {userProfile?.health_survey?.is_drinking === true ? '음주' : userProfile?.health_survey?.is_drinking === false ? '비음주' : '-'}</p></div>
-                  <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100"><p className="text-xs font-black text-gray-400 mb-2">보유 질환</p><p className="text-xl font-black text-gray-800">{userProfile?.health_survey?.conditions?.join(', ') || '없음'}</p></div>
-                  <div className="p-8 bg-slate-50 rounded-[32px] border border-slate-100"><p className="text-xs font-black text-gray-400 mb-2">특이 알레르기</p><p className="text-xl font-black text-gray-800">{userProfile?.health_survey?.allergies?.join(', ') || '없음'}</p></div>
+                  <div className="p-8 bg-surface-2 rounded-[32px] border border-line"><p className="text-xs font-black text-muted mb-2">나이</p><p className="text-xl font-black text-ink">{userProfile?.health_survey?.age ? `${userProfile.health_survey.age}세` : '-'}</p></div>
+                  <div className="p-8 bg-surface-2 rounded-[32px] border border-line"><p className="text-xs font-black text-muted mb-2">성별</p><p className="text-xl font-black text-ink">{(() => { const g = userProfile?.gender ?? userProfile?.health_survey?.gender; return g === 'MALE' ? '남성' : g === 'FEMALE' ? '여성' : '-' })()}</p></div>
+                  <div className="p-8 bg-surface-2 rounded-[32px] border border-line"><p className="text-xs font-black text-muted mb-2">키 / 몸무게</p><p className="text-xl font-black text-ink">{userProfile?.health_survey?.height ? `${userProfile.health_survey.height}cm` : '-'} / {userProfile?.health_survey?.weight ? `${userProfile.health_survey.weight}kg` : '-'}</p></div>
+                  <div className="p-8 bg-surface-2 rounded-[32px] border border-line"><p className="text-xs font-black text-muted mb-2">흡연 / 음주</p><p className="text-xl font-black text-ink">{userProfile?.health_survey?.is_smoking === true ? '흡연' : userProfile?.health_survey?.is_smoking === false ? '비흡연' : '-'} / {userProfile?.health_survey?.is_drinking === true ? '음주' : userProfile?.health_survey?.is_drinking === false ? '비음주' : '-'}</p></div>
+                  <div className="p-8 bg-surface-2 rounded-[32px] border border-line"><p className="text-xs font-black text-muted mb-2">보유 질환</p><p className="text-xl font-black text-ink">{userProfile?.health_survey?.conditions?.join(', ') || '없음'}</p></div>
+                  <div className="p-8 bg-surface-2 rounded-[32px] border border-line"><p className="text-xs font-black text-muted mb-2">특이 알레르기</p><p className="text-xl font-black text-ink">{userProfile?.health_survey?.allergies?.join(', ') || '없음'}</p></div>
                 </div>
               </div>
             )}
@@ -481,8 +481,8 @@ export default function MyPage() {
             {activeMenu === '가족관리' && (
               <div className="space-y-8">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-2xl font-black text-gray-900">함께 관리하는 가족</h3>
-                  <button onClick={() => { setSelectedFamilyMember(null); setModalType('family'); }} className="bg-gray-900 text-white px-6 py-3 rounded-2xl text-sm font-black hover:bg-gray-700 cursor-pointer">+ 가족 추가하기</button>
+                  <h3 className="text-2xl font-black text-ink">함께 관리하는 가족</h3>
+                  <button onClick={() => { setSelectedFamilyMember(null); setModalType('family'); }} className="bg-accent text-accent-ink px-6 py-3 rounded-2xl text-sm font-black hover:brightness-110 cursor-pointer">+ 가족 추가하기</button>
                 </div>
                 {family.length > 0 ? (
                   <div className="grid sm:grid-cols-2 gap-4">
@@ -515,32 +515,32 @@ export default function MyPage() {
                           onClick={handleSwitchProfile}
                           className={`relative rounded-[32px] p-8 transition-all flex justify-between items-center group cursor-pointer ${
                             isActive
-                              ? 'bg-white shadow-lg ring-2 ring-gray-900'
+                              ? 'bg-surface shadow-lg ring-2 ring-accent'
                               : isSelf
-                                ? 'bg-gray-100 hover:bg-gray-200 border border-gray-300'
-                                : 'bg-slate-50 hover:bg-white hover:shadow-md'
+                                ? 'bg-surface-2 hover:bg-surface-2 border border-line'
+                                : 'bg-surface-2 hover:bg-surface hover:shadow-md'
                           }`}
                         >
                           {isActive && (
-                            <span className="absolute top-3 right-3 bg-gray-900 text-white text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1">
+                            <span className="absolute top-3 right-3 bg-accent text-accent-ink text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1">
                               <Check size={11} />현재 활성
                             </span>
                           )}
                           <div className="flex items-center gap-5">
-                            <div className={`w-16 h-16 rounded-[24px] flex items-center justify-center text-2xl font-black transition-all ${isSelf ? 'bg-gray-900 text-white' : 'bg-white text-gray-700 group-hover:bg-gray-900 group-hover:text-white'}`}>{member.name[0]}</div>
+                            <div className={`w-16 h-16 rounded-[24px] flex items-center justify-center text-2xl font-black transition-all ${isSelf ? 'bg-accent text-accent-ink' : 'bg-surface text-ink group-hover:bg-accent group-hover:text-accent-ink'}`}>{member.name[0]}</div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <p className="text-lg font-black text-gray-800">{member.name}</p>
-                                {isSelf && <span className="bg-gray-900 text-white text-[10px] font-black px-2 py-0.5 rounded-full">본인</span>}
+                                <p className="text-lg font-black text-ink">{member.name}</p>
+                                {isSelf && <span className="bg-accent text-accent-ink text-[10px] font-black px-2 py-0.5 rounded-full">본인</span>}
                               </div>
-                              <p className="text-xs font-bold text-gray-400 uppercase">{detailLabel}</p>
+                              <p className="text-xs font-bold text-muted uppercase">{detailLabel}</p>
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={handleEdit}
                               aria-label={isSelf ? '본인 정보 수정' : '가족 정보 수정'}
-                              className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-400 hover:text-gray-900 shadow-sm cursor-pointer"
+                              className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-muted hover:text-ink shadow-sm cursor-pointer"
                             >
                               <Pencil size={16} />
                             </button>
@@ -548,7 +548,7 @@ export default function MyPage() {
                               <button
                                 onClick={(e) => handleDeleteFamily(member.id, e)}
                                 aria-label="가족 삭제"
-                                className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-300 hover:text-red-500 shadow-sm cursor-pointer"
+                                className="w-10 h-10 bg-surface rounded-full flex items-center justify-center text-muted hover:text-red-500 shadow-sm cursor-pointer"
                               >
                                 <Trash2 size={18} />
                               </button>
@@ -559,7 +559,7 @@ export default function MyPage() {
                     })}
                   </div>
                 ) : (
-                  <div className="py-20 bg-slate-50 rounded-[40px] border border-dashed border-slate-200">
+                  <div className="py-20 bg-surface-2 rounded-[40px] border border-dashed border-line">
                     <EmptyState title="등록된 가족이 없어요" message="우측 상단의 버튼을 눌러 가족을 추가해보세요!" />
                   </div>
                 )}

@@ -7,43 +7,43 @@ import { markLoggedIn } from '@/lib/authStatus'
 // 메인 페이지 스켈레톤 UI
 function MainSkeleton() {
   return (
-    <main className="min-h-screen bg-gray-50 animate-pulse">
+    <main className="min-h-screen bg-surface-2 animate-pulse">
       {/* 상단 헤더 스켈레톤 */}
-      <div className="bg-white px-10 py-4 shadow-sm">
-        <div className="h-4 w-24 bg-gray-200 rounded mb-2" />
-        <div className="h-6 w-32 bg-gray-200 rounded" />
+      <div className="bg-surface px-10 py-4 shadow-sm">
+        <div className="h-4 w-24 bg-surface-2 rounded mb-2" />
+        <div className="h-6 w-32 bg-surface-2 rounded" />
       </div>
 
       <div className="p-10 grid grid-cols-2 gap-4">
         {/* 오늘 복약 현황 스켈레톤 */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 col-span-2">
-          <div className="h-5 w-32 bg-gray-200 rounded mb-4" />
-          <div className="h-4 w-48 bg-gray-200 rounded" />
+        <div className="bg-surface rounded-2xl shadow-sm p-6 col-span-2">
+          <div className="h-5 w-32 bg-surface-2 rounded mb-4" />
+          <div className="h-4 w-48 bg-surface-2 rounded" />
         </div>
 
         {/* 챗봇 버튼 스켈레톤 */}
-        <div className="bg-gray-200 rounded-2xl p-6">
-          <div className="h-4 w-32 bg-gray-300 rounded mb-2" />
-          <div className="h-6 w-40 bg-gray-300 rounded" />
+        <div className="bg-surface-2 rounded-2xl p-6">
+          <div className="h-4 w-32 bg-surface-2 rounded mb-2" />
+          <div className="h-6 w-40 bg-surface-2 rounded" />
         </div>
 
         {/* 처방전 업로드 스켈레톤 */}
-        <div className="bg-white rounded-2xl shadow-sm p-6">
-          <div className="h-5 w-24 bg-gray-200 rounded mb-2" />
-          <div className="h-4 w-36 bg-gray-200 rounded mb-4" />
-          <div className="w-full border-2 border-dashed border-gray-200 py-4 rounded-xl">
-            <div className="h-4 w-16 bg-gray-200 rounded mx-auto" />
+        <div className="bg-surface rounded-2xl shadow-sm p-6">
+          <div className="h-5 w-24 bg-surface-2 rounded mb-2" />
+          <div className="h-4 w-36 bg-surface-2 rounded mb-4" />
+          <div className="w-full border-2 border-dashed border-line py-4 rounded-xl">
+            <div className="h-4 w-16 bg-surface-2 rounded mx-auto" />
           </div>
         </div>
       </div>
 
       {/* 하단 네비게이션 스켈레톤 */}
-      <div className="fixed bottom-0 w-full bg-white border-t border-gray-100 flex">
+      <div className="fixed bottom-0 w-full bg-surface border-t border-line flex">
         <div className="flex-1 py-4 flex justify-center">
-          <div className="h-4 w-8 bg-gray-200 rounded" />
+          <div className="h-4 w-8 bg-surface-2 rounded" />
         </div>
         <div className="flex-1 py-4 flex justify-center">
-          <div className="h-4 w-16 bg-gray-200 rounded" />
+          <div className="h-4 w-16 bg-surface-2 rounded" />
         </div>
       </div>
     </main>

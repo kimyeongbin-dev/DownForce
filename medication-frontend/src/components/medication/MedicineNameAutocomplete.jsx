@@ -150,11 +150,11 @@ export default function MedicineNameAutocomplete({
       />
       {isOpen && suggestions.length > 0 && (
         <ul
-          className="absolute left-0 right-0 top-full mt-1 z-50 bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-y-auto"
+          className="absolute left-0 right-0 top-full mt-1 z-50 bg-surface border border-line rounded-xl shadow-lg max-h-72 overflow-y-auto"
           role="listbox"
         >
           {isLoading && (
-            <li className="px-4 py-2 text-xs text-gray-400">검색 중…</li>
+            <li className="px-4 py-2 text-xs text-muted">검색 중…</li>
           )}
           {suggestions.map((item, idx) => {
             const isActive = idx === highlightIndex
@@ -169,7 +169,7 @@ export default function MedicineNameAutocomplete({
                 }}
                 onMouseEnter={() => setHighlightIndex(idx)}
                 className={`px-4 py-2 text-sm cursor-pointer transition-colors ${
-                  isActive ? 'bg-gray-900 text-white' : 'text-gray-800 hover:bg-gray-100'
+                  isActive ? 'bg-accent text-accent-ink' : 'text-ink hover:bg-surface-2'
                 }`}
               >
                 <span className="font-bold">{item.medicine_name}</span>

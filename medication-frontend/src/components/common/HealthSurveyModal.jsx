@@ -21,10 +21,10 @@ const CONDITION_OPTIONS = [
 ]
 const ALLERGY_OPTIONS = ['페니실린', '아스피린', '항생제', '소염제', '없음']
 
-const btnSelected = 'bg-gray-900 text-white border-gray-900'
-const btnUnselected = 'bg-white text-gray-400 border-gray-100 hover:border-gray-300'
-const chipSelected = 'bg-gray-900 text-white border-gray-900'
-const chipUnselected = 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+const btnSelected = 'bg-accent text-accent-ink border-accent'
+const btnUnselected = 'bg-surface text-muted border-line hover:border-line'
+const chipSelected = 'bg-accent text-accent-ink border-accent'
+const chipUnselected = 'bg-surface text-muted border-line hover:border-line'
 
 // "없음" 칩과 다른 항목의 mutually-exclusive 토글.
 function toggleChip(list, item) {
@@ -70,18 +70,18 @@ export default function HealthSurveyModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-      <div className="bg-white rounded-[40px] w-full max-w-lg max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200">
+      <div className="bg-surface rounded-[40px] w-full max-w-lg max-h-[90vh] overflow-hidden shadow-2xl flex flex-col animate-in fade-in zoom-in duration-200">
         {/* 헤더 */}
-        <div className="flex justify-between items-start p-8 border-b border-gray-50 shrink-0">
+        <div className="flex justify-between items-start p-8 border-b border-line shrink-0">
           <div>
-            <h3 className="text-xl font-black text-gray-900">{title}</h3>
-            {subtitle && <p className="text-gray-400 text-sm mt-1">{subtitle}</p>}
+            <h3 className="text-xl font-black text-ink">{title}</h3>
+            {subtitle && <p className="text-muted text-sm mt-1">{subtitle}</p>}
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+            className="p-2 hover:bg-surface-2 rounded-full transition-colors cursor-pointer"
           >
-            <X size={24} className="text-gray-400" />
+            <X size={24} className="text-muted" />
           </button>
         </div>
 
@@ -90,20 +90,20 @@ export default function HealthSurveyModal({
           {/* 기본 정보 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-black text-gray-400 mb-2 block ml-1">나이</label>
+              <label className="text-xs font-black text-muted mb-2 block ml-1">나이</label>
               <input
                 type="text"
                 inputMode="numeric"
                 placeholder="예: 30"
                 {...register('age')}
-                className={`w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 border transition-colors ${
-                  errors.age ? 'border-red-500' : 'border-transparent focus:border-gray-200'
+                className={`w-full px-6 py-4 bg-surface-2 rounded-2xl outline-none font-bold text-ink border transition-colors ${
+                  errors.age ? 'border-red-500' : 'border-transparent focus:border-line'
                 }`}
               />
               <FormError name="age" errors={errors} />
             </div>
             <div>
-              <label className="text-xs font-black text-gray-400 mb-2 block ml-1">성별</label>
+              <label className="text-xs font-black text-muted mb-2 block ml-1">성별</label>
               <Controller
                 control={control}
                 name="gender"
@@ -129,27 +129,27 @@ export default function HealthSurveyModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-black text-gray-400 mb-2 block ml-1">키 (cm)</label>
+              <label className="text-xs font-black text-muted mb-2 block ml-1">키 (cm)</label>
               <input
                 type="text"
                 inputMode="decimal"
                 placeholder="예: 170"
                 {...register('height')}
-                className={`w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 border transition-colors ${
-                  errors.height ? 'border-red-500' : 'border-transparent focus:border-gray-200'
+                className={`w-full px-6 py-4 bg-surface-2 rounded-2xl outline-none font-bold text-ink border transition-colors ${
+                  errors.height ? 'border-red-500' : 'border-transparent focus:border-line'
                 }`}
               />
               <FormError name="height" errors={errors} />
             </div>
             <div>
-              <label className="text-xs font-black text-gray-400 mb-2 block ml-1">몸무게 (kg)</label>
+              <label className="text-xs font-black text-muted mb-2 block ml-1">몸무게 (kg)</label>
               <input
                 type="text"
                 inputMode="decimal"
                 placeholder="예: 65.5"
                 {...register('weight')}
-                className={`w-full px-6 py-4 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 border transition-colors ${
-                  errors.weight ? 'border-red-500' : 'border-transparent focus:border-gray-200'
+                className={`w-full px-6 py-4 bg-surface-2 rounded-2xl outline-none font-bold text-ink border transition-colors ${
+                  errors.weight ? 'border-red-500' : 'border-transparent focus:border-line'
                 }`}
               />
               <FormError name="weight" errors={errors} />
@@ -159,7 +159,7 @@ export default function HealthSurveyModal({
           {/* 생활 습관 */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-black text-gray-400 mb-2 block ml-1">흡연 여부</label>
+              <label className="text-xs font-black text-muted mb-2 block ml-1">흡연 여부</label>
               <Controller
                 control={control}
                 name="is_smoking"
@@ -182,7 +182,7 @@ export default function HealthSurveyModal({
               />
             </div>
             <div>
-              <label className="text-xs font-black text-gray-400 mb-2 block ml-1">음주 여부</label>
+              <label className="text-xs font-black text-muted mb-2 block ml-1">음주 여부</label>
               <Controller
                 control={control}
                 name="is_drinking"
@@ -208,7 +208,7 @@ export default function HealthSurveyModal({
 
           {/* 기저질환 */}
           <div>
-            <label className="text-xs font-black text-gray-400 mb-3 block ml-1">기저질환</label>
+            <label className="text-xs font-black text-muted mb-3 block ml-1">기저질환</label>
             <Controller
               control={control}
               name="conditions"
@@ -233,7 +233,7 @@ export default function HealthSurveyModal({
 
           {/* 알레르기 */}
           <div>
-            <label className="text-xs font-black text-gray-400 mb-3 block ml-1">알레르기</label>
+            <label className="text-xs font-black text-muted mb-3 block ml-1">알레르기</label>
             <Controller
               control={control}
               name="allergies"
@@ -258,12 +258,12 @@ export default function HealthSurveyModal({
         </div>
 
         {/* 하단 버튼 */}
-        <div className="p-8 pt-4 flex gap-3 border-t border-gray-50 shrink-0">
+        <div className="p-8 pt-4 flex gap-3 border-t border-line shrink-0">
           <button
             type="button"
             onClick={showSkip ? onSkip : onClose}
             disabled={isSubmitting}
-            className="flex-1 py-4 rounded-2xl bg-gray-50 text-gray-500 font-bold hover:bg-gray-100 transition-all cursor-pointer disabled:opacity-50"
+            className="flex-1 py-4 rounded-2xl bg-surface-2 text-muted font-bold hover:bg-surface-2 transition-all cursor-pointer disabled:opacity-50"
           >
             {showSkip ? skipLabel : cancelLabel}
           </button>
@@ -271,7 +271,7 @@ export default function HealthSurveyModal({
             type="button"
             onClick={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting}
-            className="flex-1 py-4 rounded-2xl bg-gray-900 text-white font-black hover:bg-gray-800 transition-all shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 py-4 rounded-2xl bg-accent text-accent-ink font-black hover:brightness-110 transition-all shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? '저장 중...' : saveLabel}
           </button>

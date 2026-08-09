@@ -14,7 +14,7 @@ const MARKDOWN_COMPONENTS = {
   ul: ({ children }) => <ul className="list-disc pl-5 mb-2 last:mb-0 space-y-0.5">{children}</ul>,
   ol: ({ children }) => <ol className="list-decimal pl-5 mb-2 last:mb-0 space-y-0.5">{children}</ol>,
   li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-  strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+  strong: ({ children }) => <strong className="font-semibold text-ink">{children}</strong>,
   em: ({ children }) => <em className="italic">{children}</em>,
   h1: ({ children }) => <h1 className="font-bold text-base mt-3 mb-1 first:mt-0">{children}</h1>,
   h2: ({ children }) => <h2 className="font-bold text-base mt-3 mb-1 first:mt-0">{children}</h2>,
@@ -30,14 +30,14 @@ const MARKDOWN_COMPONENTS = {
     </a>
   ),
   code: ({ children }) => (
-    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono">{children}</code>
+    <code className="bg-surface-2 px-1 py-0.5 rounded text-xs font-mono">{children}</code>
   ),
   pre: ({ children }) => (
-    <pre className="bg-gray-100 rounded-md p-2 my-2 text-xs font-mono overflow-x-auto">{children}</pre>
+    <pre className="bg-surface-2 rounded-md p-2 my-2 text-xs font-mono overflow-x-auto">{children}</pre>
   ),
-  hr: () => <hr className="my-3 border-gray-200" />,
+  hr: () => <hr className="my-3 border-line" />,
   blockquote: ({ children }) => (
-    <blockquote className="border-l-4 border-gray-300 pl-3 my-2 text-gray-600">{children}</blockquote>
+    <blockquote className="border-l-4 border-line pl-3 my-2 text-muted">{children}</blockquote>
   ),
 }
 
@@ -412,14 +412,14 @@ export default function ChatModal({ onClose, profileId }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[100] flex items-end justify-end p-6 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl w-full max-w-3xl h-[640px] flex shadow-2xl border border-gray-100 overflow-hidden">
+      <div className="bg-surface rounded-2xl w-full max-w-3xl h-[640px] flex shadow-2xl border border-line overflow-hidden">
         {/* 좌측 세션 사이드바 */}
-        <aside className="w-56 flex-shrink-0 border-r border-gray-100 flex flex-col bg-gray-50">
-          <div className="p-3 border-b border-gray-100">
+        <aside className="w-56 flex-shrink-0 border-r border-line flex flex-col bg-surface-2">
+          <div className="p-3 border-b border-line">
             <button
               onClick={handleCreateSession}
               disabled={isInitializing}
-              className="w-full flex items-center justify-center gap-2 bg-gray-900 text-white rounded-lg px-3 py-2 text-sm font-medium hover:bg-gray-700 disabled:bg-gray-400 active:scale-95 transition-all cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 bg-accent text-accent-ink rounded-lg px-3 py-2 text-sm font-medium hover:brightness-110 disabled:bg-surface-2 active:scale-95 transition-all cursor-pointer"
             >
               <Plus size={16} />
               새 채팅
@@ -427,7 +427,7 @@ export default function ChatModal({ onClose, profileId }) {
           </div>
           <div className="flex-1 overflow-y-auto">
             {sessions.length === 0 && !isInitializing && (
-              <div className="p-4 text-xs text-gray-400 text-center">사용 중인 채팅창이 없습니다.</div>
+              <div className="p-4 text-xs text-muted text-center">사용 중인 채팅창이 없습니다.</div>
             )}
             <ul>
               {sessions.map(session => {
@@ -437,8 +437,8 @@ export default function ChatModal({ onClose, profileId }) {
                 return (
                   <li
                     key={session.id}
-                    className={`group px-3 py-2 border-b border-gray-100 cursor-pointer transition-colors
-                      ${isActive ? 'bg-white' : 'hover:bg-white'}`}
+                    className={`group px-3 py-2 border-b border-line cursor-pointer transition-colors
+                      ${isActive ? 'bg-surface' : 'hover:bg-surface'}`}
                     onClick={() => !isEditing && switchSession(session.id)}
                   >
                     <div className="flex items-center justify-between gap-1">
@@ -455,7 +455,7 @@ export default function ChatModal({ onClose, profileId }) {
                           }}
                           onBlur={saveEditing}
                           onClick={(e) => e.stopPropagation()}
-                          className="flex-1 min-w-0 text-sm px-1.5 py-0.5 border border-gray-300 rounded outline-none focus:border-gray-500 bg-white"
+                          className="flex-1 min-w-0 text-sm px-1.5 py-0.5 border border-line rounded outline-none focus:border-line bg-surface"
                         />
                       ) : (
                         <div
@@ -463,7 +463,7 @@ export default function ChatModal({ onClose, profileId }) {
                           onDoubleClick={(e) => { e.stopPropagation(); startEditing(session) }}
                           title={session.title || '제목 없음'}
                         >
-                          <span className={isActive ? 'font-semibold text-gray-900' : 'text-gray-700'}>
+                          <span className={isActive ? 'font-semibold text-ink' : 'text-ink'}>
                             {session.title || '제목 없음'}
                           </span>
                         </div>
@@ -472,7 +472,7 @@ export default function ChatModal({ onClose, profileId }) {
                         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={(e) => { e.stopPropagation(); startEditing(session) }}
-                            className="p-1 text-gray-400 hover:text-gray-700 rounded"
+                            className="p-1 text-muted hover:text-ink rounded"
                             aria-label="이름 변경"
                           >
                             <Pencil size={13} />
@@ -480,7 +480,7 @@ export default function ChatModal({ onClose, profileId }) {
                           <button
                             onClick={(e) => { e.stopPropagation(); handleDeleteClick(session.id) }}
                             className={`p-1 rounded transition-colors
-                              ${isConfirmingDelete ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-red-600'}`}
+                              ${isConfirmingDelete ? 'text-red-600 bg-red-50' : 'text-muted hover:text-red-600'}`}
                             aria-label={isConfirmingDelete ? '삭제 확정' : '삭제'}
                           >
                             {isConfirmingDelete ? <Check size={13} /> : <Trash2 size={13} />}
@@ -488,7 +488,7 @@ export default function ChatModal({ onClose, profileId }) {
                         </div>
                       )}
                     </div>
-                    <div className="text-[10px] text-gray-400 mt-0.5">{formatSessionDate(session.created_at)}</div>
+                    <div className="text-[10px] text-muted mt-0.5">{formatSessionDate(session.created_at)}</div>
                   </li>
                 )
               })}
@@ -499,24 +499,24 @@ export default function ChatModal({ onClose, profileId }) {
         {/* 우측 대화 영역 */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* 헤더 */}
-          <div className="flex justify-between items-center p-5 border-b border-gray-100">
+          <div className="flex justify-between items-center p-5 border-b border-line">
             <div className="min-w-0">
-              <h2 className="font-bold text-lg text-gray-900">복약 AI 상담</h2>
-              <p className="text-xs text-gray-400 truncate">약 복용 방법 등 무엇이든 물어보세요</p>
+              <h2 className="font-bold text-lg text-ink">복약 AI 상담</h2>
+              <p className="text-xs text-muted truncate">약 복용 방법 등 무엇이든 물어보세요</p>
             </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-black cursor-pointer p-2 transition-colors">
+            <button onClick={onClose} className="text-muted hover:text-black cursor-pointer p-2 transition-colors">
               <X size={20} />
             </button>
           </div>
 
           {/* 채팅 영역 */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface-2">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm shadow-sm
                   ${msg.role === 'user'
-                    ? 'bg-gray-900 text-white rounded-br-none whitespace-pre-wrap break-words'
-                    : 'bg-white text-gray-800 rounded-bl-none border border-gray-200'
+                    ? 'bg-accent text-accent-ink rounded-br-none whitespace-pre-wrap break-words'
+                    : 'bg-surface text-ink rounded-bl-none border border-line'
                   }`}>
                   {msg.role === 'user' ? (
                     msg.content
@@ -534,10 +534,10 @@ export default function ChatModal({ onClose, profileId }) {
 
             {(isInitializing || isLoading || isPendingResponse) && (
               <div className="flex justify-start">
-                  <div className="bg-white border border-gray-200 px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex gap-1.5">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}} />
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}} />
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}} />
+                  <div className="bg-surface border border-line px-4 py-3 rounded-2xl rounded-bl-none shadow-sm flex gap-1.5">
+                    <div className="w-1.5 h-1.5 bg-surface-2 rounded-full animate-bounce" style={{animationDelay: '0ms'}} />
+                    <div className="w-1.5 h-1.5 bg-surface-2 rounded-full animate-bounce" style={{animationDelay: '150ms'}} />
+                    <div className="w-1.5 h-1.5 bg-surface-2 rounded-full animate-bounce" style={{animationDelay: '300ms'}} />
                   </div>
               </div>)}
           </div>
@@ -545,20 +545,20 @@ export default function ChatModal({ onClose, profileId }) {
           {/* GPS 권한 토글 (JIT — 첫 위치 검색 후 등장, 이후 같은 세션 동안 유지) */}
           {gpsToggleVisible && (
             <div className="px-4 py-2 bg-blue-50 border-t border-blue-100 flex items-center justify-between">
-              <div className="flex items-center gap-2 text-sm text-gray-700">
-                <MapPin size={14} className={gpsToggleOn ? 'text-gray-900' : 'text-gray-400'} />
+              <div className="flex items-center gap-2 text-sm text-ink">
+                <MapPin size={14} className={gpsToggleOn ? 'text-ink' : 'text-muted'} />
                 <span>위치 정보 사용 {gpsToggleOn ? '켜짐' : '꺼짐'}</span>
               </div>
               <button
                 onClick={handleGpsToggle}
                 disabled={isLoading || isInitializing}
                 className={`relative w-10 h-5 rounded-full transition-colors disabled:opacity-50 cursor-pointer
-                  ${gpsToggleOn ? 'bg-gray-900' : 'bg-gray-300'}`}
+                  ${gpsToggleOn ? 'bg-accent' : 'bg-surface-2'}`}
                 aria-label={gpsToggleOn ? '위치 사용 끄기' : '위치 사용 켜기'}
                 aria-pressed={gpsToggleOn}
               >
                 <span
-                  className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all
+                  className={`absolute top-0.5 w-4 h-4 bg-surface rounded-full transition-all
                     ${gpsToggleOn ? 'right-0.5' : 'left-0.5'}`}
                 />
               </button>
@@ -566,12 +566,12 @@ export default function ChatModal({ onClose, profileId }) {
           )}
 
           {/* 입력창 */}
-          <div className="p-4 bg-white border-t border-gray-100 flex gap-2 items-center">
+          <div className="p-4 bg-surface border-t border-line flex gap-2 items-center">
             {initError ? (
               <button
                 onClick={initSession}
                 disabled={isInitializing}
-                className="flex-1 flex items-center justify-center gap-2 bg-gray-900 text-white rounded-xl px-4 py-2.5 text-sm hover:bg-gray-700 disabled:bg-gray-400 active:scale-95 transition-all cursor-pointer"
+                className="flex-1 flex items-center justify-center gap-2 bg-accent text-accent-ink rounded-xl px-4 py-2.5 text-sm hover:brightness-110 disabled:bg-surface-2 active:scale-95 transition-all cursor-pointer"
               >
                 <RefreshCw size={16} className={isInitializing ? 'animate-spin' : ''} />
                 {isInitializing ? '연결 중...' : '다시 연결하기'}
@@ -591,12 +591,12 @@ export default function ChatModal({ onClose, profileId }) {
                         ? '답변을 기다리는 중...'
                         : '메시지를 입력하세요'
                   }
-                  className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-gray-400 transition-all disabled:opacity-50"
+                  className="flex-1 bg-surface-2 border border-line rounded-xl px-4 py-2.5 text-sm outline-none focus:border-line transition-all disabled:opacity-50"
                 />
                 <button
                   onClick={handleSend}
                   disabled={isLoading || !input.trim() || isInitializing || isPendingResponse}
-                  className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-900 text-white hover:bg-gray-700 disabled:bg-gray-100 disabled:text-gray-300 active:scale-95 transition-all cursor-pointer"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center bg-accent text-accent-ink hover:brightness-110 disabled:bg-surface-2 disabled:text-muted active:scale-95 transition-all cursor-pointer"
                 >
                   <Send size={16} />
                 </button>

@@ -51,20 +51,20 @@ async function* watchDraftStatus(draftId, profileId, signal) {
 
 function ResultSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50 pb-32 animate-pulse">
-      <div className="h-48 bg-white border-b border-gray-100" />
+    <div className="min-h-screen bg-surface-2 pb-32 animate-pulse">
+      <div className="h-48 bg-surface border-b border-line" />
       <div className="max-w-3xl mx-auto px-6 py-12">
         <div className="flex justify-between items-center mb-8 px-1">
-          <div className="h-6 w-32 bg-gray-200 rounded-lg" />
-          <div className="h-6 w-20 bg-gray-200 rounded-lg" />
+          <div className="h-6 w-32 bg-surface-2 rounded-lg" />
+          <div className="h-6 w-20 bg-surface-2 rounded-lg" />
         </div>
         <div className="space-y-6">
           {[1, 2].map((i) => (
-            <div key={i} className="h-48 bg-white rounded-3xl border border-gray-100 shadow-sm" />
+            <div key={i} className="h-48 bg-surface rounded-3xl border border-line shadow-sm" />
           ))}
         </div>
         <div className="mt-12 flex gap-4">
-          <div className="flex-1 h-16 bg-white border border-gray-200 rounded-2xl" />
+          <div className="flex-1 h-16 bg-surface border border-line rounded-2xl" />
           <div className="flex-1 h-16 bg-blue-100 rounded-2xl" />
         </div>
       </div>
@@ -338,20 +338,20 @@ function OcrResultContent() {
   if (!initialized) return <ResultSkeleton />
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
+    <main className="min-h-screen bg-surface-2 pb-24">
       <form onSubmit={handleSubmit(onSubmit, onInvalid)}>
-        <div className="bg-white border-b border-gray-200 px-10 py-4 flex items-center gap-4">
+        <div className="bg-surface border-b border-line px-10 py-4 flex items-center gap-4">
           <button
             type="button"
             onClick={() => router.push('/main')}
-            className="text-gray-400 hover:text-black cursor-pointer text-xl"
+            className="text-muted hover:text-black cursor-pointer text-xl"
             aria-label="메인으로 이동"
           >
             ←
           </button>
           <div>
-            <h1 className="font-bold text-gray-900">처방전 확인 및 수정</h1>
-            <p className="text-xs text-gray-400">오탈자가 있다면 직접 수정해주세요</p>
+            <h1 className="font-bold text-ink">처방전 확인 및 수정</h1>
+            <p className="text-xs text-muted">오탈자가 있다면 직접 수정해주세요</p>
           </div>
         </div>
 
@@ -364,22 +364,22 @@ function OcrResultContent() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 flex items-center justify-between gap-4">
+          <div className="bg-surface rounded-2xl p-5 border border-line flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-gray-900">처방일</p>
-              <p className="text-xs text-gray-400 mt-0.5">처방전에 적힌 날짜를 확인해주세요</p>
+              <p className="text-sm font-bold text-ink">처방일</p>
+              <p className="text-xs text-muted mt-0.5">처방전에 적힌 날짜를 확인해주세요</p>
             </div>
             <input
               type="date"
               {...register('prescription_date')}
-              className="text-base font-bold text-gray-700 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-gray-50"
+              className="text-base font-bold text-ink border border-line rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-surface-2"
             />
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 flex items-center justify-between gap-4">
+          <div className="bg-surface rounded-2xl p-5 border border-line flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-gray-900">병원</p>
-              <p className="text-xs text-gray-400 mt-0.5">비워두면 &lsquo;미상&rsquo; 으로 등록됩니다</p>
+              <p className="text-sm font-bold text-ink">병원</p>
+              <p className="text-xs text-muted mt-0.5">비워두면 &lsquo;미상&rsquo; 으로 등록됩니다</p>
             </div>
             <div>
               <input
@@ -401,7 +401,7 @@ function OcrResultContent() {
                 }}
                 placeholder="예: 서울내과의원"
                 maxLength={128}
-                className="text-base font-bold text-gray-700 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-gray-50 w-56"
+                className="text-base font-bold text-ink border border-line rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-surface-2 w-56"
               />
               <div className="mt-1 h-4">
                 {customErrors['prescription_hospital'] ? (
@@ -413,10 +413,10 @@ function OcrResultContent() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 flex items-center justify-between gap-4">
+          <div className="bg-surface rounded-2xl p-5 border border-line flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-gray-900">진료과</p>
-              <p className="text-xs text-gray-400 mt-0.5">비워두면 &lsquo;미상&rsquo; 으로 등록됩니다</p>
+              <p className="text-sm font-bold text-ink">진료과</p>
+              <p className="text-xs text-muted mt-0.5">비워두면 &lsquo;미상&rsquo; 으로 등록됩니다</p>
             </div>
             <div>
               <input
@@ -438,7 +438,7 @@ function OcrResultContent() {
                 }}
                 placeholder="예: 내과"
                 maxLength={64}
-                className="text-base font-bold text-gray-700 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-gray-50 w-40"
+                className="text-base font-bold text-ink border border-line rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-surface-2 w-40"
               />
               <div className="mt-1 h-4">
                 {customErrors['prescription_department'] ? (
@@ -454,7 +454,7 @@ function OcrResultContent() {
             {fields.map((field, i) => (
               <div
                 key={field.id}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                className="bg-surface rounded-2xl p-6 shadow-sm border border-line animate-in fade-in slide-in-from-bottom-2 duration-300"
               >
                 <div className="flex justify-between items-start mb-4 gap-4">
                   <div className="flex-1">
@@ -466,7 +466,7 @@ function OcrResultContent() {
                           value={field.value}
                           onChange={field.onChange}
                           placeholder="약품명 입력"
-                          inputClassName="font-bold text-lg text-gray-900 border-b-2 border-transparent hover:border-blue-200 focus:border-blue-500 focus:outline-none bg-transparent w-full transition-colors"
+                          inputClassName="font-bold text-lg text-ink border-b-2 border-transparent hover:border-blue-200 focus:border-blue-500 focus:outline-none bg-transparent w-full transition-colors"
                         />
                       )}
                     />
@@ -475,15 +475,15 @@ function OcrResultContent() {
                   <button
                     type="button"
                     onClick={() => remove(i)}
-                    className="text-gray-300 hover:text-red-400 mt-1 cursor-pointer"
+                    className="text-muted hover:text-red-400 mt-1 cursor-pointer"
                   >
                     <Trash2 size={20} />
                   </button>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">1회 복용량</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">1회 복용량</p>
                     <input
                       type="text"
                       {...register(`meds.${i}.dose_per_intake`)}
@@ -504,7 +504,7 @@ function OcrResultContent() {
                            setValue(`meds.${i}.dose_per_intake`, val, { shouldDirty: true });
                         }
                       }}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 1"
                     />
                     <div className="mt-1 px-1 h-4">
@@ -516,8 +516,8 @@ function OcrResultContent() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">1일 복용 횟수</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">1일 복용 횟수</p>
                     <input
                       type="text"
                       inputMode="numeric"
@@ -536,7 +536,7 @@ function OcrResultContent() {
                           setValue(`meds.${i}.daily_intake_count`, val, { shouldDirty: true });
                         }
                       }}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 3"
                     />
                     <div className="mt-1 px-1 h-4">
@@ -548,8 +548,8 @@ function OcrResultContent() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">총 복용 일수</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">총 복용 일수</p>
                     <input
                       type="text"
                       inputMode="numeric"
@@ -568,7 +568,7 @@ function OcrResultContent() {
                           setValue(`meds.${i}.total_intake_days`, val, { shouldDirty: true });
                         }
                       }}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 5"
                     />
                     <div className="mt-1 px-1 h-4">
@@ -580,11 +580,11 @@ function OcrResultContent() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">복용 방법</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">복용 방법</p>
                     <select
                       {...register(`meds.${i}.intake_instruction`)}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1 cursor-pointer"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1 cursor-pointer"
                     >
                       <option value="" disabled hidden>선택해주세요</option>
                       <option value="식후 30분">식후 30분</option>
@@ -613,7 +613,7 @@ function OcrResultContent() {
             <button
               type="button"
               onClick={() => append({ ...EMPTY_MED })}
-              className="w-full bg-white rounded-2xl p-4 border-2 border-dashed border-blue-300 text-blue-500 font-bold hover:bg-blue-50 hover:border-blue-400 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm mb-10"
+              className="w-full bg-surface rounded-2xl p-4 border-2 border-dashed border-blue-300 text-blue-500 font-bold hover:bg-blue-50 hover:border-blue-400 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm mb-10"
             >
               <span className="text-xl">+</span> 직접 약품 추가하기
             </button>
@@ -625,14 +625,14 @@ function OcrResultContent() {
               type="button"
               onClick={handleRetake}
               disabled={isRetaking}
-              className="flex-1 bg-white border border-gray-200 py-4 rounded-xl text-gray-500 text-sm font-bold cursor-pointer hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-surface border border-line py-4 rounded-xl text-muted text-sm font-bold cursor-pointer hover:bg-surface-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isRetaking ? '정리 중...' : '다시 촬영'}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-gray-900 text-white py-4 rounded-xl font-semibold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:bg-gray-800 enabled:cursor-pointer"
+              className="flex-1 bg-accent text-accent-ink py-4 rounded-xl font-semibold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:cursor-pointer"
             >
               {isSubmitting ? '저장 중...' : '수정 완료 및 저장'}
             </button>

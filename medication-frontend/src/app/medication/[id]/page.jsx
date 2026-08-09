@@ -15,17 +15,17 @@ export default function MedicationDetailPage() {
   const { id } = useParams()
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
-      <header className="sticky top-0 z-20 bg-white border-b border-gray-100">
+    <main className="min-h-screen bg-surface-2 pb-24">
+      <header className="sticky top-0 z-20 bg-surface border-b border-line">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-2">
           <button
             onClick={() => router.back()}
-            className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer text-gray-700"
+            className="p-2 rounded-lg hover:bg-surface-2 cursor-pointer text-ink"
             aria-label="뒤로"
           >
             ←
           </button>
-          <h1 className="font-bold text-gray-900">약품 상세</h1>
+          <h1 className="font-bold text-ink">약품 상세</h1>
         </div>
       </header>
 

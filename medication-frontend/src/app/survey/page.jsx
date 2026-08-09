@@ -16,10 +16,10 @@ const CONDITION_OPTIONS = [
 ]
 const ALLERGY_OPTIONS = ['페니실린', '아스피린', '항생제', '소염제', '없음']
 
-const btnSelected = 'bg-gray-900 text-white border-gray-900 shadow-lg'
-const btnUnselected = 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'
-const chipSelected = 'bg-gray-900 text-white border-gray-900 shadow-md'
-const chipUnselected = 'bg-white text-gray-500 border-gray-100 hover:border-gray-200'
+const btnSelected = 'bg-accent text-accent-ink border-accent shadow-lg'
+const btnUnselected = 'bg-surface text-muted border-line hover:border-line'
+const chipSelected = 'bg-accent text-accent-ink border-accent shadow-md'
+const chipUnselected = 'bg-surface text-muted border-line hover:border-line'
 
 // "없음" 선택 시 다른 항목과 mutual exclusion.
 function toggleChip(list, item) {
@@ -88,30 +88,30 @@ export default function SurveyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative">
+    <div className="min-h-screen bg-surface-2 flex items-center justify-center p-6 relative">
       {isSubmitting && (
-        <div className="fixed inset-0 bg-white/60 backdrop-blur-sm z-[200] flex flex-col items-center justify-center animate-in fade-in duration-300">
-          <div className="w-20 h-20 bg-gray-900 rounded-[32px] flex items-center justify-center shadow-2xl mb-6 animate-bounce">
-            <ActivityIcon size={40} className="text-white animate-pulse" />
+        <div className="fixed inset-0 bg-surface/60 backdrop-blur-sm z-[200] flex flex-col items-center justify-center animate-in fade-in duration-300">
+          <div className="w-20 h-20 bg-accent rounded-[32px] flex items-center justify-center shadow-2xl mb-6 animate-bounce">
+            <ActivityIcon size={40} className="text-accent-ink animate-pulse" />
           </div>
-          <p className="text-xl font-black text-gray-900">건강 프로필을 분석하고 있어요</p>
-          <p className="text-gray-400 font-bold mt-2">잠시만 기다려 주세요...</p>
+          <p className="text-xl font-black text-ink">건강 프로필을 분석하고 있어요</p>
+          <p className="text-muted font-bold mt-2">잠시만 기다려 주세요...</p>
         </div>
       )}
 
       <form
         onSubmit={handleSubmit(onSubmit, onInvalid)}
-        className={`max-w-2xl w-full bg-white rounded-[40px] shadow-2xl overflow-hidden border border-gray-100 transition-all duration-500 ${
+        className={`max-w-2xl w-full bg-surface rounded-[40px] shadow-2xl overflow-hidden border border-line transition-all duration-500 ${
           isSubmitting ? 'scale-95 opacity-50' : 'scale-100 opacity-100'
         }`}
       >
         {/* Header */}
-        <div className="flex justify-between items-center p-8 border-b border-gray-50">
+        <div className="flex justify-between items-center p-8 border-b border-line">
           <div>
-            <h3 className="text-xl font-black text-gray-900">건강 정보 입력</h3>
-            <p className="text-xs font-bold text-gray-400 mt-1">맞춤형 관리를 위해 정보를 입력해주세요</p>
+            <h3 className="text-xl font-black text-ink">건강 정보 입력</h3>
+            <p className="text-xs font-bold text-muted mt-1">맞춤형 관리를 위해 정보를 입력해주세요</p>
           </div>
-          <button type="button" onClick={handleSkip} className="flex items-center gap-1 text-xs font-black text-gray-400 hover:text-gray-900 transition-all">
+          <button type="button" onClick={handleSkip} className="flex items-center gap-1 text-xs font-black text-muted hover:text-ink transition-all">
             건너뛰기 <X size={14} />
           </button>
         </div>
@@ -119,23 +119,23 @@ export default function SurveyPage() {
         <div className="p-8 space-y-8 max-h-[70vh] overflow-y-auto custom-scrollbar">
           {/* 1. 기본 정보 */}
           <div className="space-y-4">
-            <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+            <h4 className="text-sm font-black text-ink flex items-center gap-2">
               <User size={16} /> 기본 정보
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-black text-gray-400 mb-1.5 block ml-1">나이</label>
+                <label className="text-[10px] font-black text-muted mb-1.5 block ml-1">나이</label>
                 <input
                   type="text"
                   inputMode="numeric"
                   placeholder="예: 30"
                   {...register('age')}
-                  className="w-full px-5 py-3.5 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 border-2 border-transparent focus:border-gray-900 transition-all text-sm"
+                  className="w-full px-5 py-3.5 bg-surface-2 rounded-2xl outline-none font-bold text-ink border-2 border-transparent focus:border-accent transition-all text-sm"
                 />
                 <FormError name="age" errors={errors} />
               </div>
               <div>
-                <label className="text-[10px] font-black text-gray-400 mb-1.5 block ml-1">성별</label>
+                <label className="text-[10px] font-black text-muted mb-1.5 block ml-1">성별</label>
                 <Controller
                   control={control}
                   name="gender"
@@ -163,29 +163,29 @@ export default function SurveyPage() {
 
           {/* 2. 신체 정보 */}
           <div className="space-y-4">
-            <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+            <h4 className="text-sm font-black text-ink flex items-center gap-2">
               <Activity size={16} /> 신체 정보
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-black text-gray-400 mb-1.5 block ml-1">키 (cm)</label>
+                <label className="text-[10px] font-black text-muted mb-1.5 block ml-1">키 (cm)</label>
                 <input
                   type="text"
                   inputMode="decimal"
                   placeholder="예: 170"
                   {...register('height')}
-                  className="w-full px-5 py-3.5 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 border-2 border-transparent focus:border-gray-900 transition-all text-sm"
+                  className="w-full px-5 py-3.5 bg-surface-2 rounded-2xl outline-none font-bold text-ink border-2 border-transparent focus:border-accent transition-all text-sm"
                 />
                 <FormError name="height" errors={errors} />
               </div>
               <div>
-                <label className="text-[10px] font-black text-gray-400 mb-1.5 block ml-1">몸무게 (kg)</label>
+                <label className="text-[10px] font-black text-muted mb-1.5 block ml-1">몸무게 (kg)</label>
                 <input
                   type="text"
                   inputMode="decimal"
                   placeholder="예: 65.5"
                   {...register('weight')}
-                  className="w-full px-5 py-3.5 bg-gray-50 rounded-2xl outline-none font-bold text-gray-800 border-2 border-transparent focus:border-gray-900 transition-all text-sm"
+                  className="w-full px-5 py-3.5 bg-surface-2 rounded-2xl outline-none font-bold text-ink border-2 border-transparent focus:border-accent transition-all text-sm"
                 />
                 <FormError name="weight" errors={errors} />
               </div>
@@ -194,12 +194,12 @@ export default function SurveyPage() {
 
           {/* 3. 생활 습관 */}
           <div className="space-y-4">
-            <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+            <h4 className="text-sm font-black text-ink flex items-center gap-2">
               <Heart size={16} /> 생활 습관
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-[10px] font-black text-gray-400 mb-1.5 block ml-1">흡연 여부</label>
+                <label className="text-[10px] font-black text-muted mb-1.5 block ml-1">흡연 여부</label>
                 <Controller
                   control={control}
                   name="is_smoking"
@@ -222,7 +222,7 @@ export default function SurveyPage() {
                 />
               </div>
               <div>
-                <label className="text-[10px] font-black text-gray-400 mb-1.5 block ml-1">음주 여부</label>
+                <label className="text-[10px] font-black text-muted mb-1.5 block ml-1">음주 여부</label>
                 <Controller
                   control={control}
                   name="is_drinking"
@@ -250,7 +250,7 @@ export default function SurveyPage() {
           {/* 4. 질환 및 알레르기 */}
           <div className="space-y-6">
             <div>
-              <label className="text-xs font-black text-gray-400 mb-3 block ml-1">보유 질환</label>
+              <label className="text-xs font-black text-muted mb-3 block ml-1">보유 질환</label>
               <Controller
                 control={control}
                 name="conditions"
@@ -273,7 +273,7 @@ export default function SurveyPage() {
               />
             </div>
             <div>
-              <label className="text-xs font-black text-gray-400 mb-3 block ml-1">알레르기</label>
+              <label className="text-xs font-black text-muted mb-3 block ml-1">알레르기</label>
               <Controller
                 control={control}
                 name="allergies"
@@ -299,11 +299,11 @@ export default function SurveyPage() {
         </div>
 
         {/* Footer Action */}
-        <div className="p-8 bg-gray-50 border-t border-gray-100">
+        <div className="p-8 bg-surface-2 border-t border-line">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full py-5 rounded-2xl bg-gray-900 text-white font-black hover:bg-gray-800 transition-all shadow-xl flex items-center justify-center gap-2 disabled:opacity-50"
+            className="w-full py-5 rounded-2xl bg-accent text-accent-ink font-black hover:brightness-110 transition-all shadow-xl flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2"><Loader2 className="animate-spin" size={20} /> 처리 중...</div>

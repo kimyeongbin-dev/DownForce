@@ -130,7 +130,7 @@ function ChallengeBanner({ challenge, isViewingHistory }) {
             <p className="text-[10px] font-bold text-green-400 uppercase tracking-wide">챌린지 완료</p>
             <p className="text-sm font-bold text-green-700 truncate">{challenge.title}</p>
           </div>
-          <span className="bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shrink-0 ml-3">완료</span>
+          <span className="bg-green-500 text-accent-ink text-xs font-bold px-3 py-1.5 rounded-full shrink-0 ml-3">완료</span>
         </div>
       </div>
     )
@@ -138,25 +138,25 @@ function ChallengeBanner({ challenge, isViewingHistory }) {
 
   return (
     <div className="fixed bottom-20 left-0 w-full px-4 z-40">
-      <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl px-4 py-3 flex items-center justify-between shadow-lg">
+      <div className="max-w-3xl mx-auto bg-surface border border-line rounded-2xl px-4 py-3 flex items-center justify-between shadow-lg">
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">이 가이드 관련 챌린지</p>
-          <p className="text-sm font-bold text-gray-900 truncate">{challenge.title}</p>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-wide">이 가이드 관련 챌린지</p>
+          <p className="text-sm font-bold text-ink truncate">{challenge.title}</p>
           {challenge.target_days && (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-muted">
               {challenge.completed_dates?.length || 0}/{challenge.target_days}일
             </p>
           )}
         </div>
 
         {isViewingHistory ? (
-          <span className="text-xs text-gray-400 shrink-0 ml-3">과거 가이드</span>
+          <span className="text-xs text-muted shrink-0 ml-3">과거 가이드</span>
         ) : !challenge.is_active ? (
           <button
             onClick={() => requestStart(challenge)}
             disabled={isProcessing}
             className={`ml-3 px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors cursor-pointer ${
-              isProcessing ? 'bg-gray-100 text-gray-400 cursor-wait' : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-95'
+              isProcessing ? 'bg-surface-2 text-muted cursor-wait' : 'bg-accent text-accent-ink hover:brightness-110 active:scale-95'
             }`}
           >
             {isProcessing && startTarget?.id === challenge.id ? '처리중...' : '시작하기'}
@@ -168,7 +168,7 @@ function ChallengeBanner({ challenge, isViewingHistory }) {
             </span>
             <button
               onClick={() => router.push('/challenge')}
-              className="text-xs font-bold text-gray-400 hover:text-gray-700 px-2 py-2 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+              className="text-xs font-bold text-muted hover:text-ink px-2 py-2 rounded-xl hover:bg-surface-2 transition-colors cursor-pointer"
               title="챌린지 페이지에서 보기"
             >
               →
@@ -179,7 +179,7 @@ function ChallengeBanner({ challenge, isViewingHistory }) {
             onClick={() => checkToday(challenge)}
             disabled={isProcessing}
             className={`ml-3 px-3 py-2 rounded-xl text-xs font-bold shrink-0 transition-colors cursor-pointer ${
-              isProcessing ? 'bg-gray-100 text-gray-400 cursor-wait' : 'bg-blue-500 text-white hover:bg-blue-600'
+              isProcessing ? 'bg-surface-2 text-muted cursor-wait' : 'bg-blue-500 text-accent-ink hover:bg-blue-600'
             }`}
           >
             {isProcessing ? '처리중...' : '오늘 완료 체크'}
@@ -418,14 +418,14 @@ export default function LifestyleGuidePage() {
   // ── 로딩 스켈레톤 ──
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-gray-50 pb-24">
+      <main className="min-h-screen bg-surface-2 pb-24">
         <Header title="생활습관 가이드" subtitle="맞춤형 건강 가이드" showBack={false} />
         <div className="max-w-3xl mx-auto px-4 py-6 space-y-4 animate-pulse">
-          <div className="h-10 bg-white rounded-xl w-full" />
+          <div className="h-10 bg-surface rounded-xl w-full" />
           <div className="flex gap-2 overflow-hidden">
-            {[1, 2, 3].map((i) => <div key={i} className="h-8 bg-white rounded-full w-16 shrink-0" />)}
+            {[1, 2, 3].map((i) => <div key={i} className="h-8 bg-surface rounded-full w-16 shrink-0" />)}
           </div>
-          {[1, 2, 3].map((i) => <div key={i} className="h-24 bg-white rounded-2xl w-full" />)}
+          {[1, 2, 3].map((i) => <div key={i} className="h-24 bg-surface rounded-2xl w-full" />)}
         </div>
         <BottomNav />
       </main>
@@ -435,14 +435,14 @@ export default function LifestyleGuidePage() {
   const currentTab = TABS.find((t) => t.key === activeTab)
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-40">
+    <main className="min-h-screen bg-surface-2 pb-40">
       <Header title="생활습관 가이드" subtitle="맞춤형 건강 가이드" showBack={false} />
 
       <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
 
         {/* ── 새 가이드 버튼 ── */}
         <div className="flex items-center justify-between">
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-muted">
             {isGenerating ? '🤖 AI가 분석 중입니다...' : ''}
           </p>
           <button
@@ -450,8 +450,8 @@ export default function LifestyleGuidePage() {
             disabled={isGenerating || !profileId}
             className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
               isGenerating || !profileId
-                ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-wait'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer'
+                ? 'bg-surface-2 text-muted border-line cursor-wait'
+                : 'bg-surface text-ink border-line hover:bg-surface-2 cursor-pointer'
             }`}
           >
             {isGenerating ? '생성 중...' : '+ 새 가이드'}
@@ -472,7 +472,7 @@ export default function LifestyleGuidePage() {
             {!hasEligibleGroup && !groupsLoading && (
               <button
                 onClick={() => router.push('/ocr')}
-                className="mx-auto block px-5 py-2.5 rounded-xl text-sm font-bold bg-gray-900 text-white hover:bg-gray-700 cursor-pointer"
+                className="mx-auto block px-5 py-2.5 rounded-xl text-sm font-bold bg-accent text-accent-ink hover:brightness-110 cursor-pointer"
               >
                 처방전 등록하러 가기
               </button>
@@ -484,25 +484,25 @@ export default function LifestyleGuidePage() {
         {isGenerating && guides.filter(g => g.status === 'ready').length === 0 && (
           <div className="animate-pulse space-y-4">
             <div className="flex gap-2">
-              <div className="h-7 bg-gray-200 rounded-full w-20" />
+              <div className="h-7 bg-surface-2 rounded-full w-20" />
             </div>
-            <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-50">
-              <div className="h-3 bg-gray-200 rounded w-32 mb-3" />
+            <div className="bg-surface rounded-2xl px-4 py-3 shadow-sm border border-line">
+              <div className="h-3 bg-surface-2 rounded w-32 mb-3" />
               <div className="flex flex-wrap gap-1.5">
-                {[1, 2, 3].map((i) => <div key={i} className="h-6 bg-gray-200 rounded-full w-16" />)}
+                {[1, 2, 3].map((i) => <div key={i} className="h-6 bg-surface-2 rounded-full w-16" />)}
               </div>
             </div>
             <div className="flex gap-1 overflow-hidden">
-              {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-9 bg-gray-200 rounded-xl w-20 shrink-0" />)}
+              {[1, 2, 3, 4, 5].map((i) => <div key={i} className="h-9 bg-surface-2 rounded-xl w-20 shrink-0" />)}
             </div>
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+            <div className="bg-surface rounded-2xl shadow-sm border border-line p-5">
               <div className="flex items-center gap-2 mb-4">
-                <div className="h-6 w-6 bg-gray-200 rounded" />
-                <div className="h-5 bg-gray-200 rounded w-28" />
+                <div className="h-6 w-6 bg-surface-2 rounded" />
+                <div className="h-5 bg-surface-2 rounded w-28" />
               </div>
               <div className="space-y-2.5">
                 {['w-full', 'w-11/12', 'w-4/5', 'w-full', 'w-3/4', 'w-5/6'].map((w, i) => (
-                  <div key={i} className={`h-4 bg-gray-200 rounded ${w}`} />
+                  <div key={i} className={`h-4 bg-surface-2 rounded ${w}`} />
                 ))}
               </div>
             </div>
@@ -532,8 +532,8 @@ export default function LifestyleGuidePage() {
                   key={guide.id}
                   className={`shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
                     isSelected
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+                      ? 'bg-accent text-accent-ink border-accent'
+                      : 'bg-surface text-muted border-line hover:border-line'
                   }`}
                 >
                   <button
@@ -550,7 +550,7 @@ export default function LifestyleGuidePage() {
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDeleteGuide(guide) }}
                     className={`ml-0.5 leading-none cursor-pointer transition-colors ${
-                      isSelected ? 'text-gray-300 hover:text-white' : 'text-gray-300 hover:text-red-400'
+                      isSelected ? 'text-muted hover:text-accent-ink' : 'text-muted hover:text-red-400'
                     }`}
                     title="가이드 삭제"
                   >
@@ -586,8 +586,8 @@ export default function LifestyleGuidePage() {
           <>
             {/* 복용 약 스냅샷 */}
             {selectedGuide.medication_snapshot?.length > 0 && (
-              <div className="bg-white rounded-2xl px-4 py-3 shadow-sm border border-gray-50">
-                <p className="text-xs font-bold text-gray-400 mb-2">💊 가이드 생성 시 복용 약</p>
+              <div className="bg-surface rounded-2xl px-4 py-3 shadow-sm border border-line">
+                <p className="text-xs font-bold text-muted mb-2">💊 가이드 생성 시 복용 약</p>
                 <div className="flex flex-wrap gap-1.5">
                   {selectedGuide.medication_snapshot.map((med, i) => {
                     const name =
@@ -599,11 +599,11 @@ export default function LifestyleGuidePage() {
                     return (
                       <span
                         key={i}
-                        className="bg-gray-100 text-gray-600 text-xs px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1.5"
+                        className="bg-surface-2 text-muted text-xs px-2.5 py-1 rounded-full font-bold inline-flex items-center gap-1.5"
                       >
                         {name}
                         {dispensed && (
-                          <span className="text-[10px] font-normal text-gray-400">
+                          <span className="text-[10px] font-normal text-muted">
                             처방 {dispensed.slice(5, 10).replace('-', '/')}
                           </span>
                         )}
@@ -624,7 +624,7 @@ export default function LifestyleGuidePage() {
                     className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                       activeTab === tab.key
                         ? `${tab.bg} ${tab.color}`
-                        : 'bg-white text-gray-400 hover:text-gray-600'
+                        : 'bg-surface text-muted hover:text-muted'
                     }`}
                   >
                     {tab.icon} {tab.label}
@@ -634,18 +634,18 @@ export default function LifestyleGuidePage() {
             </div>
 
             {/* 탭 콘텐츠 */}
-            <div className={`bg-white rounded-2xl shadow-sm border ${currentTab?.border || 'border-gray-100'} p-5`}>
+            <div className={`bg-surface rounded-2xl shadow-sm border ${currentTab?.border || 'border-line'} p-5`}>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xl">{currentTab?.icon}</span>
                 <h2 className={`font-black text-base ${currentTab?.color}`}>{currentTab?.label}</h2>
               </div>
 
               {selectedGuide.content?.[activeTab] ? (
-                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                <p className="text-sm text-ink leading-relaxed whitespace-pre-line">
                   {selectedGuide.content[activeTab]}
                 </p>
               ) : (
-                <p className="text-sm text-gray-400">이 카테고리의 가이드 내용이 없습니다.</p>
+                <p className="text-sm text-muted">이 카테고리의 가이드 내용이 없습니다.</p>
               )}
 
               {/* ── 증상 탭: 오늘의 증상 요약 카드 + 입력 폼 ── */}
@@ -673,7 +673,7 @@ export default function LifestyleGuidePage() {
                             {todaySymptoms.map((s, idx) => (
                               <span
                                 key={idx}
-                                className="px-3 py-1.5 bg-white text-orange-700 rounded-full text-xs font-bold border border-orange-100"
+                                className="px-3 py-1.5 bg-surface text-orange-700 rounded-full text-xs font-bold border border-orange-100"
                               >
                                 {s}
                               </span>
@@ -681,7 +681,7 @@ export default function LifestyleGuidePage() {
                           </div>
                         )}
                         {todayNote && (
-                          <p className="text-gray-500 text-xs leading-relaxed bg-white/70 p-3 rounded-xl border border-dashed border-orange-100">
+                          <p className="text-muted text-xs leading-relaxed bg-surface/70 p-3 rounded-xl border border-dashed border-orange-100">
                             "{todayNote}"
                           </p>
                         )}
@@ -699,9 +699,9 @@ export default function LifestyleGuidePage() {
                       날 1건만. 지난 가이드에서 새 입력을 받으면 사용자 혼란 +
                       upsert 로 기존 기록을 덮어쓸 수 있어 의도와 다를 수 있음. */}
                   {isViewingHistory ? (
-                    <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex items-center justify-between gap-3">
-                      <div className="text-xs text-gray-600 leading-relaxed">
-                        <p className="font-bold text-gray-800 mb-1">지난 가이드를 보고 계셔요</p>
+                    <div className="bg-surface-2 border border-line rounded-2xl p-4 flex items-center justify-between gap-3">
+                      <div className="text-xs text-muted leading-relaxed">
+                        <p className="font-bold text-ink mb-1">지난 가이드를 보고 계셔요</p>
                         <p>오늘의 증상은 한 곳에서만 기록할 수 있어요. 최근 가이드에서 입력해주세요.</p>
                       </div>
                       <button
@@ -712,7 +712,7 @@ export default function LifestyleGuidePage() {
                             setSelectedGuide(firstReadyGuide)
                           }
                         }}
-                        className="shrink-0 px-3 py-2 text-xs font-bold rounded-xl bg-orange-500 text-white hover:bg-orange-600 cursor-pointer"
+                        className="shrink-0 px-3 py-2 text-xs font-bold rounded-xl bg-orange-500 text-accent-ink hover:bg-orange-600 cursor-pointer"
                       >
                         최근 가이드로
                       </button>
@@ -738,11 +738,11 @@ export default function LifestyleGuidePage() {
               const isFirstPage = safePage === 0
               const isLastPage = safePage >= totalPages - 1
               return (
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-50 p-4">
+                <div className="bg-surface rounded-2xl shadow-sm border border-line p-4">
                   <div className="flex items-center justify-between mb-3 gap-2">
                     <div className="min-w-0">
-                      <p className="text-xs font-bold text-gray-400">🎯 이 가이드에서 생성된 챌린지</p>
-                      <p className="text-[11px] text-gray-400 mt-0.5 break-keep">
+                      <p className="text-xs font-bold text-muted">🎯 이 가이드에서 생성된 챌린지</p>
+                      <p className="text-[11px] text-muted mt-0.5 break-keep">
                         총 {guideChallenges.length}개의 추천 챌린지를 페이지로 넘겨가며 둘러볼 수 있어요.
                       </p>
                     </div>
@@ -751,7 +751,7 @@ export default function LifestyleGuidePage() {
                   <div className="space-y-2">
                     {isLoadingChallenges ? (
                       <div className="animate-pulse space-y-2">
-                        {[1, 2].map((i) => <div key={i} className="h-10 bg-gray-100 rounded-xl" />)}
+                        {[1, 2].map((i) => <div key={i} className="h-10 bg-surface-2 rounded-xl" />)}
                       </div>
                     ) : (
                       pageItems.map((c) => {
@@ -767,7 +767,7 @@ export default function LifestyleGuidePage() {
                         return (
                           <div
                             key={c.id}
-                            className="flex items-center justify-between gap-3 py-2 px-3 bg-gray-50 rounded-xl"
+                            className="flex items-center justify-between gap-3 py-2 px-3 bg-surface-2 rounded-xl"
                           >
                             <div className="flex items-center gap-2 min-w-0">
                               {tabMeta && (
@@ -775,7 +775,7 @@ export default function LifestyleGuidePage() {
                                   {tabMeta.icon}
                                 </span>
                               )}
-                              <span className="text-sm font-bold text-gray-800 truncate">{c.title}</span>
+                              <span className="text-sm font-bold text-ink truncate">{c.title}</span>
                               {diffStyle && (
                                 <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${diffStyle.bg} ${diffStyle.text}`}>
                                   {c.difficulty}
@@ -792,10 +792,10 @@ export default function LifestyleGuidePage() {
                                   disabled={isViewingHistory || isProcessing}
                                   className={`text-[10px] font-bold px-3 py-1.5 rounded-full transition-colors ${
                                     isViewingHistory
-                                      ? 'bg-gray-100 text-gray-400 cursor-default'
+                                      ? 'bg-surface-2 text-muted cursor-default'
                                       : isProcessing
-                                        ? 'bg-gray-100 text-gray-400 cursor-wait'
-                                        : 'bg-gray-900 text-white hover:bg-gray-700 cursor-pointer'
+                                        ? 'bg-surface-2 text-muted cursor-wait'
+                                        : 'bg-accent text-accent-ink hover:brightness-110 cursor-pointer'
                                   }`}
                                 >
                                   {isProcessing ? '...' : '시작하기'}
@@ -808,10 +808,10 @@ export default function LifestyleGuidePage() {
                                   disabled={isViewingHistory || isProcessing}
                                   className={`text-[10px] font-bold px-3 py-1.5 rounded-full transition-colors ${
                                     isViewingHistory
-                                      ? 'bg-gray-100 text-gray-400 cursor-default'
+                                      ? 'bg-surface-2 text-muted cursor-default'
                                       : isProcessing
-                                        ? 'bg-gray-100 text-gray-400 cursor-wait'
-                                        : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-95 cursor-pointer'
+                                        ? 'bg-surface-2 text-muted cursor-wait'
+                                        : 'bg-accent text-accent-ink hover:brightness-110 active:scale-95 cursor-pointer'
                                   }`}
                                 >
                                   {isProcessing ? '...' : '오늘 체크'}
@@ -834,13 +834,13 @@ export default function LifestyleGuidePage() {
                         aria-label="이전 페이지"
                         className={`w-8 h-8 flex items-center justify-center rounded-full border transition-colors ${
                           isFirstPage
-                            ? 'bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer'
+                            ? 'bg-surface-2 text-muted border-line cursor-not-allowed'
+                            : 'bg-surface text-ink border-line hover:bg-surface-2 cursor-pointer'
                         }`}
                       >
                         <ChevronLeft size={16} />
                       </button>
-                      <span className="text-xs font-bold text-gray-500 tabular-nums">
+                      <span className="text-xs font-bold text-muted tabular-nums">
                         {safePage + 1} / {totalPages}
                       </span>
                       <button
@@ -850,8 +850,8 @@ export default function LifestyleGuidePage() {
                         aria-label="다음 페이지"
                         className={`w-8 h-8 flex items-center justify-center rounded-full border transition-colors ${
                           isLastPage
-                            ? 'bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed'
-                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50 cursor-pointer'
+                            ? 'bg-surface-2 text-muted border-line cursor-not-allowed'
+                            : 'bg-surface text-ink border-line hover:bg-surface-2 cursor-pointer'
                         }`}
                       >
                         <ChevronRight size={16} />

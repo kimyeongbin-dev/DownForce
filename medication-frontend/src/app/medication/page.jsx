@@ -45,10 +45,10 @@ function formatDate(isoStr) {
 
 function GroupCardSkeleton() {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-4 animate-pulse space-y-3">
-      <div className="h-4 bg-gray-200 rounded w-32" />
-      <div className="h-3 bg-gray-200 rounded w-24" />
-      <div className="h-8 bg-gray-200 rounded w-full" />
+    <div className="bg-surface rounded-2xl border border-line p-4 animate-pulse space-y-3">
+      <div className="h-4 bg-surface-2 rounded w-32" />
+      <div className="h-3 bg-surface-2 rounded w-24" />
+      <div className="h-8 bg-surface-2 rounded w-full" />
     </div>
   )
 }
@@ -60,7 +60,7 @@ function PrescriptionCard({ group, onClick, onDelete, isDeleting }) {
   const statusLabel = group.has_active_medication ? '복용 중' : '복용 완료'
   const statusStyle = group.has_active_medication
     ? 'bg-blue-50 text-blue-600 border-blue-100'
-    : 'bg-gray-100 text-gray-500 border-gray-200'
+    : 'bg-surface-2 text-muted border-line'
 
   // 카드 전체를 <button> 으로 두면 그 안에 삭제 <button> 을 넣을 수 없다 (nested button
   // HTML 위반). 카드 wrapper 는 div role="button" + keyboard handler 로 대체.
@@ -78,26 +78,26 @@ function PrescriptionCard({ group, onClick, onDelete, isDeleting }) {
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-busy={isDeleting || undefined}
-      className={`w-full text-left bg-white rounded-2xl border border-gray-100 hover:border-gray-300 transition-colors p-4 flex items-center gap-3 cursor-pointer ${
+      className={`w-full text-left bg-surface rounded-2xl border border-line hover:border-line transition-colors p-4 flex items-center gap-3 cursor-pointer ${
         isDeleting ? 'opacity-50 pointer-events-none' : ''
       }`}
     >
       <div className="flex-1 min-w-0 space-y-1.5">
         <div className="flex items-center gap-2 text-xs">
-          <Calendar size={14} className="text-gray-400 shrink-0" />
-          <span className="font-bold text-gray-900">{dateLabel}</span>
+          <Calendar size={14} className="text-muted shrink-0" />
+          <span className="font-bold text-ink">{dateLabel}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-700">
-          <Hospital size={14} className="shrink-0 text-gray-400" />
-          <span className={group.hospital_name ? 'font-bold' : 'text-gray-400'}>{hospital}</span>
+        <div className="flex items-center gap-2 text-xs text-ink">
+          <Hospital size={14} className="shrink-0 text-muted" />
+          <span className={group.hospital_name ? 'font-bold' : 'text-muted'}>{hospital}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-muted">
           <Building2 size={14} className="shrink-0" />
           <span>{dept}</span>
         </div>
         <div className="flex items-center gap-2 pt-1">
           <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${statusStyle}`}>{statusLabel}</span>
-          <span className="text-[11px] text-gray-400">
+          <span className="text-[11px] text-muted">
             {group.has_active_medication
               ? `복용 중 ${group.active_medications_count ?? 0}개 / 총 ${group.medications_count}개`
               : `약 ${group.medications_count}개`}
@@ -116,13 +116,13 @@ function PrescriptionCard({ group, onClick, onDelete, isDeleting }) {
         aria-label="처방전 삭제"
         className={`shrink-0 w-9 h-9 flex items-center justify-center rounded-lg transition-colors ${
           isDeleting
-            ? 'text-gray-300 cursor-wait'
-            : 'text-gray-300 hover:text-red-500 hover:bg-red-50 cursor-pointer'
+            ? 'text-muted cursor-wait'
+            : 'text-muted hover:text-red-500 hover:bg-red-50 cursor-pointer'
         }`}
       >
         <Trash2 size={16} />
       </button>
-      <ChevronRight size={18} className="text-gray-300 shrink-0" />
+      <ChevronRight size={18} className="text-muted shrink-0" />
     </div>
   )
 }
@@ -200,34 +200,34 @@ export default function MedicationPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
+    <main className="min-h-screen bg-surface-2 pb-24">
       {/* ── 상단 헤더 ── */}
-      <header className="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <header className="sticky top-0 z-20 bg-surface border-b border-line">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <h1 className="flex-1 text-base font-bold text-gray-900">복용 가이드</h1>
+          <h1 className="flex-1 text-base font-bold text-ink">복용 가이드</h1>
           <button
             type="button"
             onClick={() => setIsSearchOpen((v) => !v)}
-            className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer"
+            className="p-2 rounded-lg hover:bg-surface-2 cursor-pointer"
             aria-label="약품 검색"
           >
-            <Search size={18} className={isSearchOpen ? 'text-blue-500' : 'text-gray-500'} />
+            <Search size={18} className={isSearchOpen ? 'text-blue-500' : 'text-muted'} />
           </button>
           <button
             type="button"
             onClick={() => router.push('/ocr')}
-            className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer"
+            className="p-2 rounded-lg hover:bg-surface-2 cursor-pointer"
             aria-label="처방전 추가"
           >
-            <Plus size={18} className="text-gray-700" />
+            <Plus size={18} className="text-ink" />
           </button>
         </div>
 
         {/* 검색 input — toggle 시에만 표시 */}
         {isSearchOpen && (
           <div className="max-w-4xl mx-auto px-4 pb-3">
-            <div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
-              <Search size={16} className="text-gray-400 shrink-0" />
+            <div className="flex items-center gap-2 bg-surface-2 border border-line rounded-xl px-3 py-2">
+              <Search size={16} className="text-muted shrink-0" />
               <input
                 type="text"
                 value={searchDraft}
@@ -244,16 +244,16 @@ export default function MedicationPage() {
                 <button
                   type="button"
                   onClick={clearSearch}
-                  className="p-0.5 rounded hover:bg-gray-200 cursor-pointer"
+                  className="p-0.5 rounded hover:bg-surface-2 cursor-pointer"
                   aria-label="검색 지우기"
                 >
-                  <X size={14} className="text-gray-400" />
+                  <X size={14} className="text-muted" />
                 </button>
               )}
             </div>
             {search && (
-              <p className="text-[11px] text-gray-400 mt-1.5 px-1">
-                <span className="font-bold text-gray-600">{search}</span> 약품을 포함하는 처방전을 보여드려요.
+              <p className="text-[11px] text-muted mt-1.5 px-1">
+                <span className="font-bold text-muted">{search}</span> 약품을 포함하는 처방전을 보여드려요.
               </p>
             )}
           </div>
@@ -268,8 +268,8 @@ export default function MedicationPage() {
               onClick={() => setStatusFilter(tab.key)}
               className={`px-3 py-2 text-xs font-bold whitespace-nowrap border-b-2 transition-colors cursor-pointer ${
                 statusFilter === tab.key
-                  ? 'border-gray-900 text-gray-900'
-                  : 'border-transparent text-gray-400 hover:text-gray-700'
+                  ? 'border-accent text-ink'
+                  : 'border-transparent text-muted hover:text-ink'
               }`}
             >
               {tab.label}
@@ -281,11 +281,11 @@ export default function MedicationPage() {
       <div className="max-w-4xl mx-auto px-4 py-4 space-y-3">
         {/* 정렬 dropdown — 헤더 아래 */}
         <div className="flex items-center justify-end">
-          <label className="text-[11px] text-gray-400 mr-2">정렬</label>
+          <label className="text-[11px] text-muted mr-2">정렬</label>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="text-xs font-bold border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white cursor-pointer"
+            className="text-xs font-bold border border-line rounded-lg px-2.5 py-1.5 bg-surface cursor-pointer"
           >
             {Object.entries(SORT_LABELS).map(([key, label]) => (
               <option key={key} value={key}>{label}</option>

@@ -10,9 +10,9 @@ import { useState, useEffect } from 'react'
 
 const DIFFICULTIES = ['쉬움', '보통', '어려움']
 const DIFFICULTY_META = {
-  '쉬움': { color: 'bg-blue-500 text-white border-blue-500', idle: 'bg-white text-blue-500 border-blue-200 hover:border-blue-400' },
-  '보통': { color: 'bg-green-500 text-white border-green-500', idle: 'bg-white text-green-500 border-green-200 hover:border-green-400' },
-  '어려움': { color: 'bg-red-500 text-white border-red-500', idle: 'bg-white text-red-500 border-red-200 hover:border-red-400' },
+  '쉬움': { color: 'bg-blue-500 text-accent-ink border-blue-500', idle: 'bg-surface text-blue-500 border-blue-200 hover:border-blue-400' },
+  '보통': { color: 'bg-green-500 text-accent-ink border-green-500', idle: 'bg-surface text-green-500 border-green-200 hover:border-green-400' },
+  '어려움': { color: 'bg-red-500 text-accent-ink border-red-500', idle: 'bg-surface text-red-500 border-red-200 hover:border-red-400' },
 }
 const BASE_DURATIONS = [7, 14, 21, 30]
 
@@ -51,27 +51,27 @@ export default function StartChallengeModal({ challenge, onConfirm, onClose, isL
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
       {/* 바텀시트 */}
-      <div className="relative w-full max-w-lg bg-white rounded-t-3xl px-5 pt-5 pb-8 shadow-2xl">
+      <div className="relative w-full max-w-lg bg-surface rounded-t-3xl px-5 pt-5 pb-8 shadow-2xl">
         {/* 핸들 바 */}
-        <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+        <div className="w-10 h-1 bg-surface-2 rounded-full mx-auto mb-5" />
 
         {/* 챌린지 정보 */}
         <div className="mb-5">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">시작할 챌린지</p>
-          <p className="text-base font-black text-gray-900 leading-snug">{challenge.title}</p>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-wide mb-1">시작할 챌린지</p>
+          <p className="text-base font-black text-ink leading-snug">{challenge.title}</p>
           {challenge.description && (
-            <p className="text-xs text-gray-500 mt-1 leading-relaxed">{challenge.description}</p>
+            <p className="text-xs text-muted mt-1 leading-relaxed">{challenge.description}</p>
           )}
         </div>
 
-        <div className="h-px bg-gray-100 mb-5" />
+        <div className="h-px bg-surface-2 mb-5" />
 
         {/* 난이도 선택 */}
         <div className="mb-5">
           <div className="flex items-center gap-1.5 mb-2.5">
-            <p className="text-xs font-black text-gray-700">난이도</p>
+            <p className="text-xs font-black text-ink">난이도</p>
             {aiDifficulty && (
-              <span className="text-[10px] text-gray-400">AI 추천: {aiDifficulty}</span>
+              <span className="text-[10px] text-muted">AI 추천: {aiDifficulty}</span>
             )}
           </div>
           <div className="grid grid-cols-3 gap-2">
@@ -102,9 +102,9 @@ export default function StartChallengeModal({ challenge, onConfirm, onClose, isL
         {/* 기간 선택 */}
         <div className="mb-6">
           <div className="flex items-center gap-1.5 mb-2.5">
-            <p className="text-xs font-black text-gray-700">목표 기간</p>
+            <p className="text-xs font-black text-ink">목표 기간</p>
             {aiTargetDays && (
-              <span className="text-[10px] text-gray-400">AI 추천: {aiTargetDays}일</span>
+              <span className="text-[10px] text-muted">AI 추천: {aiTargetDays}일</span>
             )}
           </div>
           <div className="flex flex-wrap gap-2">
@@ -117,8 +117,8 @@ export default function StartChallengeModal({ challenge, onConfirm, onClose, isL
                   onClick={() => setTargetDays(days)}
                   className={`px-4 py-2 rounded-xl text-sm font-bold border-2 transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-gray-900 text-white border-gray-900'
-                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
+                      ? 'bg-accent text-accent-ink border-accent'
+                      : 'bg-surface text-muted border-line hover:border-line'
                   }`}
                 >
                   {days}일{isAi ? ' ★' : ''}
@@ -134,8 +134,8 @@ export default function StartChallengeModal({ challenge, onConfirm, onClose, isL
           disabled={isLoading}
           className={`w-full py-3.5 rounded-2xl text-sm font-black transition-all ${
             isLoading
-              ? 'bg-gray-100 text-gray-400 cursor-wait'
-              : 'bg-gray-900 text-white hover:bg-gray-700 active:scale-[0.98] cursor-pointer'
+              ? 'bg-surface-2 text-muted cursor-wait'
+              : 'bg-accent text-accent-ink hover:brightness-110 active:scale-[0.98] cursor-pointer'
           }`}
         >
           {isLoading
@@ -146,7 +146,7 @@ export default function StartChallengeModal({ challenge, onConfirm, onClose, isL
         {/* 취소 */}
         <button
           onClick={onClose}
-          className="w-full mt-2 py-2 text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+          className="w-full mt-2 py-2 text-xs text-muted hover:text-muted transition-colors cursor-pointer"
         >
           취소
         </button>

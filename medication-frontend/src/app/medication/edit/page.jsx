@@ -23,13 +23,13 @@ const editFormSchema = z.object({
 
 function EditSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50 pb-32 animate-pulse">
+    <div className="min-h-screen bg-surface-2 pb-32 animate-pulse">
       <div className="max-w-2xl mx-auto">
-        <div className="h-14 bg-white border-b border-gray-100" />
+        <div className="h-14 bg-surface border-b border-line" />
         <div className="px-6 py-8 space-y-4">
-          <div className="h-16 bg-white rounded-2xl border border-gray-100" />
+          <div className="h-16 bg-surface rounded-2xl border border-line" />
           {[1, 2].map((i) => (
-            <div key={i} className="h-48 bg-white rounded-2xl border border-gray-100" />
+            <div key={i} className="h-48 bg-surface rounded-2xl border border-line" />
           ))}
         </div>
       </div>
@@ -146,19 +146,19 @@ function MedicationEditContent() {
   if (isLoading) return <EditSkeleton />
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
+    <main className="min-h-screen bg-surface-2 pb-24">
       <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="max-w-2xl mx-auto">
-        <div className="bg-white border-b border-gray-200 px-6 py-4 flex items-center gap-4">
+        <div className="bg-surface border-b border-line px-6 py-4 flex items-center gap-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-gray-400 hover:text-black cursor-pointer text-xl"
+            className="text-muted hover:text-black cursor-pointer text-xl"
           >
             ←
           </button>
           <div>
-            <h1 className="font-bold text-gray-900">처방전 수정</h1>
-            <p className="text-xs text-gray-400">내용을 터치해서 수정할 수 있어요</p>
+            <h1 className="font-bold text-ink">처방전 수정</h1>
+            <p className="text-xs text-muted">내용을 터치해서 수정할 수 있어요</p>
           </div>
         </div>
 
@@ -170,15 +170,15 @@ function MedicationEditContent() {
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-gray-200 flex items-center justify-between gap-4">
+          <div className="bg-surface rounded-2xl p-5 border border-line flex items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-bold text-gray-900">처방일</p>
-              <p className="text-xs text-gray-400 mt-0.5">처방전에 적힌 날짜를 확인해주세요</p>
+              <p className="text-sm font-bold text-ink">처방일</p>
+              <p className="text-xs text-muted mt-0.5">처방전에 적힌 날짜를 확인해주세요</p>
             </div>
             <input
               type="date"
               {...register('prescription_date')}
-              className="text-sm font-bold text-gray-700 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-gray-50"
+              className="text-sm font-bold text-ink border border-line rounded-xl px-3 py-2 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 bg-surface-2"
             />
           </div>
 
@@ -186,7 +186,7 @@ function MedicationEditContent() {
             {fields.map((field, i) => (
               <div
                 key={field.id}
-                className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200"
+                className="bg-surface rounded-2xl p-6 shadow-sm border border-line"
               >
                 <div className="flex justify-between items-start mb-4 gap-4">
                   <div className="flex-1">
@@ -198,7 +198,7 @@ function MedicationEditContent() {
                           value={field.value}
                           onChange={field.onChange}
                           placeholder="약품명 입력"
-                          inputClassName="font-bold text-lg text-gray-900 border-b-2 border-transparent hover:border-blue-200 focus:border-blue-500 focus:outline-none bg-transparent w-full transition-colors"
+                          inputClassName="font-bold text-lg text-ink border-b-2 border-transparent hover:border-blue-200 focus:border-blue-500 focus:outline-none bg-transparent w-full transition-colors"
                         />
                       )}
                     />
@@ -207,51 +207,51 @@ function MedicationEditContent() {
                   <button
                     type="button"
                     onClick={() => remove(i)}
-                    className="text-gray-300 hover:text-red-400 mt-1 cursor-pointer shrink-0"
+                    className="text-muted hover:text-red-400 mt-1 cursor-pointer shrink-0"
                   >
                     <Trash2 size={20} />
                   </button>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">1회 복용량</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">1회 복용량</p>
                     <input
                       type="text"
                       {...register(`meds.${i}.dose_per_intake`)}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 1정"
                     />
                     <FormError name={`meds.${i}.dose_per_intake`} errors={errors} />
                   </div>
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">1일 복용 횟수</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">1일 복용 횟수</p>
                     <input
                       type="number"
                       inputMode="numeric"
                       {...register(`meds.${i}.daily_intake_count`)}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 3"
                     />
                     <FormError name={`meds.${i}.daily_intake_count`} errors={errors} />
                   </div>
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">총 복용 일수</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">총 복용 일수</p>
                     <input
                       type="number"
                       inputMode="numeric"
                       {...register(`meds.${i}.total_intake_days`)}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 5"
                     />
                     <FormError name={`meds.${i}.total_intake_days`} errors={errors} />
                   </div>
-                  <div className="bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">복용 방법</p>
+                  <div className="bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">복용 방법</p>
                     <input
                       type="text"
                       {...register(`meds.${i}.intake_instruction`)}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 식후 30분"
                     />
                     <FormError name={`meds.${i}.intake_instruction`} errors={errors} />
@@ -259,12 +259,12 @@ function MedicationEditContent() {
                 </div>
 
                 {field.category && (
-                  <div className="mt-3 bg-gray-50 p-2 rounded-xl border border-gray-100">
-                    <p className="text-[10px] text-gray-500 mb-1 px-1">약품 분류</p>
+                  <div className="mt-3 bg-surface-2 p-2 rounded-xl border border-line">
+                    <p className="text-[10px] text-muted mb-1 px-1">약품 분류</p>
                     <input
                       type="text"
                       {...register(`meds.${i}.category`)}
-                      className="text-sm font-bold text-gray-700 bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
+                      className="text-sm font-bold text-ink bg-transparent w-full focus:outline-none focus:text-blue-600 px-1"
                       placeholder="예: 해열진통제"
                     />
                   </div>
@@ -277,14 +277,14 @@ function MedicationEditContent() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex-1 bg-white border border-gray-200 py-4 rounded-xl text-gray-500 text-sm font-bold cursor-pointer hover:bg-gray-50 transition-colors"
+              className="flex-1 bg-surface border border-line py-4 rounded-xl text-muted text-sm font-bold cursor-pointer hover:bg-surface-2 transition-colors"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-gray-900 text-white py-4 rounded-xl font-semibold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:bg-gray-800 enabled:cursor-pointer"
+              className="flex-1 bg-accent text-accent-ink py-4 rounded-xl font-semibold transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:brightness-110 enabled:cursor-pointer"
             >
               {isSubmitting ? '저장 중...' : '수정 완료'}
             </button>

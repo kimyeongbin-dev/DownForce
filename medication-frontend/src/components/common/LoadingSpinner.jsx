@@ -9,7 +9,7 @@ export default function LoadingSpinner({ size = 'md', className = '' }) {
   }
 
   return (
-    <div className={`inline-block animate-spin rounded-full border-2 border-gray-300 border-t-gray-900 ${sizeClasses[size]} ${className}`} />
+    <div className={`inline-block animate-spin rounded-full border-2 border-line border-t-accent ${sizeClasses[size]} ${className}`} />
   )
 }
 

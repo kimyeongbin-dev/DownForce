@@ -78,10 +78,10 @@ export default function GlobalAuthGuard({ children }) {
   // 로딩 중
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-surface">
         <div className="flex flex-col items-center gap-4">
           <LoadingSpinner size="lg" />
-          <p className="text-gray-600 font-medium">인증 확인 중...</p>
+          <p className="text-muted font-medium">인증 확인 중...</p>
         </div>
       </div>
     )

@@ -39,12 +39,12 @@ export default function PrescriptionPickerModal({ onConfirm, onClose, isLoading 
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white w-full lg:max-w-lg rounded-t-3xl lg:rounded-3xl shadow-2xl max-h-[80vh] flex flex-col"
+        className="bg-surface w-full lg:max-w-lg rounded-t-3xl lg:rounded-3xl shadow-2xl max-h-[80vh] flex flex-col"
       >
         {/* 헤더 */}
-        <div className="px-5 pt-5 pb-3 border-b border-gray-100">
-          <p className="text-base font-black text-gray-900">처방전 선택</p>
-          <p className="text-xs text-gray-500 mt-1 break-keep">
+        <div className="px-5 pt-5 pb-3 border-b border-line">
+          <p className="text-base font-black text-ink">처방전 선택</p>
+          <p className="text-xs text-muted mt-1 break-keep">
             가이드는 처방전 단위로 만들어져요. 가이드를 받을 처방전을 선택해주세요.
           </p>
         </div>
@@ -54,11 +54,11 @@ export default function PrescriptionPickerModal({ onConfirm, onClose, isLoading 
           {groupsLoading ? (
             <div className="space-y-2 animate-pulse">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="h-16 bg-gray-100 rounded-xl" />
+                <div key={i} className="h-16 bg-surface-2 rounded-xl" />
               ))}
             </div>
           ) : candidates.length === 0 ? (
-            <div className="text-center text-sm text-gray-500 py-10 px-4 break-keep">
+            <div className="text-center text-sm text-muted py-10 px-4 break-keep">
               가이드를 만들 수 있는 처방전이 없어요.
               <br />
               먼저 처방전을 등록하거나 복용 중인 약을 확인해주세요.
@@ -73,21 +73,21 @@ export default function PrescriptionPickerModal({ onConfirm, onClose, isLoading 
                   onClick={() => onConfirm(g.id)}
                   className={`w-full text-left px-4 py-3 rounded-xl border transition-colors ${
                     isLoading
-                      ? 'bg-gray-50 border-gray-100 cursor-wait'
-                      : 'bg-white border-gray-200 hover:border-gray-900 hover:bg-gray-50 cursor-pointer'
+                      ? 'bg-surface-2 border-line cursor-wait'
+                      : 'bg-surface border-line hover:border-accent hover:bg-surface-2 cursor-pointer'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-sm font-bold text-gray-900 truncate">
+                      <p className="text-sm font-bold text-ink truncate">
                         {g.hospital_name || '병원 미상'}
                       </p>
-                      <p className="text-[11px] text-gray-500 mt-0.5">
+                      <p className="text-[11px] text-muted mt-0.5">
                         {g.department || '진료과 미상'} · {formatDispensedLabel(g.dispensed_date)}
                       </p>
                     </div>
                     <div className="shrink-0 text-right">
-                      <p className="text-[11px] font-bold text-gray-700">
+                      <p className="text-[11px] font-bold text-ink">
                         복용 중 {g.active_medications_count ?? 0}건 / 약 {g.medications_count || 0}개
                       </p>
                     </div>
@@ -99,15 +99,15 @@ export default function PrescriptionPickerModal({ onConfirm, onClose, isLoading 
         </div>
 
         {/* 푸터 */}
-        <div className="px-5 py-3 border-t border-gray-100">
+        <div className="px-5 py-3 border-t border-line">
           <button
             type="button"
             onClick={onClose}
             disabled={isLoading}
             className={`w-full py-3 rounded-xl text-sm font-bold transition-colors ${
               isLoading
-                ? 'bg-gray-100 text-gray-400 cursor-wait'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer'
+                ? 'bg-surface-2 text-muted cursor-wait'
+                : 'bg-surface-2 text-ink hover:bg-surface-2 cursor-pointer'
             }`}
           >
             취소

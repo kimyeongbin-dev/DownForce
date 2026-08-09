@@ -55,7 +55,7 @@ function EditableMetaRow({
   maxLength,
 }) {
   return (
-    <div className="flex items-center gap-2 text-xs text-gray-700">
+    <div className="flex items-center gap-2 text-xs text-ink">
       {icon}
       {isEditing ? (
         <input
@@ -77,13 +77,13 @@ function EditableMetaRow({
           }}
           placeholder={placeholder}
           maxLength={maxLength}
-          className="flex-1 bg-gray-50 border border-gray-200 rounded px-2 py-1 outline-none focus:border-gray-400"
+          className="flex-1 bg-surface-2 border border-line rounded px-2 py-1 outline-none focus:border-line"
           autoFocus
         />
       ) : (
         <>
           <span
-            className={`${value ? 'font-bold' : 'text-gray-400'} cursor-text select-none`}
+            className={`${value ? 'font-bold' : 'text-muted'} cursor-text select-none`}
             onDoubleClick={onStart}
             title="더블클릭하거나 연필 아이콘으로 수정"
           >
@@ -92,7 +92,7 @@ function EditableMetaRow({
           <button
             type="button"
             onClick={onStart}
-            className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 cursor-pointer"
+            className="p-1 rounded hover:bg-surface-2 text-muted hover:text-ink cursor-pointer"
             aria-label="수정"
           >
             <Pencil size={12} />
@@ -111,8 +111,8 @@ function MedicationItem({ medication, onClick, selected = false }) {
     <button
       type="button"
       onClick={onClick}
-      className={`w-full text-left bg-white rounded-2xl border transition-colors p-4 flex items-center gap-3 cursor-pointer ${
-        selected ? 'border-gray-900 ring-1 ring-gray-900' : 'border-gray-100 hover:border-gray-300'
+      className={`w-full text-left bg-surface rounded-2xl border transition-colors p-4 flex items-center gap-3 cursor-pointer ${
+        selected ? 'border-accent ring-1 ring-accent' : 'border-line hover:border-line'
       }`}
     >
       <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
@@ -120,18 +120,18 @@ function MedicationItem({ medication, onClick, selected = false }) {
       </div>
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-gray-900 truncate">{medication.medicine_name}</span>
+          <span className="text-sm font-bold text-ink truncate">{medication.medicine_name}</span>
           {inactive && (
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500 shrink-0">완료</span>
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-surface-2 text-muted shrink-0">완료</span>
           )}
         </div>
         {(dose || instr) && (
-          <p className="text-xs text-gray-500 truncate">
+          <p className="text-xs text-muted truncate">
             {[dose, instr].filter(Boolean).join(' · ')}
           </p>
         )}
       </div>
-      <ChevronRight size={18} className="text-gray-300 shrink-0" />
+      <ChevronRight size={18} className="text-muted shrink-0" />
     </button>
   )
 }
@@ -266,18 +266,18 @@ export default function PrescriptionGroupDetailPage() {
   }, [group?.medications, selectedMedicationId])
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
-      <header className="sticky top-0 z-20 bg-white border-b border-gray-100">
+    <main className="min-h-screen bg-surface-2 pb-24">
+      <header className="sticky top-0 z-20 bg-surface border-b border-line">
         <div className="max-w-4xl mx-auto px-2 py-3 flex items-center gap-2">
           <button
             type="button"
             onClick={() => router.push('/medication')}
-            className="p-2 rounded-lg hover:bg-gray-100 cursor-pointer"
+            className="p-2 rounded-lg hover:bg-surface-2 cursor-pointer"
             aria-label="뒤로"
           >
-            <ArrowLeft size={18} className="text-gray-700" />
+            <ArrowLeft size={18} className="text-ink" />
           </button>
-          <h1 className="flex-1 text-base font-bold text-gray-900 truncate">처방전 상세</h1>
+          <h1 className="flex-1 text-base font-bold text-ink truncate">처방전 상세</h1>
           {group && (
             <>
               <button
@@ -292,7 +292,7 @@ export default function PrescriptionGroupDetailPage() {
                 }}
                 disabled={!group.medications?.length}
                 title="약 정보 수정"
-                className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 cursor-pointer disabled:text-gray-300 disabled:cursor-default"
+                className="p-2 rounded-lg hover:bg-blue-50 text-blue-500 cursor-pointer disabled:text-muted disabled:cursor-default"
                 aria-label="약 정보 수정"
               >
                 <PencilLine size={18} />
@@ -303,7 +303,7 @@ export default function PrescriptionGroupDetailPage() {
                 disabled={isCompleting || allInactive}
                 title={allInactive ? '이미 복용 완료됨' : '복용 완료 처리'}
                 className={`p-2 rounded-lg cursor-pointer transition-colors ${
-                  allInactive ? 'text-gray-300 cursor-default' : 'text-green-600 hover:bg-green-50'
+                  allInactive ? 'text-muted cursor-default' : 'text-green-600 hover:bg-green-50'
                 }`}
                 aria-label="복용 완료 처리"
               >
@@ -325,9 +325,9 @@ export default function PrescriptionGroupDetailPage() {
 
       <div className="max-w-4xl mx-auto px-4 py-4 space-y-4">
         {isLoading && !group ? (
-          <div className="bg-white rounded-2xl border border-gray-100 p-4 animate-pulse space-y-3">
-            <div className="h-4 bg-gray-200 rounded w-32" />
-            <div className="h-3 bg-gray-200 rounded w-24" />
+          <div className="bg-surface rounded-2xl border border-line p-4 animate-pulse space-y-3">
+            <div className="h-4 bg-surface-2 rounded w-32" />
+            <div className="h-3 bg-surface-2 rounded w-24" />
           </div>
         ) : error ? (
           <p className="text-sm text-red-500 text-center py-10">{error}</p>
@@ -337,13 +337,13 @@ export default function PrescriptionGroupDetailPage() {
           <div className="lg:grid lg:grid-cols-[minmax(280px,360px)_1fr] lg:gap-4">
             <div className="space-y-4">
               {/* 그룹 메타 카드 */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-4 space-y-2">
-                <div className="flex items-center gap-2 text-sm font-bold text-gray-900">
-                  <Calendar size={16} className="text-gray-400" />
+              <div className="bg-surface rounded-2xl border border-line p-4 space-y-2">
+                <div className="flex items-center gap-2 text-sm font-bold text-ink">
+                  <Calendar size={16} className="text-muted" />
                   <span>{formatDate(group.dispensed_date)}</span>
                 </div>
                 <EditableMetaRow
-                  icon={<Hospital size={14} className="shrink-0 text-gray-400" />}
+                  icon={<Hospital size={14} className="shrink-0 text-muted" />}
                   fieldKey="hospital_name"
                   value={group.hospital_name}
                   placeholder="병원 (예: 서울내과의원)"
@@ -358,7 +358,7 @@ export default function PrescriptionGroupDetailPage() {
                   maxLength={128}
                 />
                 <EditableMetaRow
-                  icon={<Building2 size={14} className="shrink-0 text-gray-400" />}
+                  icon={<Building2 size={14} className="shrink-0 text-muted" />}
                   fieldKey="department"
                   value={group.department}
                   placeholder="진료과 (예: 내과)"
@@ -372,7 +372,7 @@ export default function PrescriptionGroupDetailPage() {
                   isSaving={isSaving}
                   maxLength={64}
                 />
-                <p className="text-[11px] text-gray-400 pt-1">
+                <p className="text-[11px] text-muted pt-1">
                   약 {group.medications?.length || 0}개 · 등록 경로 {SOURCE_LABEL[group.source] || group.source}
                   {allInactive && <span className="ml-2 text-green-500 font-bold">· 복용 완료</span>}
                 </p>
@@ -381,7 +381,7 @@ export default function PrescriptionGroupDetailPage() {
               {/* 약 list */}
               <div className="space-y-2">
                 {(group.medications || []).length === 0 ? (
-                  <p className="text-sm text-gray-400 text-center py-8">이 처방전엔 등록된 약이 없어요.</p>
+                  <p className="text-sm text-muted text-center py-8">이 처방전엔 등록된 약이 없어요.</p>
                 ) : (
                   group.medications.map((m) => (
                     <MedicationItem
@@ -396,7 +396,7 @@ export default function PrescriptionGroupDetailPage() {
             </div>
 
             {/* 우측 — 약품 상세 panel (lg+ 에서만 표시, 모바일은 별 페이지로 push) */}
-            <div className="hidden lg:block bg-white rounded-2xl border border-gray-100 p-5">
+            <div className="hidden lg:block bg-surface rounded-2xl border border-line p-5">
               <MedicationDetailPanel
                 medicationId={selectedMedicationId}
                 onDeleted={() => setSelectedMedicationId(null)}

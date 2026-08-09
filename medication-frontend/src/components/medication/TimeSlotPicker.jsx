@@ -71,8 +71,8 @@ useEffect(() => {
           disabled={saving}
           className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer disabled:opacity-50 ${
             isActive(time)
-              ? 'bg-gray-900 text-white'
-              : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              ? 'bg-accent text-accent-ink'
+              : 'bg-surface-2 text-muted hover:bg-surface-2'
           }`}
         >
           {label}

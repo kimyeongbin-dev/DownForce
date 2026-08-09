@@ -225,10 +225,10 @@ export default function ChallengePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-gray-50 pb-24">
+      <main className="min-h-screen bg-surface-2 pb-24">
         <Header title="생활습관 챌린지" subtitle="건강한 습관을 만들어보세요" showBack={true} />
         <div className="max-w-3xl mx-auto px-6 py-6 space-y-4 animate-pulse">
-          {[1, 2, 3].map(i => <div key={i} className="bg-white rounded-2xl h-32 w-full" />)}
+          {[1, 2, 3].map(i => <div key={i} className="bg-surface rounded-2xl h-32 w-full" />)}
         </div>
         <BottomNav />
       </main>
@@ -236,28 +236,28 @@ export default function ChallengePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-24">
+    <main className="min-h-screen bg-surface-2 pb-24">
       <Header title="생활습관 챌린지" subtitle="건강한 습관을 만들어보세요" showBack={true} />
 
       <div className="max-w-3xl mx-auto px-6 py-6">
-        <div className="flex gap-8 mb-8 border-b border-gray-200">
+        <div className="flex gap-8 mb-8 border-b border-line">
           {['추천', '진행중', '완료'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`pb-3 text-sm font-bold cursor-pointer transition-colors relative active:scale-[0.98]
                 ${activeTab === tab
-                  ? 'text-gray-900 border-b-2 border-gray-900'
-                  : 'text-gray-400 hover:text-gray-600'}`}
+                  ? 'text-ink border-b-2 border-accent'
+                  : 'text-muted hover:text-muted'}`}
             >
               {tab}
               {tab === '진행중' && ongoing.length > 0 && (
-                <span className="ml-1.5 bg-gray-900 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                <span className="ml-1.5 bg-accent text-accent-ink text-[10px] px-1.5 py-0.5 rounded-full">
                   {ongoing.length}
                 </span>
               )}
               {tab === '완료' && completed.length > 0 && (
-                <span className="ml-1.5 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                <span className="ml-1.5 bg-green-500 text-accent-ink text-[10px] px-1.5 py-0.5 rounded-full">
                   {completed.length}
                 </span>
               )}
@@ -286,17 +286,17 @@ export default function ChallengePage() {
               recommended.map((item) => {
                 const categoryMeta = item.category ? CATEGORY_META[item.category] : null
                 return (
-                  <div key={item.id} className="bg-white rounded-2xl shadow-sm p-5 border border-gray-50 hover:border-blue-100 transition-all">
+                  <div key={item.id} className="bg-surface rounded-2xl shadow-sm p-5 border border-line hover:border-blue-100 transition-all">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${categoryMeta ? categoryMeta.color : 'bg-gray-100 text-gray-500'}`}>
+                        <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${categoryMeta ? categoryMeta.color : 'bg-surface-2 text-muted'}`}>
                           {getIconByTitle(item.title)}
                         </div>
                         <div className="min-w-0">
-                          <h3 className="font-bold text-gray-900 text-sm">{item.title}</h3>
-                          <p className="text-gray-400 text-xs mt-0.5 leading-relaxed line-clamp-1">{item.description}</p>
+                          <h3 className="font-bold text-ink text-sm">{item.title}</h3>
+                          <p className="text-muted text-xs mt-0.5 leading-relaxed line-clamp-1">{item.description}</p>
                           <div className="flex gap-1.5 mt-1.5">
-                            <span className="bg-gray-100 text-gray-500 text-[10px] px-2 py-0.5 rounded-full font-bold">{item.target_days}일</span>
+                            <span className="bg-surface-2 text-muted text-[10px] px-2 py-0.5 rounded-full font-bold">{item.target_days}일</span>
                             {categoryMeta && (
                               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${categoryMeta.color}`}>
                                 {categoryMeta.label}
@@ -310,8 +310,8 @@ export default function ChallengePage() {
                         disabled={isStarting}
                         className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors shrink-0
                           ${isStarting
-                            ? 'bg-gray-100 text-gray-400 cursor-wait'
-                            : 'bg-gray-900 text-white hover:bg-gray-800 active:scale-95 shadow-sm'}`}
+                            ? 'bg-surface-2 text-muted cursor-wait'
+                            : 'bg-accent text-accent-ink hover:brightness-110 active:scale-95 shadow-sm'}`}
                       >
                         {isStarting && startTarget?.id === item.id ? '처리중...' : '시작하기'}
                       </button>
@@ -334,14 +334,14 @@ export default function ChallengePage() {
                 const diffStyle = item.difficulty ? (DIFFICULTY_STYLE[item.difficulty] || DIFFICULTY_STYLE['보통']) : null
                 const categoryMeta = item.category ? CATEGORY_META[item.category] : null
                 return (
-                  <div key={item.id} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-50">
+                  <div key={item.id} className="bg-surface rounded-2xl shadow-sm p-6 border border-line">
                     <div className="flex items-center gap-4 mb-5">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${categoryMeta ? categoryMeta.color : 'bg-gray-100 text-gray-500'}`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${categoryMeta ? categoryMeta.color : 'bg-surface-2 text-muted'}`}>
                         {item.icon}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-bold text-gray-900">{item.title}</h3>
+                          <h3 className="font-bold text-ink">{item.title}</h3>
                           {categoryMeta && (
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${categoryMeta.color}`}>
                               {categoryMeta.label}
@@ -353,7 +353,7 @@ export default function ChallengePage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-gray-400 text-xs mt-0.5">
+                        <p className="text-muted text-xs mt-0.5">
                           {item.started_date
                             ? `D+${getDaysSince(item.started_date)} · ${item.target_days}일 목표`
                             : `${item.current}일째 진행 중`}
@@ -363,7 +363,7 @@ export default function ChallengePage() {
                         <span className="text-blue-500 text-sm font-bold">{item.current}/{item.target_days}일</span>
                         <button
                           onClick={() => handleAbandon(item)}
-                          className="w-7 h-7 flex items-center justify-center rounded-full text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all cursor-pointer"
+                          className="w-7 h-7 flex items-center justify-center rounded-full text-muted hover:text-red-400 hover:bg-red-50 transition-all cursor-pointer"
                           title="챌린지 포기"
                         >
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
@@ -372,7 +372,7 @@ export default function ChallengePage() {
                         </button>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mb-4 overflow-hidden">
+                    <div className="w-full bg-surface-2 rounded-full h-2 mb-4 overflow-hidden">
                       <div
                         className="bg-blue-500 h-2 rounded-full transition-all duration-500 shadow-sm"
                         style={{ width: `${(item.current / item.target_days) * 100}%` }}
@@ -385,8 +385,8 @@ export default function ChallengePage() {
                         ${checkedToday
                           ? 'bg-green-50 text-green-500'
                           : isProcessing
-                            ? 'bg-gray-100 text-gray-400 cursor-wait'
-                            : 'bg-gray-50 text-gray-600 hover:bg-gray-100 cursor-pointer'}`}
+                            ? 'bg-surface-2 text-muted cursor-wait'
+                            : 'bg-surface-2 text-muted hover:bg-surface-2 cursor-pointer'}`}
                     >
                       {checkedToday ? '오늘 완료!' : isProcessing ? '처리중...' : '오늘 완료 체크'}
                     </button>
@@ -407,14 +407,14 @@ export default function ChallengePage() {
                 const diffStyle = item.difficulty ? (DIFFICULTY_STYLE[item.difficulty] || DIFFICULTY_STYLE['보통']) : null
                 const categoryMeta = item.category ? CATEGORY_META[item.category] : null
                 return (
-                  <div key={item.id} className="bg-white rounded-2xl shadow-sm p-6 border border-gray-50 opacity-80">
+                  <div key={item.id} className="bg-surface rounded-2xl shadow-sm p-6 border border-line opacity-80">
                     <div className="flex items-center gap-4">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${categoryMeta ? categoryMeta.color : 'bg-green-50 text-green-400'}`}>
                         {item.icon}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-bold text-gray-900">{item.title}</h3>
+                          <h3 className="font-bold text-ink">{item.title}</h3>
                           {categoryMeta && (
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${categoryMeta.color}`}>
                               {categoryMeta.label}
@@ -426,7 +426,7 @@ export default function ChallengePage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-gray-400 text-xs mt-0.5">
+                        <p className="text-muted text-xs mt-0.5">
                           {item.target_days}일 달성
                           {item.started_date && <span className="ml-1">· {item.started_date} 시작</span>}
                         </p>
