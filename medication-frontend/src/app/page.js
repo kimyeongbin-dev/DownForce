@@ -109,7 +109,7 @@ export default function LandingPage() {
 
   return (
     <div
-      className="min-h-screen bg-white"
+      className="min-h-screen bg-bg"
       onWheel={handleUserScroll}
       onTouchMove={handleUserScroll}
     >
@@ -174,29 +174,29 @@ export default function LandingPage() {
 
         {/* 콘텐츠 */}
         <div className="relative z-10 text-center px-6 max-w-3xl mx-auto py-28">
-          <p className="text-gray-500 text-[11px] font-black mb-6 tracking-[0.3em] uppercase">
+          <p className="text-white/50 text-[11px] font-black mb-6 tracking-[0.3em] uppercase">
             AI 기반 지능형 복약 관리
           </p>
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white leading-[1.05] tracking-tighter mb-8">
-            복약의 새로운  
+            복약의 새로운
 
-            <span className="text-gray-600">기준</span>
+            <span className="text-white/40">기준</span>
           </h1>
-          <p className="text-gray-500 text-base md:text-lg mb-12 leading-relaxed max-w-xl mx-auto font-medium">
+          <p className="text-white/60 text-base md:text-lg mb-12 leading-relaxed max-w-xl mx-auto font-medium">
             처방전 촬영으로 시작하는 스마트한 건강 관리.<br className="hidden md:block" />
             AI가 당신의 안전한 복약 파트너가 되어드립니다.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => router.push('/login')}
-              className="px-10 py-4 bg-white text-black text-sm font-black rounded-full hover:scale-105 transition-all shadow-xl cursor-pointer flex items-center justify-center gap-2 group"
+              className="px-10 py-4 bg-accent text-accent-ink text-sm font-black rounded-full hover:scale-105 transition-all shadow-xl cursor-pointer flex items-center justify-center gap-2 group"
             >
-              지금 시작하기 
+              지금 시작하기
               <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </button>
             <button
               onClick={handleAutoScroll}
-              className="px-10 py-4 text-white text-sm font-black rounded-full border border-white/20 hover:bg-white/5 transition-all cursor-pointer"
+              className="px-10 py-4 text-white text-sm font-black rounded-full border border-white/25 hover:bg-white/10 transition-all cursor-pointer"
             >
               서비스 소개
             </button>
@@ -219,8 +219,8 @@ export default function LandingPage() {
       {/* ── 기능 소개 ── */}
       <section id="features-section" className="max-w-6xl mx-auto px-6 py-32">
         <div className="text-center mb-20">
-          <p className="text-[11px] font-black text-gray-400 tracking-[0.3em] uppercase mb-4">Core Value</p>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter">
+          <p className="text-[11px] font-black text-muted tracking-[0.3em] uppercase mb-4">Core Value</p>
+          <h2 className="text-4xl md:text-5xl font-black text-ink tracking-tighter">
             더 쉽고, 더 정확하게
           </h2>
         </div>
@@ -228,35 +228,35 @@ export default function LandingPage() {
           {features.map(({ Icon, title, desc }, i) => (
             <div
               key={i}
-              className="p-10 bg-slate-50 rounded-[40px] border border-transparent hover:border-slate-200 hover:bg-white hover:shadow-xl transition-all duration-300 group"
+              className="p-10 bg-surface-2 rounded-[40px] border border-transparent hover:border-line hover:bg-surface hover:shadow-[var(--shadow-pop)] transition-all duration-300 group"
             >
-              <div className="w-14 h-14 bg-gray-900 rounded-2xl flex items-center justify-center text-white mb-8 group-hover:scale-110 transition-transform shadow-lg">
+              <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center text-accent-ink mb-8 group-hover:scale-110 transition-transform shadow-lg">
                 <Icon size={24} />
               </div>
-              <h3 className="text-xl font-black text-gray-900 mb-4">{title}</h3>
-              <p className="text-gray-500 text-base leading-relaxed font-medium">{desc}</p>
+              <h3 className="text-xl font-black text-ink mb-4">{title}</h3>
+              <p className="text-muted text-base leading-relaxed font-medium">{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── 사용 사례 ── */}
-      <section id="usecases-section" className="bg-slate-50 py-32">
+      <section id="usecases-section" className="bg-surface-2 py-32">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
-            <p className="text-[11px] font-black text-gray-400 tracking-[0.3em] uppercase mb-4">Target</p>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tighter">
+            <p className="text-[11px] font-black text-muted tracking-[0.3em] uppercase mb-4">Target</p>
+            <h2 className="text-3xl md:text-4xl font-black text-ink tracking-tighter">
               모두를 위한 건강 관리
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {useCases.map((u, i) => (
-              <div key={i} className="flex flex-col p-10 rounded-[40px] bg-white border border-slate-100 hover:shadow-xl transition-all duration-300">
-                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-lg font-black text-slate-300 mb-6">
+              <div key={i} className="flex flex-col p-10 rounded-[40px] bg-surface border border-line hover:shadow-[var(--shadow-pop)] transition-all duration-300">
+                <div className="w-12 h-12 bg-accent-soft rounded-2xl flex items-center justify-center text-lg font-black text-accent mb-6">
                   0{i + 1}
                 </div>
-                <h3 className="font-black text-gray-900 text-xl mb-3">{u.label}</h3>
-                <p className="text-gray-500 font-medium">{u.desc}</p>
+                <h3 className="font-black text-ink text-xl mb-3">{u.label}</h3>
+                <p className="text-muted font-medium">{u.desc}</p>
               </div>
             ))}
           </div>
@@ -266,17 +266,17 @@ export default function LandingPage() {
       {/* ── CTA 섹션 ── */}
       <section id="cta-section" className="py-32 text-center bg-black relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent rounded-full blur-[120px]" />
         </div>
         <div className="relative z-10">
-          <p className="text-gray-500 text-xs font-black mb-6 tracking-[0.3em] uppercase">Join us today</p>
+          <p className="text-white/50 text-xs font-black mb-6 tracking-[0.3em] uppercase">Join us today</p>
           <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tighter">
             안전한 복약의 시작
           </h2>
-          <p className="text-gray-500 text-lg mb-12 font-medium">지금 바로 무료로 체험해보세요</p>
+          <p className="text-white/50 text-lg mb-12 font-medium">지금 바로 무료로 체험해보세요</p>
           <button
             onClick={() => router.push('/login')}
-            className="px-12 py-5 bg-white text-black font-black rounded-full hover:scale-110 transition-all cursor-pointer text-base shadow-2xl"
+            className="px-12 py-5 bg-accent text-accent-ink font-black rounded-full hover:scale-110 transition-all cursor-pointer text-base shadow-2xl"
           >
             시작하기
           </button>
