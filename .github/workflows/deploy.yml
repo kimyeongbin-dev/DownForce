@@ -15,7 +15,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: pw1234
-          POSTGRES_DB: downforce_db
+          POSTGRES_DB: doseph_db
         ports:
           - 5432:5432
         options: >-
@@ -47,7 +47,7 @@ jobs:
           DB_PASSWORD: pw1234
           DB_HOST: localhost
           DB_PORT: 5432
-          DB_NAME: downforce_db
+          DB_NAME: doseph_db
         run: |
           uv run pytest app/tests/ -v --tb=short || echo "No tests found or tests failed"
 
@@ -87,8 +87,8 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: |
-            ghcr.io/kimyeongbin-dev/downforce-fastapi:latest
-            ghcr.io/kimyeongbin-dev/downforce-fastapi:${{ github.sha }}
+            ghcr.io/kimyeongbin-dev/doseph-fastapi:latest
+            ghcr.io/kimyeongbin-dev/doseph-fastapi:${{ github.sha }}
           cache-from: type=gha,scope=fastapi
           cache-to: type=gha,scope=fastapi,mode=max
 
@@ -100,8 +100,8 @@ jobs:
           push: true
           platforms: linux/arm64
           tags: |
-            ghcr.io/kimyeongbin-dev/downforce-ai-worker:latest
-            ghcr.io/kimyeongbin-dev/downforce-ai-worker:${{ github.sha }}
+            ghcr.io/kimyeongbin-dev/doseph-ai-worker:latest
+            ghcr.io/kimyeongbin-dev/doseph-ai-worker:${{ github.sha }}
           cache-from: type=gha,scope=ai-worker
           cache-to: type=gha,scope=ai-worker,mode=max
 
@@ -125,7 +125,7 @@ jobs:
           command_timeout: "15m"
           script: |
             set -e
-            cd ~/DownForce
+            cd ~/Doseph
 
             echo "=== [1/7] Pull latest code ==="
             git fetch origin main
@@ -141,16 +141,16 @@ jobs:
             #   가 3시간마다 회전 + 백업 2개 유지 = 활성 1 + 백업 2 = 3개 파일.
             #   가장 오래된 백업은 9시간 시점에 자동 삭제. cron 의존 없음.
             # - JSON 텍스트 로그는 gzip 90% 이상 압축 → archive 약 12MB 수준.
-            sudo rm -f ~/DownForce/logs.prev.tar.gz
+            sudo rm -f ~/Doseph/logs.prev.tar.gz
             # 옛 정책 잔재 정리 — logs.prev/ 디렉터리 / logs.archive/ (cron 실험)
-            sudo rm -rf ~/DownForce/logs.prev ~/DownForce/logs.archive
-            if [ -d ~/DownForce/logs ]; then
-              sudo tar -C ~/DownForce -czf ~/DownForce/logs.prev.tar.gz logs \
-                && sudo rm -rf ~/DownForce/logs \
+            sudo rm -rf ~/Doseph/logs.prev ~/Doseph/logs.archive
+            if [ -d ~/Doseph/logs ]; then
+              sudo tar -C ~/Doseph -czf ~/Doseph/logs.prev.tar.gz logs \
+                && sudo rm -rf ~/Doseph/logs \
                 || echo "WARN: logs archive failed — keeping logs/ as-is for safety"
             fi
-            mkdir -p ~/DownForce/logs/fastapi ~/DownForce/logs/ai-worker
-            ls -lah ~/DownForce/logs.prev.tar.gz 2>/dev/null || echo "No previous archive (first deploy)"
+            mkdir -p ~/Doseph/logs/fastapi ~/Doseph/logs/ai-worker
+            ls -lah ~/Doseph/logs.prev.tar.gz 2>/dev/null || echo "No previous archive (first deploy)"
 
             echo "=== [3/8] Pre-pull prune (옛 ghcr tag 누적 영구 차단) ==="
             # 2026-05-01 EC2 사고 회귀 가드 — 그날 9개 이미지 20.45GB 누적으로
@@ -218,7 +218,7 @@ jobs:
 
       - name: Check API Health
         env:
-          DOMAIN: downforce.duckdns.org
+          DOMAIN: doseph.duckdns.org
         run: |
           echo "Checking https://${DOMAIN}/api/v1/health"
           for i in 1 2 3 4 5; do
@@ -234,7 +234,7 @@ jobs:
           exit 1
 
       - name: Check Nginx Health
-        run: curl -sf https://downforce.duckdns.org/health && echo "Nginx OK"
+        run: curl -sf https://doseph.duckdns.org/health && echo "Nginx OK"
 
   notify-failure:
     name: Notify Failure

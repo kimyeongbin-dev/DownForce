@@ -1,11 +1,11 @@
 // ============================================================
-// Project Downforce - Database Schema
+// Project Doseph - Database Schema
 // AI 기반 복약 관리 시스템
 // PostgreSQL 15+
 // Updated: 2026-04-21
 // ============================================================
 
-Project downforce {
+Project doseph {
   database_type: 'PostgreSQL'
   Note: '''
   AI 복약 관리 시스템 - 14개 테이블

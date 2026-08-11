@@ -91,8 +91,8 @@ cd medication-frontend && npm run dev
 ssh ubuntu@<oracle-arm-public-ip>
 
 # 프로젝트 클론 (fork 본인 namespace)
-git clone https://github.com/kimyeongbin-dev/DownForce.git
-cd DownForce
+git clone https://github.com/kimyeongbin-dev/Doseph.git
+cd Doseph
 
 # 환경변수 설정
 cp envs/example.prod.env envs/.prod.env
@@ -109,7 +109,7 @@ docker compose -f docker-compose.prod.yml up -d
 
 ```bash
 ssh ubuntu@<oracle-arm-public-ip>
-cd DownForce
+cd Doseph
 git pull
 docker compose -f docker-compose.prod.yml up -d --build
 ```
@@ -126,7 +126,7 @@ Vercel Dashboard에서 환경변수 설정:
 Settings > Environment Variables
 
 NEXT_PUBLIC_ENV = prod                              (Production)
-NEXT_PUBLIC_API_BASE_URL = https://downforce.duckdns.org  (Production & Preview)
+NEXT_PUBLIC_API_BASE_URL = https://doseph.duckdns.org  (Production & Preview)
 NEXT_PUBLIC_KAKAO_CLIENT_ID = <카카오 REST API 키>    (All)
 ```
 
@@ -154,7 +154,7 @@ Repository > Settings > Secrets and variables > Actions
 ### Oracle ARM에 필요한 파일
 
 ```
-Oracle ARM:/home/ubuntu/DownForce/
+Oracle ARM:/home/ubuntu/Doseph/
 ├── .env                      # envs/.prod.env 복사본
 ├── docker-compose.prod.yml   # prod용 Docker Compose
 ├── logs/                     # 호스트 볼륨 마운트 (fastapi/ai-worker 로그)
@@ -186,7 +186,7 @@ docker compose logs fastapi --tail=50
 
 ### DB 연결 테스트
 ```bash
-docker exec -it postgres psql -U downforce_admin -d downforce_db
+docker exec -it postgres psql -U doseph_admin -d doseph_db
 ```
 
 ### 환경변수 확인

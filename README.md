@@ -1,4 +1,4 @@
-# DownForce
+# Doseph
 
 ![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)
@@ -17,14 +17,14 @@
   - 팀 프로젝트 기간: 2026-03-30 ~ 2026-05-05 (PR #140 머지)
   - 개인 개선 프로젝트 (v2.x): 2026-05 ~ 진행 중
 - **한 줄 소개**: 처방전 사진 한 장으로 OCR 복약 등록 · 회수 의약품 필터 · 복약 가이드를 받고, 가족 단위로 건강 데이터를 함께 관리하는 24시간 AI 헬스케어 챗봇지원 웹 사이트
-- **서비스 명**: DownForce
+- **서비스 명**: Doseph
 
 ### 원본 / 포트폴리오 분기
 
-본 레포는 부트캠프 4인 팀 프로젝트 DownForce(`v1.0.0-team-final`)를 fork하여 **개인 프로젝트**로 전환했다. 팀 작업 이후 개인적으로 찾은 개선점에 대한 보완을 위한 프로젝트다.
+본 레포는 부트캠프 4인 팀 프로젝트 Doseph(`v1.0.0-team-final`)를 fork하여 **개인 프로젝트**로 전환했다. 팀 작업 이후 개인적으로 찾은 개선점에 대한 보완을 위한 프로젝트다.
 
 - 원본 팀 레포 (read-only): https://github.com/AI-HealthCare-02/AI_02_06
-- 팀 종료 시점 스냅샷: [v1.0.0-team-final Release](https://github.com/kimyeongbin-dev/DownForce/releases/tag/v1.0.0-team-final)
+- 팀 종료 시점 스냅샷: [v1.0.0-team-final Release](https://github.com/kimyeongbin-dev/Doseph/releases/tag/v1.0.0-team-final)
 - 개인 개선 로드맵 (v2.x): [ROADMAP.md](./ROADMAP.md)
 
 ### 기획 배경
@@ -313,7 +313,7 @@ flowchart TD
 - **v2.5 — 클린 코드.** 현재 `pyproject.toml` 에 ignore된 룰 점진 해제. 300줄 초과 파일 분할. per-file ignore 해소.
 - **v2.6 — FE UX.** SSE streaming UX, 모바일 반응형, 접근성(axe-core), Lighthouse mobile ≥ 90.
 
-> 상세 계획 · 체크박스 · DoD는 [ROADMAP.md](./ROADMAP.md), 매듭지은 버전은 [Releases](https://github.com/kimyeongbin-dev/DownForce/releases) 페이지에 정리.
+> 상세 계획 · 체크박스 · DoD는 [ROADMAP.md](./ROADMAP.md), 매듭지은 버전은 [Releases](https://github.com/kimyeongbin-dev/Doseph/releases) 페이지에 정리.
 
 ---
 

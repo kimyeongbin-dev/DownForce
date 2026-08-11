@@ -5,18 +5,18 @@ EC2 인스턴스(t3.micro)에 FastAPI + Redis + AI-Worker + Nginx를 배포하�
 ## 사전 요구사항
 
 - EC2 인스턴스: t3.micro (Ubuntu)
-- SSH 키: `downforce-key.pem`
+- SSH 키: `doseph-key.pem`
 - EC2 IP: `52.78.62.12`
 
 ## 1. EC2 접속
 
 ```bash
 # Windows (PowerShell 또는 CMD)
-ssh -i "downforce-key.pem" ubuntu@52.78.62.12
+ssh -i "doseph-key.pem" ubuntu@52.78.62.12
 
 # Mac/Linux
-chmod 400 downforce-key.pem
-ssh -i "downforce-key.pem" ubuntu@52.78.62.12
+chmod 400 doseph-key.pem
+ssh -i "doseph-key.pem" ubuntu@52.78.62.12
 ```
 
 ## 2. 필수 패키지 설치 (최초 1회)
@@ -37,7 +37,7 @@ exit
 
 재접속 후 Docker 확인:
 ```bash
-ssh -i "downforce-key.pem" ubuntu@52.78.62.12
+ssh -i "doseph-key.pem" ubuntu@52.78.62.12
 docker --version
 docker compose version
 ```
@@ -62,7 +62,7 @@ nano .env
 
 ```env
 # Database
-DATABASE_URL=postgresql+asyncpg://사용자:비밀번호@52.78.62.12:5432/downforce_db
+DATABASE_URL=postgresql+asyncpg://사용자:비밀번호@52.78.62.12:5432/doseph_db
 
 # Redis
 REDIS_URL=redis://redis:6379/0

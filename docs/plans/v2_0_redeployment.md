@@ -165,7 +165,7 @@ flowchart LR
 | **B. DuckDNS + Caddy (Let's Encrypt) (확정)** | 완전 무료. 팀 시점 패턴(`ai-02-06.duckdns.org`)과 유사. Caddy가 인증서 자동 갱신 | ARM에 80/443 직접 노출 → ufw/fail2ban 등 일반 보안 점검 필요 |
 | C. Cloudflare Tunnel + free trycloudflare.com | 도메인 0원                                | URL 임시. 포트폴리오로 부적합              |
 
-→ **B 확정**. DuckDNS 신규 hostname (예: `downforce.duckdns.org`) 신청 + Oracle ARM의 reserve public IP에 매핑. Caddy가 Let's Encrypt 인증서 발급/갱신 자동.
+→ **B 확정**. DuckDNS 신규 hostname (예: `doseph.duckdns.org`) 신청 + Oracle ARM의 reserve public IP에 매핑. Caddy가 Let's Encrypt 인증서 발급/갱신 자동.
 
 ---
 
@@ -174,7 +174,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     User(["사용자"]) -->|HTTPS| VR["Vercel<br/>Next.js Frontend"]
-    VR -->|API call HTTPS| DD["DuckDNS<br/>downforce.duckdns.org<br/>→ Oracle ARM IP"]
+    VR -->|API call HTTPS| DD["DuckDNS<br/>doseph.duckdns.org<br/>→ Oracle ARM IP"]
     DD --> CA["Caddy<br/>Let's Encrypt 자동"]
     CA --> API["FastAPI"]
     API <--> PG[("PostgreSQL 16<br/>pgvector + pg_trgm<br/>self-host")]
@@ -244,7 +244,7 @@ flowchart LR
 
 **검증**:
 - CI 모든 job green (test → build-and-push → deploy → health-check)
-- ghcr.io 에 `kimyeongbin-dev/downforce-fastapi`, `downforce-ai-worker` 이미지 ARM64 tag 확인
+- ghcr.io 에 `kimyeongbin-dev/doseph-fastapi`, `doseph-ai-worker` 이미지 ARM64 tag 확인
 - `curl http://<oracle-ip>:8000/api/v1/health` → 200 (Caddy 셋업 전 단계 — 내부 IP 직접 확인)
 
 ### PR-4 — FE Vercel 배포 + CORS
@@ -261,7 +261,7 @@ flowchart LR
 ### PR-5 — 도메인 + HTTPS + SSE long-poll 검증
 
 **작업**:
-- DuckDNS 신규 hostname 신청 (`downforce.duckdns.org`)
+- DuckDNS 신규 hostname 신청 (`doseph.duckdns.org`)
 - Oracle ARM에 Reserve Public IP 할당 + DuckDNS A 레코드 매핑
 - Caddy 컨테이너 셋업 (Let's Encrypt 자동 발급/갱신)
 - ARM 보안: ufw로 22/80/443만 허용 + fail2ban (선택)
@@ -272,7 +272,7 @@ flowchart LR
 - `docker-compose.prod.yml` — nginx 서비스 → caddy로 교체 (또는 둘 다 두고 profile로 분기)
 
 **검증**:
-- `https://downforce.duckdns.org/api/v1/health` → 200 + Let's Encrypt 인증서 유효
+- `https://doseph.duckdns.org/api/v1/health` → 200 + Let's Encrypt 인증서 유효
 - 외부 URL로 카카오 로그인 → /survey → 처방전 OCR → 챗봇 SSE stream 동작
 
 ### PR-6 — README §1 갱신 + ROADMAP 수정 + v2.0.0 Release

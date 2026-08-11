@@ -249,13 +249,13 @@ https://github.com/AI-HealthCare-02/AH_02_06/actions
 ### (로컬 PowerShell) Windows에서 EC2 접속
 
 ```powershell
-ssh -i ".\downforce-key.pem" ubuntu@52.78.62.12
+ssh -i ".\doseph-key.pem" ubuntu@52.78.62.12
 ```
 
 ### (로컬 Mac/Linux) Mac에서 EC2 접속
 
 ```bash
-ssh -i ./downforce-key.pem ubuntu@52.78.62.12
+ssh -i ./doseph-key.pem ubuntu@52.78.62.12
 ```
 
 ### (EC2) 컨테이너 상태 확인
@@ -436,7 +436,7 @@ cd medication-frontend && npm run dev
 
 ### (로컬 -> EC2) SSH 접속
 ```bash
-ssh -i ./downforce-key.pem ubuntu@52.78.62.12
+ssh -i ./doseph-key.pem ubuntu@52.78.62.12
 ```
 
 ### (EC2) 로그 실시간 확인

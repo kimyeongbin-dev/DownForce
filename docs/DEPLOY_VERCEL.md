@@ -83,7 +83,7 @@ if ($http_origin ~* "^https?://(localhost:3000|.*\.vercel\.app)$") {
 나중에 도메인을 구매하면:
 
 1. Vercel 프로젝트 -> "Settings" -> "Domains"
-2. 도메인 추가 (예: `www.downforce.com`)
+2. 도메인 추가 (예: `www.doseph.com`)
 3. DNS 설정 안내에 따라 설정
 
 ## 문제 해결

@@ -1,6 +1,6 @@
-# ROADMAP — DownForce v2.x
+# ROADMAP — Doseph v2.x
 
-> 팀 프로젝트 [`v1.0.0-team-final`](https://github.com/kimyeongbin-dev/DownForce/releases/tag/v1.0.0-team-final) (2026-05-05 종료) 이후
+> 팀 프로젝트 [`v1.0.0-team-final`](https://github.com/kimyeongbin-dev/Doseph/releases/tag/v1.0.0-team-final) (2026-05-05 종료) 이후
 > 개인 포트폴리오로서의 개선 계획. 팀 시점 회고와 정량/정성 기여는 [README.md](./README.md) §5, §7 참조.
 
 본 문서는 v2.x 시리즈의 **단일 source-of-truth**다. 진행 상태는 아래 체크박스로 추적하고, 각 버전 시작 전에는 별도 `PLAN_v2_X.md`를 작성한 뒤 작업한다 ([CLAUDE.md §1.1](./CLAUDE.md)).
@@ -90,7 +90,7 @@ flowchart LR
 
 ### 작업 단계
 - [ ] `PLAN_*.md` (5개) → `docs/plans/archive/` 이동 또는 `.gitignore` 추가
-- [ ] `aerich_prod.sql` · `final_utf8_dump.sql` · `downforce-key.pem` · `*.log` · `nul` → tracked 여부 확인 후 `git rm` (gitignore에 일부 등록되어 있으나 이미 트래킹된 경우 명시 제거 필요)
+- [ ] `aerich_prod.sql` · `final_utf8_dump.sql` · `doseph-key.pem` · `*.log` · `nul` → tracked 여부 확인 후 `git rm` (gitignore에 일부 등록되어 있으나 이미 트래킹된 경우 명시 제거 필요)
 - [ ] `테스트 계획.md` → 영문 파일명 + `docs/` 이동
 - [ ] AI 지침 통합 정책 결정
   - 옵션 A: 루트 1세트만 유지 + 하위 디렉토리는 짧은 reference로 축약

@@ -197,7 +197,7 @@ flowchart TD
 5. **등록**: 검색·바코드·낱알식별 **우선**, 처방전 OCR **보조**(이미지 미저장), 마이데이터 **장기**.
 6. **타깃**: 환자·보호자 우선, 의료진 장기.
 7. **배포**: Cloudflare(FE) + Oracle ARM(BE) — [v2_0_redeployment.md](plans/v2_0_redeployment.md) 참조.
-8. **네이밍**: **Doseph** 확정 (도메인 `doseph.com` 구매 완료 2026-08-08). ‘Downforce’ 대체. 복약 도우미 캐릭터로 챗봇 의인화 활용.
+8. **네이밍**: **Doseph** 확정 (도메인 `doseph.com` 구매 완료 2026-08-08). ‘Doseph’ 대체. 복약 도우미 캐릭터로 챗봇 의인화 활용.
 
 ---
 

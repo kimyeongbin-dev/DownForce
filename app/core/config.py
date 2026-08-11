@@ -83,9 +83,9 @@ class Config(BaseSettings):
     # Database settings (not auto-configured by ENV - sensitive information)
     DB_HOST: str = "postgres"
     DB_PORT: int = 5432
-    DB_USER: str = "downforce_admin"
+    DB_USER: str = "doseph_admin"
     DB_PASSWORD: str = _DEFAULT_DB_PASSWORD
-    DB_NAME: str = "downforce_db"
+    DB_NAME: str = "doseph_db"
     DB_CONNECT_TIMEOUT: int = 10  # asyncpg pool 새 connection 생성 한도 — 5초는 OCR 폴링/RQ 부하 시 일시 timeout 유발
     DB_CONNECTION_POOL_MAXSIZE: int = 20  # SSE long-poll + RQ + 스케줄러 동시 보유로 10 은 한계 — 20 으로 상향
 

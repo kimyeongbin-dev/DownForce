@@ -1,4 +1,4 @@
-# Downforce 개발 워크플로우 가이드
+# Doseph 개발 워크플로우 가이드
 
 > **새로 합류한 팀원을 위한 핵심 안내서**
 >
@@ -191,8 +191,8 @@ ENV=prod
 | 환경 | ENV 값 | API URL | Frontend URL |
 |------|--------|---------|--------------|
 | Local | `local` | `http://localhost:8000` | `http://localhost:3000` |
-| Dev | `dev` | `https://dev-api.downforce.app` | `https://dev.downforce.app` |
-| Prod | `prod` | `https://api.downforce.app` | `https://downforce.app` |
+| Dev | `dev` | `https://dev-api.doseph.app` | `https://dev.doseph.app` |
+| Prod | `prod` | `https://api.doseph.app` | `https://doseph.app` |
 
 ### 3.2 백엔드 (.env)
 

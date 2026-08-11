@@ -17,9 +17,9 @@ services:
     image: pgvector/pgvector:pg15
     container_name: postgres
     environment:
-      POSTGRES_USER: ${DB_USER:-downforce_admin}
+      POSTGRES_USER: ${DB_USER:-doseph_admin}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME:-downforce_db}
+      POSTGRES_DB: ${DB_NAME:-doseph_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -27,7 +27,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-downforce_admin} -d ${DB_NAME:-downforce_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-doseph_admin} -d ${DB_NAME:-doseph_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -81,7 +81,7 @@ services:
   # FastAPI API 서버 — ML 추론은 ai-worker 에 위임
   fastapi:
     container_name: fastapi
-    image: ghcr.io/kimyeongbin-dev/downforce-fastapi:${IMAGE_TAG:-latest}
+    image: ghcr.io/kimyeongbin-dev/doseph-fastapi:${IMAGE_TAG:-latest}
     pull_policy: always
     build:
       context: .
@@ -127,7 +127,7 @@ services:
   # (torch 2.x+, sentence-transformers 2.x+) — 빌드 시 추가 컴파일 불필요.
   ai-worker:
     container_name: ai-worker
-    image: ghcr.io/kimyeongbin-dev/downforce-ai-worker:${IMAGE_TAG:-latest}
+    image: ghcr.io/kimyeongbin-dev/doseph-ai-worker:${IMAGE_TAG:-latest}
     pull_policy: always
     build:
       context: .

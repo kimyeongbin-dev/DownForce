@@ -58,7 +58,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: pw1234
-          POSTGRES_DB: downforce_db
+          POSTGRES_DB: doseph_db
         ports:
           - 5432:5432
         options: >-
@@ -101,7 +101,7 @@ jobs:
           DB_PASSWORD: pw1234
           DB_HOST: localhost
           DB_PORT: 5432
-          DB_NAME: downforce_db
+          DB_NAME: doseph_db
         run: |
           uv run coverage run -m pytest app
           uv run coverage report -m

@@ -8,15 +8,15 @@
 # 결과물:
 #   - scripts/crawling/medicine_data_dump.sql  (SQL INSERT문, 팀원 공유용)
 #   - 팀원은 이 파일로 DB를 복원:
-#     docker compose exec -T postgres psql -U downforce_admin -d downforce_db < medicine_data_dump.sql
+#     docker compose exec -T postgres psql -U doseph_admin -d doseph_db < medicine_data_dump.sql
 # ─────────────────────────────────────────────────────────────────────
 
 set -e
 
 DUMP_FILE="scripts/crawling/medicine_data_dump.sql"
 CONTAINER="final_project-postgres-1"
-DB_USER="downforce_admin"
-DB_NAME="downforce_db"
+DB_USER="doseph_admin"
+DB_NAME="doseph_db"
 
 echo "[1/3] pg_trgm 확장 활성화..."
 docker compose exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" \

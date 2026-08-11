@@ -11,8 +11,8 @@ EC2 및 로컬 Docker PostgreSQL에 접근하고 DBeaver로 연동하는 방법�
 | EC2 IP | `52.78.62.12` |
 | 도메인 | `ai-02-06.duckdns.org` |
 | DB 컨테이너명 | `postgres` |
-| DB 이름 | `downforce_db` |
-| DB 사용자 | `downforce_admin` |
+| DB 이름 | `doseph_db` |
+| DB 사용자 | `doseph_admin` |
 
 ---
 
@@ -22,20 +22,20 @@ EC2 및 로컬 Docker PostgreSQL에 접근하고 DBeaver로 연동하는 방법�
 
 ```bash
 # psql 클라이언트로 접속
-docker exec -it postgres psql -U downforce_admin -d downforce_db
+docker exec -it postgres psql -U doseph_admin -d doseph_db
 
 # 접속 후 프롬프트
-downforce_db=#
+doseph_db=#
 ```
 
 ### (EC2) EC2 Docker DB 접속
 
 ```bash
 # 1. SSH로 EC2 접속 (로컬에서 실행)
-ssh -i ./downforce-key.pem ubuntu@52.78.62.12
+ssh -i ./doseph-key.pem ubuntu@52.78.62.12
 
 # 2. psql 클라이언트로 접속 (EC2에서 실행)
-docker exec -it postgres psql -U downforce_admin -d downforce_db
+docker exec -it postgres psql -U doseph_admin -d doseph_db
 ```
 
 ---
@@ -125,8 +125,8 @@ DELETE FROM profiles WHERE id = 'UUID값';
    |------|-----|
    | Host | `localhost` |
    | Port | `5432` |
-   | Database | `downforce_db` |
-   | Username | `downforce_admin` |
+   | Database | `doseph_db` |
+   | Username | `doseph_admin` |
    | Password | `.env` 파일의 `DB_PASSWORD` 확인 |
 
 4. **Test Connection** 클릭하여 연결 확인
@@ -149,8 +149,8 @@ EC2의 PostgreSQL은 외부 포트를 열지 않으므로 **SSH 터널**을 사�
    |------|-----|
    | Host | `localhost` |
    | Port | `5432` |
-   | Database | `downforce_db` |
-   | Username | `downforce_admin` |
+   | Database | `doseph_db` |
+   | Username | `doseph_admin` |
    | Password | (아래 방법으로 확인) |
 
 3. **SSH 탭 설정** (중요!):
@@ -162,7 +162,7 @@ EC2의 PostgreSQL은 외부 포트를 열지 않으므로 **SSH 터널**을 사�
    | Port | `22` |
    | Username | `ubuntu` |
    | Authentication Method | `Public Key` |
-   | Private Key | `.\downforce-key.pem` |
+   | Private Key | `.\doseph-key.pem` |
 
 4. **Test Connection** -> **완료**
 
@@ -277,22 +277,22 @@ SELECT * FROM pg_stat_user_indexes ORDER BY idx_scan DESC;
 
 ```bash
 # 전체 백업
-docker exec postgres pg_dump -U downforce_admin -d downforce_db > backup_$(date +%Y%m%d).sql
+docker exec postgres pg_dump -U doseph_admin -d doseph_db > backup_$(date +%Y%m%d).sql
 
 # 특정 테이블만 백업
-docker exec postgres pg_dump -U downforce_admin -d downforce_db -t accounts -t profiles > accounts_profiles.sql
+docker exec postgres pg_dump -U doseph_admin -d doseph_db -t accounts -t profiles > accounts_profiles.sql
 ```
 
 ### (EC2) EC2 DB 백업
 
 ```bash
-docker exec postgres pg_dump -U downforce_admin -d downforce_db --encoding=UTF8 > ~/backup_$(date +%Y%m%d).sql
+docker exec postgres pg_dump -U doseph_admin -d doseph_db --encoding=UTF8 > ~/backup_$(date +%Y%m%d).sql
 ```
 
 ### (로컬) 복원
 
 ```bash
-docker exec -i postgres psql -U downforce_admin -d downforce_db < backup_20240415.sql
+docker exec -i postgres psql -U doseph_admin -d doseph_db < backup_20240415.sql
 ```
 
 ---
@@ -325,14 +325,14 @@ docker exec postgres printenv | grep POSTGRES
 
 ### DBeaver SSH 터널 오류
 
-1. `.pem` 파일 경로가 올바른지 확인 (`downforce-key.pem`)
+1. `.pem` 파일 경로가 올바른지 확인 (`doseph-key.pem`)
 2. `.pem` 파일 권한 확인 (읽기 전용)
 3. EC2 보안 그룹에서 22번 포트 허용 확인
 
 #### (로컬 PowerShell) .pem 권한 설정
 
 ```powershell
-icacls ".\downforce-key.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
+icacls ".\doseph-key.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
 ```
 
 ### 쿼리 타임아웃
@@ -356,24 +356,24 @@ SELECT pg_cancel_backend({pid});
 
 ### (로컬) CLI 접속
 ```bash
-docker exec -it postgres psql -U downforce_admin -d downforce_db
+docker exec -it postgres psql -U doseph_admin -d doseph_db
 ```
 
 ### (EC2) CLI 접속
 ```bash
 # 1. SSH 접속
-ssh -i ./downforce-key.pem ubuntu@52.78.62.12
+ssh -i ./doseph-key.pem ubuntu@52.78.62.12
 
 # 2. psql 접속
-docker exec -it postgres psql -U downforce_admin -d downforce_db
+docker exec -it postgres psql -U doseph_admin -d doseph_db
 ```
 
 ### DBeaver 로컬 연결
 ```
 Host: localhost
 Port: 5432
-Database: downforce_db
-Username: downforce_admin
+Database: doseph_db
+Username: doseph_admin
 Password: .env 파일의 DB_PASSWORD 확인
 ```
 
@@ -382,8 +382,8 @@ Password: .env 파일의 DB_PASSWORD 확인
 [Main 탭]
 Host: localhost
 Port: 5432
-Database: downforce_db
-Username: downforce_admin
+Database: doseph_db
+Username: doseph_admin
 Password: (EC2 .env에서 확인)
 
 [SSH 탭]
@@ -391,5 +391,5 @@ Use SSH Tunnel: 체크
 Host: 52.78.62.12
 Port: 22
 Username: ubuntu
-Private Key: downforce-key.pem 경로
+Private Key: doseph-key.pem 경로
 ```

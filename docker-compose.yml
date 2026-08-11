@@ -9,9 +9,9 @@ services:
     image: pgvector/pgvector:pg15
     container_name: postgres
     environment:
-      POSTGRES_USER: ${DB_USER:-downforce_admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-downforce_admin}
-      POSTGRES_DB: ${DB_NAME:-downforce_db}
+      POSTGRES_USER: ${DB_USER:-doseph_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-doseph_admin}
+      POSTGRES_DB: ${DB_NAME:-doseph_db}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -19,7 +19,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-downforce_admin} -d ${DB_NAME:-downforce_db}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-doseph_admin} -d ${DB_NAME:-doseph_db}"]
       interval: 10s
       timeout: 5s
       retries: 5

@@ -18,15 +18,15 @@ EC2 운영 환경의 PostgreSQL 데이터를 로컬 개발 환경으로 복사�
 ## 사전 준비
 
 ### 필요한 것
-- `downforce-key.pem` 파일 (EC2 SSH 접속용 키)
+- `doseph-key.pem` 파일 (EC2 SSH 접속용 키)
 - Docker Desktop 실행 중
 - 로컬 Docker DB 컨테이너 실행 중
 
 ### .pem 파일 위치
-팀 공유 드라이브 또는 Slack에서 `downforce-key.pem` 파일을 받아 **프로젝트 루트**에 저장합니다.
+팀 공유 드라이브 또는 Slack에서 `doseph-key.pem` 파일을 받아 **프로젝트 루트**에 저장합니다.
 
 ```
-위치: 프로젝트루트/downforce-key.pem (gitignore 처리됨)
+위치: 프로젝트루트/doseph-key.pem (gitignore 처리됨)
 ```
 
 ---
@@ -37,20 +37,20 @@ EC2 운영 환경의 PostgreSQL 데이터를 로컬 개발 환경으로 복사�
 
 ```powershell
 # .pem 파일 권한 설정 (최초 1회)
-icacls ".\downforce-key.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
+icacls ".\doseph-key.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
 
 # SSH 접속
-ssh -i ".\downforce-key.pem" ubuntu@52.78.62.12
+ssh -i ".\doseph-key.pem" ubuntu@52.78.62.12
 ```
 
 ### (로컬 Mac/Linux) Mac 또는 Linux에서 EC2 접속
 
 ```bash
 # .pem 파일 권한 설정 (최초 1회)
-chmod 400 ./downforce-key.pem
+chmod 400 ./doseph-key.pem
 
 # SSH 접속
-ssh -i ./downforce-key.pem ubuntu@52.78.62.12
+ssh -i ./doseph-key.pem ubuntu@52.78.62.12
 ```
 
 ### 접속 확인
@@ -70,7 +70,7 @@ ubuntu@ip-172-31-xxx-xxx:~$
 cd ~/AI_02_06
 
 # PostgreSQL 컨테이너에서 덤프 생성
-docker exec postgres pg_dump -U downforce_admin -d downforce_db --encoding=UTF8 > ~/db_dump.sql
+docker exec postgres pg_dump -U doseph_admin -d doseph_db --encoding=UTF8 > ~/db_dump.sql
 
 # 덤프 파일 확인
 ls -lh ~/db_dump.sql
@@ -99,7 +99,7 @@ db_dump.sql: UTF-8 Unicode text
 cd E:\Project\Team_Project\OZ-Final\AH_02_06
 
 # SCP로 파일 복사
-scp -i ".\downforce-key.pem" ubuntu@52.78.62.12:~/db_dump.sql ./db_dump.sql
+scp -i ".\doseph-key.pem" ubuntu@52.78.62.12:~/db_dump.sql ./db_dump.sql
 
 # 복사 확인
 Get-Item .\db_dump.sql
@@ -112,7 +112,7 @@ Get-Item .\db_dump.sql
 cd ~/path/to/AH_02_06
 
 # SCP로 파일 복사
-scp -i ./downforce-key.pem ubuntu@52.78.62.12:~/db_dump.sql ./db_dump.sql
+scp -i ./doseph-key.pem ubuntu@52.78.62.12:~/db_dump.sql ./db_dump.sql
 
 # 복사 확인
 ls -lh db_dump.sql
@@ -137,7 +137,7 @@ docker compose up -d postgres
 기존 로컬 데이터를 보존하려면:
 
 ```bash
-docker exec postgres pg_dump -U downforce_admin -d downforce_db > local_backup.sql
+docker exec postgres pg_dump -U doseph_admin -d doseph_db > local_backup.sql
 ```
 
 ---
@@ -148,23 +148,23 @@ docker exec postgres pg_dump -U downforce_admin -d downforce_db > local_backup.s
 
 ```bash
 # 1. 기존 연결 종료 및 DB 재생성
-docker exec -it postgres psql -U downforce_admin -d postgres -c "
-SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'downforce_db' AND pid <> pg_backend_pid();
+docker exec -it postgres psql -U doseph_admin -d postgres -c "
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'doseph_db' AND pid <> pg_backend_pid();
 "
-docker exec -it postgres psql -U downforce_admin -d postgres -c "DROP DATABASE IF EXISTS downforce_db;"
-docker exec -it postgres psql -U downforce_admin -d postgres -c "CREATE DATABASE downforce_db OWNER downforce_admin;"
+docker exec -it postgres psql -U doseph_admin -d postgres -c "DROP DATABASE IF EXISTS doseph_db;"
+docker exec -it postgres psql -U doseph_admin -d postgres -c "CREATE DATABASE doseph_db OWNER doseph_admin;"
 
 # 2. 덤프 적용
-docker exec -i postgres psql -U downforce_admin -d downforce_db < db_dump.sql
+docker exec -i postgres psql -U doseph_admin -d doseph_db < db_dump.sql
 
 # 3. 적용 확인
-docker exec -it postgres psql -U downforce_admin -d downforce_db -c "\dt"
+docker exec -it postgres psql -U doseph_admin -d doseph_db -c "\dt"
 ```
 
 ### (로컬) 방법 B: 기존 데이터 유지하며 추가 (주의: 충돌 가능)
 
 ```bash
-docker exec -i postgres psql -U downforce_admin -d downforce_db < db_dump.sql
+docker exec -i postgres psql -U doseph_admin -d doseph_db < db_dump.sql
 ```
 
 ---
@@ -175,13 +175,13 @@ docker exec -i postgres psql -U downforce_admin -d downforce_db < db_dump.sql
 
 ```bash
 # 테이블 목록 확인
-docker exec -it postgres psql -U downforce_admin -d downforce_db -c "\dt"
+docker exec -it postgres psql -U doseph_admin -d doseph_db -c "\dt"
 
 # 계정 데이터 확인
-docker exec -it postgres psql -U downforce_admin -d downforce_db -c "SELECT * FROM accounts LIMIT 5;"
+docker exec -it postgres psql -U doseph_admin -d doseph_db -c "SELECT * FROM accounts LIMIT 5;"
 
 # 프로필 데이터 확인
-docker exec -it postgres psql -U downforce_admin -d downforce_db -c "SELECT * FROM profiles LIMIT 5;"
+docker exec -it postgres psql -U doseph_admin -d doseph_db -c "SELECT * FROM profiles LIMIT 5;"
 ```
 
 ---
@@ -209,13 +209,13 @@ rm ~/db_dump.sql
 #### (EC2) 덤프 시 인코딩 명시
 
 ```bash
-docker exec postgres pg_dump -U downforce_admin -d downforce_db --encoding=UTF8 > ~/db_dump.sql
+docker exec postgres pg_dump -U doseph_admin -d doseph_db --encoding=UTF8 > ~/db_dump.sql
 ```
 
 #### (로컬) 적용 시 인코딩 설정
 
 ```bash
-docker exec -i postgres psql -U downforce_admin -d downforce_db -c "SET client_encoding TO 'UTF8';" < db_dump.sql
+docker exec -i postgres psql -U doseph_admin -d doseph_db -c "SET client_encoding TO 'UTF8';" < db_dump.sql
 ```
 
 ### Permission Denied (Windows .pem 파일)
@@ -224,7 +224,7 @@ docker exec -i postgres psql -U downforce_admin -d downforce_db -c "SET client_e
 
 ```powershell
 # 파일 속성에서 읽기 전용으로 설정
-icacls "C:\path\to\downforce-key.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
+icacls "C:\path\to\doseph-key.pem" /inheritance:r /grant:r "$($env:USERNAME):R"
 ```
 
 ### 연결 거부 오류
@@ -247,8 +247,8 @@ docker compose restart postgres
 
 ```bash
 # FK 제약 조건 무시하고 적용
-docker exec -i postgres psql -U downforce_admin -d downforce_db -c "SET session_replication_role = 'replica';" < db_dump.sql
-docker exec -i postgres psql -U downforce_admin -d downforce_db -c "SET session_replication_role = 'origin';"
+docker exec -i postgres psql -U doseph_admin -d doseph_db -c "SET session_replication_role = 'replica';" < db_dump.sql
+docker exec -i postgres psql -U doseph_admin -d doseph_db -c "SET session_replication_role = 'origin';"
 ```
 
 ---
@@ -258,24 +258,24 @@ docker exec -i postgres psql -U downforce_admin -d downforce_db -c "SET session_
 ### (로컬 Mac/Linux) EC2 접속
 
 ```bash
-ssh -i ./downforce-key.pem ubuntu@52.78.62.12
+ssh -i ./doseph-key.pem ubuntu@52.78.62.12
 ```
 
 ### (EC2) 덤프 생성
 
 ```bash
-docker exec postgres pg_dump -U downforce_admin -d downforce_db --encoding=UTF8 > ~/db_dump.sql
+docker exec postgres pg_dump -U doseph_admin -d doseph_db --encoding=UTF8 > ~/db_dump.sql
 ```
 
 ### (로컬 Mac/Linux - 새 터미널) 파일 복사
 
 ```bash
-scp -i ./downforce-key.pem ubuntu@52.78.62.12:~/db_dump.sql ./db_dump.sql
+scp -i ./doseph-key.pem ubuntu@52.78.62.12:~/db_dump.sql ./db_dump.sql
 ```
 
 ### (로컬) DB 초기화 후 적용
 
 ```bash
-docker exec -it postgres psql -U downforce_admin -d postgres -c "DROP DATABASE IF EXISTS downforce_db; CREATE DATABASE downforce_db OWNER downforce_admin;"
-docker exec -i postgres psql -U downforce_admin -d downforce_db < db_dump.sql
+docker exec -it postgres psql -U doseph_admin -d postgres -c "DROP DATABASE IF EXISTS doseph_db; CREATE DATABASE doseph_db OWNER doseph_admin;"
+docker exec -i postgres psql -U doseph_admin -d doseph_db < db_dump.sql
 ```

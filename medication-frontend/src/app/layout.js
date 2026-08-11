@@ -31,7 +31,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Downforce",
+  title: "Doseph",
   description: "AI 기반 지능형 복약 관리 시스템",
 };
 
