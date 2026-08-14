@@ -409,7 +409,7 @@ function MainPageContent() {
                   </div>
                   {todayNote && (
                     <p className="text-muted text-sm leading-relaxed bg-surface-2/60 p-4 rounded-2xl border border-dashed border-line">
-                      "{todayNote}"
+                      &quot;{todayNote}&quot;
                     </p>
                   )}
                 </div>
