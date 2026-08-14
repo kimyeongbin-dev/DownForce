@@ -16,6 +16,12 @@ build/
 # testing
 coverage/
 
+# playwright e2e
+/test-results/
+/playwright-report/
+/playwright/.cache/
+e2e/.auth/
+
 # env files
 .env
 .env.local

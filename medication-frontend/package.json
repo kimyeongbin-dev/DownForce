@@ -7,7 +7,11 @@
     "build": "dotenv -e ../.env -- next build",
     "build:local": "dotenv -e ../.env -- next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "serve:static": "serve out -l 3000 --no-port-switching",
+    "test:e2e": "dotenv -e ../.env -- playwright test",
+    "test:e2e:ui": "dotenv -e ../.env -- playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -25,10 +29,12 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@playwright/test": "^1.50.0",
     "@tailwindcss/postcss": "^4",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
+    "serve": "^14.2.4",
     "tailwindcss": "^4"
   }
 }
