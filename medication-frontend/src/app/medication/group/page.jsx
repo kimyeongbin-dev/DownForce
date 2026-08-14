@@ -1,12 +1,15 @@
 'use client'
 
-// /medication/groups/[group_id] — 처방전 그룹 drill-down
+// /medication/group?group_id= — 처방전 그룹 drill-down
 //
 // 모든 fetch / mutation 은 PrescriptionGroupContext 의 hook 으로 위임.
 // 페이지는 화면 정책 (편집 모드 / confirm / 토스트) 만 책임.
+//
+// 정적 export 대응: 동적 세그먼트 [group_id] 대신 쿼리 파라미터(?group_id=)를 사용하며,
+// useSearchParams 는 <Suspense> 경계 안에서만 호출한다(CSR bailout 규정).
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft,
   Calendar,
@@ -110,6 +113,7 @@ function MedicationItem({ medication, onClick, selected = false }) {
   return (
     <button
       type="button"
+      data-testid="medication-item"
       onClick={onClick}
       className={`w-full text-left bg-surface rounded-2xl border transition-colors p-4 flex items-center gap-3 cursor-pointer ${
         selected ? 'border-accent ring-1 ring-accent' : 'border-line hover:border-line'
@@ -136,11 +140,13 @@ function MedicationItem({ medication, onClick, selected = false }) {
   )
 }
 
-export default function PrescriptionGroupDetailPage() {
+// ── 처방전 그룹 상세 본문 (useSearchParams 사용부) ──────────────────
+// 흐름: URL ?group_id= 파싱 -> Context fetch -> 메타 편집/완료/삭제 정책
+//       + 데스크탑 split-pane(우측 약품 상세) / 모바일 약품 클릭 시 상세 페이지 push
+function PrescriptionGroupContent() {
   const router = useRouter()
-  const params = useParams()
   const confirm = useConfirm()
-  const groupId = params?.group_id
+  const groupId = useSearchParams().get('group_id')
   const {
     groupsById,
     fetchGroupDetail,
@@ -248,13 +254,13 @@ export default function PrescriptionGroupDetailPage() {
 
   // 데스크탑 split-pane: lg 이상에서 우측 panel 에 약품 상세 inline 표시.
   // 같은 처방전의 약 클릭 시 페이지 push 대신 selectedMedicationId 만 변경.
-  // 모바일 (< lg) 에선 약 클릭 시 기존처럼 /medication/[id] 페이지로 이동.
+  // 모바일 (< lg) 에선 약 클릭 시 /medication/detail?id= 약품 상세 페이지로 이동.
   const [selectedMedicationId, setSelectedMedicationId] = useState(null)
   const handleMedicationClick = (medicationId) => {
     if (typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches) {
       setSelectedMedicationId(medicationId)
     } else {
-      router.push(`/medication/${medicationId}`)
+      router.push(`/medication/detail?id=${medicationId}`)
     }
   }
   // 그룹의 약 list 가 갱신되면 선택된 약이 사라졌는지 체크 (삭제 등)
@@ -408,5 +414,13 @@ export default function PrescriptionGroupDetailPage() {
 
       <BottomNav />
     </main>
+  )
+}
+
+export default function PrescriptionGroupPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface-2" />}>
+      <PrescriptionGroupContent />
+    </Suspense>
   )
 }

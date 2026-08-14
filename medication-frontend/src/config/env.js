@@ -5,16 +5,19 @@
 const ENV = process.env.NEXT_PUBLIC_ENV || 'local';
 
 // 환경별 기본값
+// 정적 export 전환 이후 동일출처 rewrites 프록시가 없으므로 API_BASE_URL 은 "풀 백엔드 URL"이어야 한다.
+// 우선순위: NEXT_PUBLIC_API_BASE_URL(빌드 시 주입) > 아래 기본값.
 const ENV_CONFIG = {
   local: {
-    API_BASE_URL: '',
+    API_BASE_URL: 'http://localhost',
     KAKAO_REDIRECT_URI: 'http://localhost:3000/auth/kakao/callback',
   },
   dev: {
-    API_BASE_URL: '',
+    API_BASE_URL: 'http://localhost',
     KAKAO_REDIRECT_URI: 'http://localhost:3000/auth/kakao/callback',
   },
   prod: {
+    // 배포 환경변수 NEXT_PUBLIC_API_BASE_URL 로 반드시 주입 (예: https://api.doseph.com)
     API_BASE_URL: '',
     KAKAO_REDIRECT_URI: 'https://ai-02-06.vercel.app/auth/kakao/callback',
   },

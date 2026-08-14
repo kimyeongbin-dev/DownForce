@@ -3,8 +3,8 @@
 // /medication (복용 가이드) — 처방전 카드 list
 //
 // 흐름: 사용자 -> 처방전 카드 list (날짜/진료과 정렬 + 약품 검색 + 복용 중/완료 탭)
-//       -> 카드 클릭 시 /medication/groups/[id] drill-down 으로 이동
-//       -> 그 페이지에서 약품 클릭 시 /medication/[id] 약품 상세 페이지
+//       -> 카드 클릭 시 /medication/group?group_id= drill-down 으로 이동
+//       -> 그 페이지에서 약품 클릭 시 /medication/detail?id= 약품 상세 페이지
 //
 // 정렬 / 검색 / 탭 셋 다 독립적이며 동시 사용 가능. 상태는 PrescriptionGroupContext 가 단일 진실.
 
@@ -75,6 +75,7 @@ function PrescriptionCard({ group, onClick, onDelete, isDeleting }) {
     <div
       role="button"
       tabIndex={0}
+      data-testid="prescription-card"
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-busy={isDeleting || undefined}
@@ -313,7 +314,7 @@ export default function MedicationPage() {
               <PrescriptionCard
                 key={g.id}
                 group={g}
-                onClick={() => router.push(`/medication/groups/${g.id}`)}
+                onClick={() => router.push(`/medication/group?group_id=${g.id}`)}
                 onDelete={() => handleDeleteGroup(g)}
                 isDeleting={deletingId === g.id}
               />

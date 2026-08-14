@@ -4,7 +4,7 @@
 // - 이력 날짜 칩으로 과거 가이드 조회 가능 (과거 가이드는 챌린지 버튼 비활성화)
 // - 각 탭에 연결된 챌린지를 하단 배너로 표시 (3-상태: 시작 전/진행중/완료)
 // - 증상 탭에는 오늘의 일일 증상 로그 입력 폼 포함
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Header from '@/components/layout/Header'
 import BottomNav from '@/components/layout/BottomNav'
@@ -194,7 +194,7 @@ function ChallengeBanner({ challenge, isViewingHistory }) {
 // 유효한 탭 키 (TABS 의 key 와 일치). 메인 → ?tab=symptom 진입 시 활용.
 const VALID_TAB_KEYS = ['interaction', 'sleep', 'diet', 'exercise', 'symptom']
 
-export default function LifestyleGuidePage() {
+function LifestyleGuideContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const confirm = useConfirm()
@@ -682,7 +682,7 @@ export default function LifestyleGuidePage() {
                         )}
                         {todayNote && (
                           <p className="text-muted text-xs leading-relaxed bg-surface/70 p-3 rounded-xl border border-dashed border-orange-100">
-                            "{todayNote}"
+                            &quot;{todayNote}&quot;
                           </p>
                         )}
                       </div>
@@ -886,5 +886,13 @@ export default function LifestyleGuidePage() {
         />
       )}
     </main>
+  )
+}
+
+export default function LifestyleGuidePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-surface-2" />}>
+      <LifestyleGuideContent />
+    </Suspense>
   )
 }

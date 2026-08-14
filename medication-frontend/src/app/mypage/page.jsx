@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { User, Activity, Users, Home, Trash2, X, Check, Plus, FileText, LogOut, Pencil } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -200,7 +200,7 @@ function MyPageSkeleton() {
   )
 }
 
-export default function MyPage() {
+function MyPageContent() {
   const router = useRouter()
   const confirm = useConfirm()
   const searchParams = useSearchParams()
@@ -589,5 +589,13 @@ export default function MyPage() {
       {showDeleteModal && <DeleteAccountModal onClose={() => setShowDeleteModal(false)} onConfirm={handleDeleteAccount} />}
       <BottomNav />
     </main>
+  )
+}
+
+export default function MyPage() {
+  return (
+    <Suspense fallback={<MyPageSkeleton />}>
+      <MyPageContent />
+    </Suspense>
   )
 }
