@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import api, { parseApiError, showError } from '@/lib/api'
-import { config, securityUtils } from '@/config/env'
+import { securityUtils } from '@/config/env'
 import {
   AUTH_STATUS,
   LOGOUT_REASON,
   consumeLogoutReason,
   getAuthStatus,
-  markLoggedIn,
   markLoggedOut,
 } from '@/lib/authStatus'
 import { Pill } from 'lucide-react'
@@ -62,9 +61,6 @@ export default function LoginPage() {
     }
   }, [router])
 
-  // 보안 검증: 개발자 로그인 표시 여부
-  const showDevLogin = securityUtils.shouldShowDevLogin()
-
   // 환경 변조 탐지
   if (securityUtils.detectEnvironmentTampering()) {
     console.error('Security warning: Environment tampering detected')
@@ -96,41 +92,6 @@ export default function LoginPage() {
       console.error('카카오 로그인 설정 조회 실패:', err)
       const parsed = err.parsed || parseApiError(err)
       showError(parsed.message)
-      setIsLoading(false)
-    }
-  }
-
-const handleTestLogin = async () => {
-    setIsLoading(true)
-
-    try {
-      // 1. 브라우저 이동 없이 백그라운드(Axios)에서 백엔드 API 호출
-      // api 객체를 사용하므로 프록시(localhost:3000 -> localhost:8000)를 안전하게 탑니다.
-      const response = await api.get('/api/v1/auth/kakao/callback', {
-        params: {
-          code: 'dev_test_login',
-          state: 'dev_mode'
-        }
-      })
-
-      // 2. 백엔드가 정상적으로 토큰(쿠키)과 JSON(200 OK)을 응답했다면?
-      if (response.status === 200) {
-        // 로그인 성공 — 재접속자 판별용 힌트 기록 (kakao 정식 콜백과 동일 처리)
-        markLoggedIn()
-
-        const { show_survey } = response.data
-
-        // 프론트엔드가 주도적으로 화면 전환
-        if (show_survey) {
-          router.push('/main?showSurvey=true')
-        } else {
-          router.push('/main')
-        }
-      }
-    } catch (err) {
-      console.error('개발용 로그인 실패:', err)
-      const parsed = err.parsed || parseApiError(err)
-      showError(parsed.message || '로그인 처리 중 오류가 발생했습니다.')
       setIsLoading(false)
     }
   }
@@ -167,17 +128,6 @@ const handleTestLogin = async () => {
         >
           {isLoading ? '연결 중...' : '카카오로 로그인'}
         </button>
-
-        {/* 개발자 로그인 버튼 (보안 검증된 환경에서만 표시) */}
-        {showDevLogin && (
-          <button
-            onClick={handleTestLogin}
-            disabled={isLoading}
-            className="w-full bg-ink text-bg py-3 rounded-xl font-semibold text-sm mb-3 cursor-pointer hover:opacity-90 transition-all disabled:opacity-50"
-          >
-            개발자로 로그인 ({config.ENV})
-          </button>
-        )}
 
         {/* 구분선 */}
         <div className="flex items-center gap-3 my-4">

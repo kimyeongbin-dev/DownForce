@@ -35,11 +35,6 @@ const cleanApiUrl = (url) => {
 
 // 보안 유틸리티
 export const securityUtils = {
-  shouldShowDevLogin: () => {
-    // 간단한 검증: local 환경에서만 표시
-    return ENV === 'local';
-  },
-
   detectEnvironmentTampering: () => {
     const clientEnv = process.env.NEXT_PUBLIC_ENV;
     const runtimeEnv = ENV;
