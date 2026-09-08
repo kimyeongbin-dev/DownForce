@@ -11,6 +11,7 @@ from tortoise import Tortoise
 from tortoise.contrib.fastapi import register_tortoise
 
 from app.core import config
+from app.core.config import Config
 
 # Tortoise ORM model modules
 TORTOISE_APP_MODELS: list[str] = [
@@ -35,29 +36,59 @@ TORTOISE_APP_MODELS: list[str] = [
     "app.models.drug_recall",
 ]
 
-# Tortoise ORM configuration
-TORTOISE_ORM: dict[str, Any] = {
-    "connections": {
-        "default": {
-            "engine": "tortoise.backends.asyncpg",
-            "credentials": {
-                "host": config.DB_HOST,
-                "port": config.DB_PORT,
-                "user": config.DB_USER,
-                "password": config.DB_PASSWORD,
-                "database": config.DB_NAME,
-                "timeout": config.DB_CONNECT_TIMEOUT,
-                "maxsize": config.DB_CONNECTION_POOL_MAXSIZE,
+
+# ── Tortoise ORM 설정 빌더 ────────────────────────────────────────────
+# 흐름: config(DB 자격증명) -> asyncpg credentials 조립 -> DB_SSL 시 ssl 주입
+#       -> Tortoise 설정 dict 반환
+# DB_SSL=true(Neon 등 관리형 PG)면 asyncpg 에 ssl="require" 전달로 TLS 강제.
+# 로컬/DEV Docker postgres 는 기본 False 라 평문 연결 유지(무영향).
+def build_tortoise_orm(cfg: Config | None = None) -> dict[str, Any]:
+    """Build the Tortoise ORM config dict from application settings.
+
+    Assembles the asyncpg connection credentials and, when ``DB_SSL`` is
+    enabled, injects an ``ssl="require"`` credential so managed Postgres
+    providers (e.g. Neon) accept the TLS-only connection.
+
+    Args:
+        cfg: Application configuration instance. Defaults to the global
+            ``config`` singleton when not provided.
+
+    Returns:
+        Tortoise ORM configuration dictionary consumed by
+        ``register_tortoise`` and aerich.
+    """
+    settings = cfg or config
+
+    credentials: dict[str, Any] = {
+        "host": settings.DB_HOST,
+        "port": settings.DB_PORT,
+        "user": settings.DB_USER,
+        "password": settings.DB_PASSWORD,
+        "database": settings.DB_NAME,
+        "timeout": settings.DB_CONNECT_TIMEOUT,
+        "maxsize": settings.DB_CONNECTION_POOL_MAXSIZE,
+    }
+    if settings.DB_SSL:
+        credentials["ssl"] = "require"
+
+    return {
+        "connections": {
+            "default": {
+                "engine": "tortoise.backends.asyncpg",
+                "credentials": credentials,
             },
         },
-    },
-    "apps": {
-        "models": {
-            "models": TORTOISE_APP_MODELS,
+        "apps": {
+            "models": {
+                "models": TORTOISE_APP_MODELS,
+            },
         },
-    },
-    "timezone": "Asia/Seoul",
-}
+        "timezone": "Asia/Seoul",
+    }
+
+
+# aerich(pyproject.toml) 와 register_tortoise 가 참조하는 모듈 전역 설정.
+TORTOISE_ORM: dict[str, Any] = build_tortoise_orm()
 
 
 def initialize_tortoise(app: FastAPI) -> None:
