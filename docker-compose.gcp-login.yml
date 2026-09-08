@@ -10,13 +10,14 @@
 
 services:
   # FastAPI API 서버 — VM 에서 amd64 네이티브 빌드 (app/Dockerfile.prod)
-  # e2-micro(1GB) 대비 워커 2개로 하향(상용 CMD 는 4). Neon TLS 연결은 DB_SSL=true.
+  # e2-micro(1GB) 는 워커 2개가 OOM(워커 SIGKILL 크래시루프) → 워커 1개로 하향.
+  # async 단일 워커로 로그인 MVP 트래픽 충분. 상용 CMD 는 4. Neon TLS 는 DB_SSL=true.
   fastapi:
     container_name: fastapi
     build:
       context: .
       dockerfile: app/Dockerfile.prod
-    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]
     env_file:
       - .env
     environment:
