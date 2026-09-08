@@ -129,12 +129,12 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
 _LOCALHOST_ORIGINS = ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost", "http://localhost:80"]
 
 if config.ENV == Env.PROD:
-    # Production environment: Vercel + localhost (for local prod testing)
+    # Production: FRONTEND_URL (env-injected, e.g. https://doseph.com) + localhost for local prod testing
     cors_origins = [config.FRONTEND_URL, *_LOCALHOST_ORIGINS]
     cors_methods = ["GET", "POST", "PATCH", "DELETE", "OPTIONS"]
     cors_headers = ["Content-Type", "Authorization"]
 elif config.ENV == Env.DEV:
-    # Development/test environment: Vercel Preview + localhost allowed
+    # Development/test: FRONTEND_URL + localhost allowed
     cors_origins = [config.FRONTEND_URL, *_LOCALHOST_ORIGINS]
     cors_methods = ["*"]
     cors_headers = ["*"]

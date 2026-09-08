@@ -3,7 +3,7 @@
 # 흐름: 사용자 -> Cloudflare(api.doseph.com) -> cloudflared 터널
 #       -> fastapi:8000 -> Neon(Postgres, TLS) / Kakao OAuth
 #
-# 상용 docker-compose.prod.yml 대비: postgres(→Neon)·redis·ai-worker·nginx 제거.
+# 전체 스택(postgres·redis·ai-worker·nginx) 대비 로그인 경로만: fastapi + cloudflared.
 # 로그인 경로는 fastapi + DB(Neon) 만 필요(APScheduler 인메모리, Redis 불요).
 # 인바운드 포트 0개 — cloudflared 아웃바운드 터널이 TLS 종단.
 # ─────────────────────────────────────────────────────────────────────
