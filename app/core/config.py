@@ -190,5 +190,27 @@ class Config(BaseSettings):
         return self
 
 
+# ── API 문서 노출 정책 ────────────────────────────────────────────────
+# 흐름: ENV 판별 -> prod 면 docs/redoc/openapi URL 을 None 으로 반환(비노출)
+#       -> 프로덕션에서 API 스키마 정보 유출 차단, 개발/로컬만 문서 제공
+def docs_urls(env: Env) -> dict[str, str | None]:
+    """Return FastAPI docs URLs, disabled in production.
+
+    Args:
+        env: The active deployment environment.
+
+    Returns:
+        dict[str, str | None]: docs_url/redoc_url/openapi_url. All None in
+        production so the API schema is not exposed publicly.
+    """
+    if env == Env.PROD:
+        return {"docs_url": None, "redoc_url": None, "openapi_url": None}
+    return {
+        "docs_url": "/api/docs",
+        "redoc_url": "/api/redoc",
+        "openapi_url": "/api/openapi.json",
+    }
+
+
 # Global configuration instance
 config = Config()

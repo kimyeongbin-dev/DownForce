@@ -7,7 +7,7 @@ must fail fast at startup rather than silently falling back to a stale default.
 
 import pytest
 
-from app.core.config import _ENV_URLS, Config, Env
+from app.core.config import _ENV_URLS, Config, Env, docs_urls
 
 # PROD 검증 통과에 필요한 최소 시크릿(기본값이면 별도 검증에 걸리므로 실제값 형태로 주입)
 _PROD_SECRETS = {
@@ -61,3 +61,22 @@ def test_prod_env_urls_have_no_hardcoded_platform_defaults() -> None:
     assert prod_urls["API_BASE_URL"] is None
     assert prod_urls["FRONTEND_URL"] is None
     assert prod_urls["KAKAO_REDIRECT_URI"] is None
+
+
+def test_docs_urls_hidden_in_prod() -> None:
+    """PROD 에서는 Swagger/redoc/openapi 를 노출하지 않음(전부 None)."""
+    urls = docs_urls(Env.PROD)
+
+    assert urls["docs_url"] is None
+    assert urls["redoc_url"] is None
+    assert urls["openapi_url"] is None
+
+
+@pytest.mark.parametrize("env", [Env.LOCAL, Env.DEV])
+def test_docs_urls_exposed_in_non_prod(env: Env) -> None:
+    """LOCAL/DEV 는 API 문서를 노출(경로 제공)."""
+    urls = docs_urls(env)
+
+    assert urls["docs_url"] == "/api/docs"
+    assert urls["redoc_url"] == "/api/redoc"
+    assert urls["openapi_url"] == "/api/openapi.json"

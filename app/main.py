@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse
 from tortoise.exceptions import BaseORMException, DBConnectionError
 
 from app.apis.v1 import v1_routers
-from app.core.config import Env, config
+from app.core.config import Env, config, docs_urls
 from app.db.databases import initialize_tortoise
 from app.middlewares.rate_limit import RateLimitMiddleware
 from app.middlewares.security import SecurityMiddleware
@@ -22,11 +22,12 @@ from app.workers.scheduler import scheduler_lifespan
 
 logger = logging.getLogger(__name__)
 
+# ── FastAPI 앱 생성 (API 문서는 비프로덕션에서만 노출) ─────────────────
+# 흐름: docs_urls(ENV) 로 문서 URL 결정 -> prod 는 None(스키마 비노출)
+#       -> 미들웨어/라우터/예외핸들러 등록
 app = FastAPI(
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
-    openapi_url="/api/openapi.json",
-    redirect_slashes=False,  # Nginx handles trailing slash removal
+    **docs_urls(config.ENV),
+    redirect_slashes=False,  # 트레일링 슬래시 정규화는 엣지(Cloudflare)에서 처리
     lifespan=scheduler_lifespan,
 )
 
