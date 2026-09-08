@@ -1,0 +1,63 @@
+"""Tests for environment-driven URL configuration in production.
+
+Enforces 12-factor portability: production must inject public URLs via env
+(no hardcoded platform URLs baked into the code). Missing URLs in production
+must fail fast at startup rather than silently falling back to a stale default.
+"""
+
+import pytest
+
+from app.core.config import _ENV_URLS, Config, Env
+
+# PROD 검증 통과에 필요한 최소 시크릿(기본값이면 별도 검증에 걸리므로 실제값 형태로 주입)
+_PROD_SECRETS = {
+    "SECRET_KEY": "A" * 64,
+    "DB_PASSWORD": "real-db-password",
+    "KAKAO_CLIENT_ID": "real-kakao-id",
+    "KAKAO_CLIENT_SECRET": "real-kakao-secret",
+}
+_PROD_URLS = {
+    "API_BASE_URL": "https://api.doseph.com",
+    "FRONTEND_URL": "https://doseph.com",
+    "KAKAO_REDIRECT_URI": "https://doseph.com/auth/kakao/callback",
+}
+
+
+def _prod_config(**overrides: object) -> Config:
+    """Build a PROD Config isolated from any local .env file."""
+    return Config(_env_file=None, ENV=Env.PROD, **{**_PROD_SECRETS, **overrides})
+
+
+def test_prod_with_all_urls_ok() -> None:
+    """PROD + 3개 URL env 주입 시 정상 생성 + 값 보존."""
+    cfg = _prod_config(**_PROD_URLS)
+
+    assert cfg.API_BASE_URL == "https://api.doseph.com"
+    assert cfg.FRONTEND_URL == "https://doseph.com"
+    assert cfg.KAKAO_REDIRECT_URI == "https://doseph.com/auth/kakao/callback"
+
+
+@pytest.mark.parametrize("missing", ["API_BASE_URL", "FRONTEND_URL", "KAKAO_REDIRECT_URI"])
+def test_prod_missing_url_raises(missing: str) -> None:
+    """PROD 인데 필수 URL 중 하나라도 없으면 기동 실패(ValueError)."""
+    urls = {k: v for k, v in _PROD_URLS.items() if k != missing}
+
+    with pytest.raises(ValueError, match=missing):
+        _prod_config(**urls)
+
+
+def test_local_still_gets_localhost_defaults() -> None:
+    """LOCAL 은 여전히 localhost 기본값을 자동 적용(회귀 방지)."""
+    cfg = Config(_env_file=None, ENV=Env.LOCAL)
+
+    assert cfg.API_BASE_URL == "http://localhost:8000"
+    assert cfg.FRONTEND_URL == "http://localhost:3000"
+
+
+def test_prod_env_urls_have_no_hardcoded_platform_defaults() -> None:
+    """PROD 프로필에 vercel/duckdns 등 플랫폼 URL 하드코딩이 없어야 함."""
+    prod_urls = _ENV_URLS[Env.PROD]
+
+    assert prod_urls["API_BASE_URL"] is None
+    assert prod_urls["FRONTEND_URL"] is None
+    assert prod_urls["KAKAO_REDIRECT_URI"] is None

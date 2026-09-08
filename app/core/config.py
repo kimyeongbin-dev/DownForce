@@ -28,7 +28,9 @@ class Env(StrEnum):
 
 # Environment-specific URL configurations
 # local/dev: Local Docker environment (same settings, different login button)
-# prod: EC2 + Vercel deployment environment
+# prod: Platform-neutral — public URLs MUST be injected via .env (12-factor).
+#       No platform-specific URL is hardcoded here so the app stays portable
+#       across hosting providers (GCP/Cloudflare today, anything tomorrow).
 _ENV_URLS: dict[Env, dict[str, str | None]] = {
     Env.LOCAL: {
         # Local environment: Local Docker (dev login button visible)
@@ -45,11 +47,12 @@ _ENV_URLS: dict[Env, dict[str, str | None]] = {
         "KAKAO_REDIRECT_URI": "http://localhost:3000/auth/kakao/callback",
     },
     Env.PROD: {
-        # Prod environment: EC2 backend (DuckDNS HTTPS) + Vercel frontend
-        "COOKIE_DOMAIN": None,  # Cross-domain cookies (Vercel <-> EC2)
-        "API_BASE_URL": "https://ai-02-06.duckdns.org",
-        "FRONTEND_URL": "https://ai-02-06.vercel.app",
-        "KAKAO_REDIRECT_URI": "https://ai-02-06.vercel.app/auth/kakao/callback",
+        # Prod environment: URLs come from .env only (validated below). Do NOT
+        # hardcode a hosting provider's URL here — it couples code to a platform.
+        "COOKIE_DOMAIN": None,  # host-only cookie (FE/API share the same site)
+        "API_BASE_URL": None,
+        "FRONTEND_URL": None,
+        "KAKAO_REDIRECT_URI": None,
     },
 }
 
@@ -168,6 +171,17 @@ class Config(BaseSettings):
 
             if self.KAKAO_CLIENT_SECRET == _DEFAULT_KAKAO_CLIENT_SECRET:
                 errors.append("KAKAO_CLIENT_SECRET must be set in production environment")
+
+            # 공개 URL 은 프로덕션에서 반드시 env 로 주입되어야 함(하드코딩 폴백 없음).
+            # 누락 시 CORS/쿠키/카카오 redirect 가 조용히 깨지므로 기동 단계에서 차단.
+            if self.API_BASE_URL is None:
+                errors.append("API_BASE_URL must be set in production environment")
+
+            if self.FRONTEND_URL is None:
+                errors.append("FRONTEND_URL must be set in production environment")
+
+            if self.KAKAO_REDIRECT_URI is None:
+                errors.append("KAKAO_REDIRECT_URI must be set in production environment")
 
             if errors:
                 error_message = f"Production configuration errors: {'; '.join(errors)}"
