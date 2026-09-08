@@ -158,43 +158,6 @@ class OAuthService:
                     },
                 ) from e
 
-    async def dev_test_login(self) -> tuple[Account, bool]:
-        """Development test login (auto-creates test user account + self profile).
-
-        Creates a test user account for development purposes with automatic
-        self profile creation.
-
-        Returns:
-            tuple[Account, bool]: (account, is_new_user)
-        """
-        nickname = "TestUser"
-        provider_account_id = "test_dev_id_12345"
-
-        account = await self.account_repo.get_by_provider(
-            provider=AuthProvider.KAKAO,
-            provider_account_id=provider_account_id,
-        )
-
-        is_new_user = False
-        if not account:
-            # 1. 계정 생성
-            account = await self.account_repo.create(
-                provider=AuthProvider.KAKAO,
-                provider_account_id=provider_account_id,
-                nickname=nickname,
-            )
-            is_new_user = True
-
-        # 2. 본인(SELF) 프로필 자동 생성 (idempotent)
-        await self._ensure_self_profile(
-            account,
-            nickname=nickname,
-            gender=Gender.MALE,
-            health_survey={"age": 25, "gender": "MALE", "conditions": ["Test"], "allergies": ["None"]},
-        )
-
-        return account, is_new_user
-
     async def kakao_callback(self, code: str, client_ip: str) -> tuple[Account, bool]:
         """Process Kakao OAuth callback.
 

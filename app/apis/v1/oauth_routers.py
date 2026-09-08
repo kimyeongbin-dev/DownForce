@@ -237,10 +237,7 @@ async def kakao_callback(
         )
 
     # state 검증 (CSRF 방지) - BE에서 생성한 서명된 state 검증
-    # [DEV ONLY] 개발자용 즉시 로그인 버튼 클릭 시에만 검증을 건너뜁니다.
-    is_dev_login = config.ENV != Env.PROD and code == "dev_test_login"
-
-    if not is_dev_login and (not state or not _verify_state(state)):
+    if not state or not _verify_state(state):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail={
@@ -252,15 +249,11 @@ async def kakao_callback(
     # 클라이언트 IP 추출 (Rate limiting용, 프록시 고려)
     client_ip = _get_client_ip(request)
 
-    # [DEV ONLY] 개발용 즉시 로그인 처리
-    if config.ENV != Env.PROD and code == "dev_test_login":
-        account, is_new_user = await oauth_service.dev_test_login()
-    else:
-        # 콜백 처리 (토큰 교환 + 사용자 정보 조회 + 계정 처리)
-        account, is_new_user = await oauth_service.kakao_callback(
-            code=code,
-            client_ip=client_ip,
-        )
+    # 콜백 처리 (토큰 교환 + 사용자 정보 조회 + 계정 처리)
+    account, is_new_user = await oauth_service.kakao_callback(
+        code=code,
+        client_ip=client_ip,
+    )
 
     # 서비스 JWT 토큰 발급 및 DB 저장
     tokens = await oauth_service.issue_tokens(account)
@@ -270,7 +263,7 @@ async def kakao_callback(
             "status": "success",
             "message": "Login successful",
             "is_new_user": is_new_user,
-            "show_survey": is_dev_login or is_new_user,
+            "show_survey": is_new_user,
         },
         status_code=status.HTTP_200_OK,
     )
