@@ -16,10 +16,12 @@ from app.core.logger import (
     _FILE_MODE,
     _MAX_MSG_LEN,
     JsonFormatter,
+    RequestIdFilter,
     SizeTimedRotatingFileHandler,
     TruncateFilter,
     _resolve_log_dir,
     log_handled_exception,
+    request_id_var,
 )
 
 
@@ -109,3 +111,25 @@ def test_log_handled_exception_records_context_and_stack(caplog) -> None:
     assert "/api/x" in message
     assert "ValueError" in message
     assert record.exc_info is not None  # 스택 포함
+
+
+# ── B2: request_id 컨텍스트 ────────────────────────────────────────────
+def test_request_id_filter_injects_contextvar() -> None:
+    """RequestIdFilter 가 현재 contextvar 의 request_id 를 record 에 붙인다."""
+    token = request_id_var.set("req-123")
+    try:
+        record = _record("hi")
+        RequestIdFilter().filter(record)
+        assert record.request_id == "req-123"
+    finally:
+        request_id_var.reset(token)
+
+
+def test_json_formatter_includes_request_id() -> None:
+    """JSON 출력에 request_id 필드가 포함된다."""
+    token = request_id_var.set("req-xyz")
+    try:
+        out = JsonFormatter().format(_record("hi"))
+        assert "req-xyz" in out
+    finally:
+        request_id_var.reset(token)

@@ -17,6 +17,7 @@ from app.core.config import Env, config, docs_urls
 from app.core.logger import log_handled_exception
 from app.db.databases import initialize_tortoise
 from app.middlewares.rate_limit import RateLimitMiddleware
+from app.middlewares.request_context import RequestContextMiddleware
 from app.middlewares.security import SecurityMiddleware
 from app.workers.scheduler import scheduler_lifespan
 
@@ -157,6 +158,10 @@ app.add_middleware(SecurityMiddleware)
 
 # Rate limiting middleware (IP-based)
 app.add_middleware(RateLimitMiddleware)
+
+# Request context (request_id) — 마지막 등록 = 최외곽(가장 먼저 실행)
+# 이후 모든 미들웨어/핸들러/로그가 request_id 를 갖도록 최외곽에 배치.
+app.add_middleware(RequestContextMiddleware)
 
 # Initialize database
 initialize_tortoise(app)

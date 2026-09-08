@@ -20,6 +20,7 @@ volume 마운트로 호스트에 영속화.
 """
 
 import contextlib
+import contextvars
 from datetime import UTC, datetime
 from io import TextIOWrapper
 import json
@@ -36,13 +37,22 @@ _DEFAULT_LOG_DIR = "/app/logs"
 _ROTATE_WHEN = "H"
 _ROTATE_INTERVAL_HOURS = 3
 _ROTATE_BACKUP_COUNT = 2
-_CONSOLE_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)d] %(message)s"
+_CONSOLE_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)d] [%(request_id)s] %(message)s"
 
 # ── 파일로깅 안전 상한 (메모리·저장공간·보안) ─────────────────────────
 _MAX_MSG_LEN = 4000  # 단일 메시지 문자 상한 — 초과분 트렁케이트(메모리·저장 폭주 방지)
 _MAX_BYTES = 10 * 1024 * 1024  # 파일당 크기 상한 10MB — 시간회전과 병행(런어웨이 단일 파일 비대 방지)
 _DIR_MODE = 0o750  # 로그 디렉토리 권한(owner rwx / group rx / other 없음)
 _FILE_MODE = 0o640  # 로그 파일 권한(owner rw / group r / other 없음) — world-readable 금지
+
+# ── 요청 컨텍스트 (request_id) ─────────────────────────────────────────
+# 요청마다 미들웨어가 설정 -> RequestIdFilter 가 모든 로그에 자동 첨부. 기본 "-".
+request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="-")
+
+
+def get_request_id() -> str:
+    """현재 컨텍스트의 request_id (미설정 시 ``-``)."""
+    return request_id_var.get()
 
 
 class JsonFormatter(logging.Formatter):
@@ -57,6 +67,7 @@ class JsonFormatter(logging.Formatter):
             "ts": datetime.fromtimestamp(record.created, tz=UTC).isoformat(),
             "level": record.levelname,
             "logger": record.name,
+            "request_id": getattr(record, "request_id", request_id_var.get()),
             "msg": record.getMessage(),
             "module": record.module,
             "line": record.lineno,
@@ -83,6 +94,17 @@ class TruncateFilter(logging.Filter):
             message = f"{message[:_MAX_MSG_LEN]}…[truncated {dropped} chars]"
         record.msg = message
         record.args = None
+        return True
+
+
+# ── request_id 주입 필터 (재사용) ─────────────────────────────────────
+# 흐름: 현재 contextvar 의 request_id -> record.request_id 부착
+#       -> 콘솔 포맷(%(request_id)s) / JSON(request_id 필드) 공통 노출
+class RequestIdFilter(logging.Filter):
+    """현재 컨텍스트의 request_id 를 record 에 부착(모든 핸들러 공통)."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.request_id = request_id_var.get()
         return True
 
 
@@ -155,12 +177,14 @@ def setup_logger(
 
     console_formatter = logging.Formatter(_CONSOLE_FORMAT)
     json_formatter = JsonFormatter()
-    # 트렁케이션은 핸들러에 부착(자식 logger 전파 record 에도 적용되도록).
+    # 필터는 핸들러에 부착(자식 logger 전파 record 에도 적용되도록).
     truncate_filter = TruncateFilter()
+    request_id_filter = RequestIdFilter()
 
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(console_formatter)
     console_handler.addFilter(truncate_filter)
+    console_handler.addFilter(request_id_filter)
     logger.addHandler(console_handler)
 
     try:
@@ -174,6 +198,7 @@ def setup_logger(
             utc=True,
         )
         file_handler.addFilter(truncate_filter)
+        file_handler.addFilter(request_id_filter)
         # 백업 파일 이름에 ISO 타임스탬프 suffix (예: app.log.2026-05-01_15)
         file_handler.suffix = "%Y-%m-%d_%H"
         file_handler.setFormatter(json_formatter)
