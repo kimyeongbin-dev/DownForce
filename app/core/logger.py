@@ -186,6 +186,29 @@ def setup_logger(
     return logger
 
 
+# ── 전역 예외 핸들러 로깅 헬퍼 (재사용) ────────────────────────────────
+# 흐름: 잡은 예외 + 요청 컨텍스트(kind/method/path) -> ERROR 로그(스택 포함)
+# 프레임워크 비의존(Request 대신 method/path 문자열) → 단위테스트 용이·재사용.
+def log_handled_exception(
+    logger: logging.Logger,
+    exc: Exception,
+    *,
+    method: str,
+    path: str,
+    kind: str,
+) -> None:
+    """전역 예외 핸들러가 잡은 예외를 요청 컨텍스트 + 스택과 함께 ERROR 기록.
+
+    Args:
+        logger: 기록에 사용할 로거.
+        exc: 잡힌 예외 인스턴스.
+        method: HTTP 메서드(예: GET).
+        path: 요청 경로(예: /api/v1/...).
+        kind: 분류 라벨(예: ``orm`` / ``db_connection`` / ``unhandled``).
+    """
+    logger.error("[%s] %s during %s %s", kind, type(exc).__name__, method, path, exc_info=exc)
+
+
 # Global loggers for the application.
 # FastAPI 프로세스가 ai_worker.* 모듈도 import 하므로 (예: RAG 응답 생성기)
 # 그 namespace 도 INFO 핸들러를 미리 등록한다 — 그렇지 않으면 ai_worker.*

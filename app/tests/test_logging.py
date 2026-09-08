@@ -19,6 +19,7 @@ from app.core.logger import (
     SizeTimedRotatingFileHandler,
     TruncateFilter,
     _resolve_log_dir,
+    log_handled_exception,
 )
 
 
@@ -84,3 +85,27 @@ def test_log_file_has_restrictive_mode(tmp_path) -> None:
     handler.close()
 
     assert (logf.stat().st_mode & 0o777) == _FILE_MODE
+
+
+# ── B1: 예외 핸들러 로깅 헬퍼 ──────────────────────────────────────────
+def test_log_handled_exception_records_context_and_stack(caplog) -> None:
+    """핸들러가 잡은 예외를 요청 컨텍스트(kind/method/path) + 스택과 함께 ERROR 기록."""
+    logger = logging.getLogger("test.handled")
+
+    def _boom() -> None:
+        raise ValueError("boom")
+
+    try:
+        _boom()
+    except ValueError as exc:
+        with caplog.at_level(logging.ERROR, logger="test.handled"):
+            log_handled_exception(logger, exc, method="GET", path="/api/x", kind="orm")
+
+    record = caplog.records[-1]
+    message = record.getMessage()
+    assert record.levelno == logging.ERROR
+    assert "orm" in message
+    assert "GET" in message
+    assert "/api/x" in message
+    assert "ValueError" in message
+    assert record.exc_info is not None  # 스택 포함

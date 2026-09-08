@@ -5,7 +5,6 @@ and global exception handlers.
 """
 
 import logging
-import traceback
 
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
@@ -15,6 +14,7 @@ from tortoise.exceptions import BaseORMException, DBConnectionError
 
 from app.apis.v1 import v1_routers
 from app.core.config import Env, config, docs_urls
+from app.core.logger import log_handled_exception
 from app.db.databases import initialize_tortoise
 from app.middlewares.rate_limit import RateLimitMiddleware
 from app.middlewares.security import SecurityMiddleware
@@ -59,7 +59,7 @@ async def validation_exception_handler(_request: Request, exc: RequestValidation
 
 
 @app.exception_handler(DBConnectionError)
-async def db_connection_exception_handler(_request: Request, _exc: DBConnectionError) -> JSONResponse:
+async def db_connection_exception_handler(request: Request, exc: DBConnectionError) -> JSONResponse:
     """Handle database connection errors.
 
     Args:
@@ -69,6 +69,7 @@ async def db_connection_exception_handler(_request: Request, _exc: DBConnectionE
     Returns:
         JSONResponse: 503 Service Unavailable response.
     """
+    log_handled_exception(logger, exc, method=request.method, path=request.url.path, kind="db_connection")
     return JSONResponse(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         content={
@@ -79,7 +80,7 @@ async def db_connection_exception_handler(_request: Request, _exc: DBConnectionE
 
 
 @app.exception_handler(BaseORMException)
-async def orm_exception_handler(_request: Request, exc: BaseORMException) -> JSONResponse:
+async def orm_exception_handler(request: Request, exc: BaseORMException) -> JSONResponse:
     """Handle other Tortoise ORM errors.
 
     Args:
@@ -89,6 +90,7 @@ async def orm_exception_handler(_request: Request, exc: BaseORMException) -> JSO
     Returns:
         JSONResponse: 500 Internal Server Error response.
     """
+    log_handled_exception(logger, exc, method=request.method, path=request.url.path, kind="orm")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
@@ -110,9 +112,7 @@ async def general_exception_handler(request: Request, exc: Exception) -> JSONRes
     Returns:
         JSONResponse: 500 Internal Server Error response.
     """
-    print(f"[ERROR] {request.method} {request.url.path}: {type(exc).__name__}: {exc}")
-    traceback.print_exc()
-
+    log_handled_exception(logger, exc, method=request.method, path=request.url.path, kind="unhandled")
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
         content={
