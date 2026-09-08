@@ -581,4 +581,3 @@ def has_medication_changed(snapshot: list[dict], current: list[dict]) -> bool:
 > 자동으로 새 가이드를 생성하지 않고 반드시 사용자가 직접 승인하도록 — GPT 비용 제어
 
 ---
-
