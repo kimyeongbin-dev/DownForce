@@ -19,7 +19,9 @@ const ENV_CONFIG = {
   prod: {
     // 배포 환경변수 NEXT_PUBLIC_API_BASE_URL 로 반드시 주입 (예: https://api.doseph.com)
     API_BASE_URL: '',
-    KAKAO_REDIRECT_URI: 'https://ai-02-06.vercel.app/auth/kakao/callback',
+    // 실제 카카오 redirect_uri 는 백엔드 /auth/kakao/config 가 내려주므로
+    // 이 흐름에서 FE 기본값은 사용되지 않음(플랫폼 중립을 위해 하드코딩 제거).
+    KAKAO_REDIRECT_URI: '',
   },
 };
 
