@@ -1,0 +1,12 @@
+{
+  // Cloudflare Workers Static Assets 배포 설정 (정적 자산 전용, 서버 코드 없음).
+  // Next.js 정적 export 산출물(out/)을 Worker 로 서빙한다. Pages 대체.
+  // 흐름: npx next build -> out/ 생성 -> npx wrangler deploy 가 out/ 를 업로드
+  //       -> doseph.com 에 정적 서빙 (커스텀 도메인/프리뷰는 CF 대시보드에서 연결)
+  "name": "doseph",
+  "compatibility_date": "2026-09-08",
+  "assets": {
+    // build output directory 와 동일. Root directory(medication-frontend) 기준 상대경로.
+    "directory": "./out"
+  }
+}
