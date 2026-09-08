@@ -1,11 +1,13 @@
-"""Tests for logging infrastructure (B0~B3).
+"""Tests for logging infrastructure (B0~B4).
 
 - B0 안전: 메시지 truncate / 시간+크기 회전 / 제한권한 / 인젝션 이스케이프
 - B1: 예외 핸들러 로깅 헬퍼(요청 컨텍스트 + 스택)
 - B2: request_id 컨텍스트 주입(필터·JSON 필드)
 - B3: env 기반 포맷(prod=JSON / local=사람형식) + funcName(위치) 필드
+- B4: 외부 경계 관측 헬퍼(진입 DEBUG / 성공 INFO+ms / 실패 WARN·ERROR)
 """
 
+import asyncio
 import logging
 import sys
 
@@ -21,6 +23,7 @@ from app.core.logger import (
     TruncateFilter,
     _is_prod,
     _resolve_log_dir,
+    log_boundary,
     log_handled_exception,
     request_id_var,
     setup_logger,
@@ -175,3 +178,71 @@ def test_setup_logger_local_uses_human(tmp_path, monkeypatch) -> None:
     formatter = _console_handler(logger).formatter
     assert not isinstance(formatter, JsonFormatter)
     assert isinstance(formatter, logging.Formatter)
+
+
+# ── B4: 외부 경계 관측 헬퍼(log_boundary) ──────────────────────────────
+class _FakeResponse:
+    """httpx.HTTPStatusError.response 흉내 — status_code 만 노출."""
+
+    def __init__(self, status_code: int) -> None:
+        self.status_code = status_code
+
+
+class _StatusError(Exception):
+    """response.status_code 를 가진 예외(httpx.HTTPStatusError 형태)."""
+
+    def __init__(self, status_code: int) -> None:
+        super().__init__(f"status {status_code}")
+        self.response = _FakeResponse(status_code)
+
+
+def _run_boundary(logger: logging.Logger, exc: Exception | None) -> None:
+    """log_boundary 를 1회 실행(성공 또는 지정 예외 발생)."""
+
+    async def _body() -> None:
+        async with log_boundary(logger, "kakao_token_exchange", url="https://x"):
+            if exc is not None:
+                raise exc
+
+    asyncio.run(_body())
+
+
+def test_log_boundary_logs_start_and_success(caplog) -> None:
+    """진입 시 DEBUG, 성공 시 INFO(소요 ms 포함)."""
+    logger = logging.getLogger("test.boundary.ok")
+    logger.setLevel(logging.DEBUG)
+
+    with caplog.at_level(logging.DEBUG, logger="test.boundary.ok"):
+        _run_boundary(logger, None)
+
+    levels = [(r.levelno, r.getMessage()) for r in caplog.records]
+    assert any(lv == logging.DEBUG and "시작" in msg for lv, msg in levels)
+    success = next(msg for lv, msg in levels if lv == logging.INFO)
+    assert "성공" in success
+    assert "ms" in success
+    assert "kakao_token_exchange" in success
+
+
+def test_log_boundary_client_error_warns_and_reraises(caplog) -> None:
+    """4xx(설정/클라이언트) 실패는 WARN + 스택 없이 기록하고 예외 재전파."""
+    logger = logging.getLogger("test.boundary.4xx")
+
+    with caplog.at_level(logging.WARNING, logger="test.boundary.4xx"), pytest.raises(_StatusError):
+        _run_boundary(logger, _StatusError(400))
+
+    record = caplog.records[-1]
+    assert record.levelno == logging.WARNING
+    assert "400" in record.getMessage()
+    assert record.exc_info is None  # 예상된 실패 — 스택 미포함
+
+
+def test_log_boundary_server_error_logs_stack_and_reraises(caplog) -> None:
+    """그 외(5xx·네트워크·버그) 실패는 ERROR + 스택 포함하고 예외 재전파."""
+    logger = logging.getLogger("test.boundary.5xx")
+
+    with caplog.at_level(logging.ERROR, logger="test.boundary.5xx"), pytest.raises(RuntimeError):
+        _run_boundary(logger, RuntimeError("boom"))
+
+    record = caplog.records[-1]
+    assert record.levelno == logging.ERROR
+    assert record.exc_info is not None  # 스택 포함

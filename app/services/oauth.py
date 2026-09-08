@@ -16,6 +16,7 @@ from tortoise.transactions import in_transaction
 
 from app.core import config
 from app.core.config import Env
+from app.core.logger import log_boundary
 from app.models.accounts import Account, AuthProvider
 from app.models.profiles import Gender, Profile, RelationType
 from app.repositories.account_repository import AccountRepository
@@ -103,9 +104,11 @@ class OAuthService:
 
         async with httpx.AsyncClient() as client:
             try:
-                response = await client.post(self.kakao_token_url, data=data, timeout=5.0)
-                response.raise_for_status()
-                return response.json()
+                # 경계 계측: 실패(예: KOE320)가 HTTPException 번역 전에 서버 로그에 남도록.
+                async with log_boundary(logger, "kakao_token_exchange", url=self.kakao_token_url):
+                    response = await client.post(self.kakao_token_url, data=data, timeout=5.0)
+                    response.raise_for_status()
+                    return response.json()
             except httpx.HTTPStatusError as e:
                 error_detail = e.response.json() if e.response.content else {"error": "token_exchange_failed"}
                 raise HTTPException(
@@ -140,9 +143,11 @@ class OAuthService:
 
         async with httpx.AsyncClient() as client:
             try:
-                response = await client.get(self.kakao_userinfo_url, headers=headers, timeout=5.0)
-                response.raise_for_status()
-                return response.json()
+                # 경계 계측: 토큰 만료/권한 실패가 HTTPException 번역 전에 서버 로그에 남도록.
+                async with log_boundary(logger, "kakao_userinfo", url=self.kakao_userinfo_url):
+                    response = await client.get(self.kakao_userinfo_url, headers=headers, timeout=5.0)
+                    response.raise_for_status()
+                    return response.json()
             except httpx.HTTPStatusError as e:
                 error_detail = e.response.json() if e.response.content else {"error": "userinfo_failed"}
                 raise HTTPException(

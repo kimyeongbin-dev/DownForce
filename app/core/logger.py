@@ -19,6 +19,7 @@ volume 마운트로 호스트에 영속화.
 - 모듈별 logger(``getLogger(__name__)`` 호출자 측에서)
 """
 
+from collections.abc import AsyncIterator
 import contextlib
 import contextvars
 from datetime import UTC, datetime
@@ -29,6 +30,7 @@ import logging.handlers
 import os
 from pathlib import Path
 import sys
+import time
 from typing import override
 
 _LOG_DIR_ENV = "LOG_DIR"
@@ -239,6 +241,53 @@ def log_handled_exception(
         kind: 분류 라벨(예: ``orm`` / ``db_connection`` / ``unhandled``).
     """
     logger.error("[%s] %s during %s %s", kind, type(exc).__name__, method, path, exc_info=exc)
+
+
+# ── 외부 경계 관측 로깅 (재사용 async 컨텍스트) ────────────────────────
+# 흐름: 진입 DEBUG -> (본문 I/O 실행) -> 성공 INFO(+소요 ms)
+#       -> 실패 시 4xx=WARN(설정/클라이언트, 스택 생략)
+#          / 그 외=ERROR(5xx·네트워크·버그, 스택 포함), 예외는 원본 그대로 재전파
+# 프레임워크·httpx 비의존(status_code 는 getattr 로 추출) — 결합도↓·재사용↑.
+# 주의: 호출자는 PII/token 을 operation/context 에 넣지 않을 책임(CLAUDE.md §9).
+@contextlib.asynccontextmanager
+async def log_boundary(
+    logger: logging.Logger,
+    operation: str,
+    **context: object,
+) -> AsyncIterator[None]:
+    """외부 서비스 호출 경계의 시작·성공·실패를 표준 형식으로 기록.
+
+    번역된 예외(HTTPException 등)가 상위에서 삼켜져 서버 로그에 남지 않는
+    문제를 방지 — 경계에서 원본 실패를 먼저 관측한 뒤 예외를 재전파한다.
+
+    Args:
+        logger: 기록에 사용할 (호출 모듈의) 로거.
+        operation: 경계 식별 라벨(예: ``kakao_token_exchange``).
+        **context: 안전한 부가 컨텍스트(예: ``url=...``). token/PII 금지.
+
+    Yields:
+        None: ``async with`` 본문에서 실제 I/O 를 수행한다.
+    """
+    ctx = " ".join(f"{key}={value}" for key, value in context.items())
+    logger.debug("[BOUNDARY] %s 시작 %s", operation, ctx)
+    start = time.perf_counter()
+    try:
+        yield
+    except Exception as exc:
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        status_code = getattr(getattr(exc, "response", None), "status_code", None)
+        if isinstance(status_code, int) and 400 <= status_code < 500:
+            # 설정/클라이언트 오류(예: 카카오 KOE320) — 재현 가능·스택 불필요.
+            logger.warning(
+                "[BOUNDARY] %s 실패(4xx) status=%s %s (%.0fms): %s", operation, status_code, ctx, elapsed_ms, exc
+            )
+        else:
+            # 서버 5xx·네트워크·예상 밖 버그 — 스택 포함해 원인 추적.
+            logger.error("[BOUNDARY] %s 실패 %s (%.0fms)", operation, ctx, elapsed_ms, exc_info=exc)
+        raise
+    else:
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        logger.info("[BOUNDARY] %s 성공 %s (%.0fms)", operation, ctx, elapsed_ms)
 
 
 # Global loggers for the application.
