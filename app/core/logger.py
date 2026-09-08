@@ -1,23 +1,22 @@
 """Logging configuration module.
 
-콘솔 (stdout) + 파일 (TimedRotatingFileHandler + JSON 구조화) 이중 출력.
-- 콘솔: 사람 읽기 형식 (`[ts] [LEVEL] [name:line] msg`) — docker logs / 개발자 직관용
-- 파일: JSON line — machine-readable, jq / log 분석 도구 호환
+콘솔(stdout, 사람 형식) + 파일(JSON 구조화) 이중 출력.
+- 콘솔: ``[ts] [LEVEL] [name:line] msg`` — docker logs / 개발자 직관용
+- 파일: JSON line — machine-readable, jq / 분석 도구 호환
 
-파일 위치는 ``LOG_DIR`` 환경변수로 결정 (default ``/app/logs``). docker-compose
-의 volume 마운트로 호스트에 영속화. 매 빌드 시작 시 호스트의 ``~/AI_02_06/logs`` 는
-``logs.prev.tar.gz`` 로 압축 백업되고 (한 세대) 새 라이프사이클로 시작 — 본 모듈
-은 디렉토리만 보장하면 충분하다.
+파일 위치는 ``LOG_DIR`` 환경변수로 결정(default ``/app/logs``). docker-compose
+volume 마운트로 호스트에 영속화.
 
-회전 정책 (사용자 합의 2026-05-01):
-- 시간 기반 회전 — 3시간마다 자동 회전 (``when='H', interval=3``)
-- 백업 2개 + 활성 1개 = 총 3개 파일 동시 존재
-- 가장 오래된 백업은 9시간 시점에 자동 삭제 → 평상시 9h retention
+회전 정책:
+- 시간(3시간) + 파일당 크기(10MB) 상한 **병행** 회전 (``SizeTimedRotatingFileHandler``)
+- 백업 2 + 활성 1 = 3개 동시, 평상시 ~9h 보존
 
-CLAUDE.md §9 의 핵심 룰 준수:
-- 모듈별 logger (``getLogger(__name__)`` 호출자 측에서)
-- 구조화 (JSON) — 파일 핸들러 한정
-- 보안: 호출자가 PII / token / huge payload 를 message 에 넣지 않을 책임
+파일로깅 안전장치(메모리·저장공간·보안, CLAUDE.md §9):
+- 메모리: 메시지 4000자 트렁케이트(``TruncateFilter``)
+- 저장공간: 시간+크기 회전 + (배포측) docker json-file 캡
+- 보안: 파일 0o640 / 디렉 0o750, JSON 개행 이스케이프(로그 인젝션 방어),
+  호출자가 PII/token/huge payload 를 message 에 넣지 않을 책임
+- 모듈별 logger(``getLogger(__name__)`` 호출자 측에서)
 """
 
 import contextlib
@@ -130,6 +129,9 @@ def _resolve_log_dir() -> Path:
     return log_dir
 
 
+# ── 로거 셋업 (콘솔 + 회전 파일 핸들러) ────────────────────────────────
+# 흐름: 기존 핸들러 있으면 재사용 -> 트렁케이션 필터 -> 콘솔 핸들러 부착
+#       -> 파일 핸들러(권한제한·시간+크기 회전) 부착 -> 실패 시 콘솔만 폴백
 def setup_logger(
     name: str = "app",
     level: int = logging.INFO,
