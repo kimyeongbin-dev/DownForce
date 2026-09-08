@@ -1,8 +1,8 @@
 """Logging configuration module.
 
-콘솔(stdout, 사람 형식) + 파일(JSON 구조화) 이중 출력.
-- 콘솔: ``[ts] [LEVEL] [name:line] msg`` — docker logs / 개발자 직관용
-- 파일: JSON line — machine-readable, jq / 분석 도구 호환
+콘솔(stdout) + 파일 이중 출력. 포맷은 ENV 기반(콘솔·파일 동일):
+- local/dev: 사람 형식 ``[ts] [LEVEL] [name:func:line] [req_id] msg`` — 직접 읽기 쉬움
+- prod: JSON line — 수집기 파싱/분석(문제 시 JSON 받아 분석), request_id·위치 필드 포함
 
 파일 위치는 ``LOG_DIR`` 환경변수로 결정(default ``/app/logs``). docker-compose
 volume 마운트로 호스트에 영속화.
@@ -37,7 +37,7 @@ _DEFAULT_LOG_DIR = "/app/logs"
 _ROTATE_WHEN = "H"
 _ROTATE_INTERVAL_HOURS = 3
 _ROTATE_BACKUP_COUNT = 2
-_CONSOLE_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s:%(lineno)d] [%(request_id)s] %(message)s"
+_CONSOLE_FORMAT = "[%(asctime)s] [%(levelname)s] [%(name)s:%(funcName)s:%(lineno)d] [%(request_id)s] %(message)s"
 
 # ── 파일로깅 안전 상한 (메모리·저장공간·보안) ─────────────────────────
 _MAX_MSG_LEN = 4000  # 단일 메시지 문자 상한 — 초과분 트렁케이트(메모리·저장 폭주 방지)
@@ -70,6 +70,7 @@ class JsonFormatter(logging.Formatter):
             "request_id": getattr(record, "request_id", request_id_var.get()),
             "msg": record.getMessage(),
             "module": record.module,
+            "func": record.funcName,
             "line": record.lineno,
         }
         if record.exc_info:
@@ -142,6 +143,11 @@ class SizeTimedRotatingFileHandler(logging.handlers.TimedRotatingFileHandler):
         return 0
 
 
+def _is_prod() -> bool:
+    """``ENV`` 가 prod 인지 (config 의존 없이 os.environ 직접 참조 — 결합도↓)."""
+    return os.environ.get("ENV", "local").strip().lower() == "prod"
+
+
 def _resolve_log_dir() -> Path:
     """``LOG_DIR`` env 우선, 미설정 시 ``/app/logs``. 디렉토리 idempotent 생성 + 권한 제한."""
     log_dir = Path(os.environ.get(_LOG_DIR_ENV, _DEFAULT_LOG_DIR))
@@ -175,14 +181,15 @@ def setup_logger(
     logger.setLevel(level)
     logger.propagate = False  # 루트 logger 로 중복 전달 방지
 
-    console_formatter = logging.Formatter(_CONSOLE_FORMAT)
-    json_formatter = JsonFormatter()
+    # env 기반 포맷: prod=JSON(수집·분석) / local·dev=사람형식(직접 읽기 쉬움).
+    # 콘솔·파일 동일 포맷터 사용 — local 파일도 사람형식으로 읽기 쉽게.
+    active_formatter: logging.Formatter = JsonFormatter() if _is_prod() else logging.Formatter(_CONSOLE_FORMAT)
     # 필터는 핸들러에 부착(자식 logger 전파 record 에도 적용되도록).
     truncate_filter = TruncateFilter()
     request_id_filter = RequestIdFilter()
 
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(console_formatter)
+    console_handler.setFormatter(active_formatter)
     console_handler.addFilter(truncate_filter)
     console_handler.addFilter(request_id_filter)
     logger.addHandler(console_handler)
@@ -201,7 +208,7 @@ def setup_logger(
         file_handler.addFilter(request_id_filter)
         # 백업 파일 이름에 ISO 타임스탬프 suffix (예: app.log.2026-05-01_15)
         file_handler.suffix = "%Y-%m-%d_%H"
-        file_handler.setFormatter(json_formatter)
+        file_handler.setFormatter(active_formatter)
         logger.addHandler(file_handler)
     except OSError:
         # 파일 시스템 권한 문제 등으로 파일 핸들러 생성 실패 시 콘솔만 유지.

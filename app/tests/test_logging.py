@@ -1,9 +1,9 @@
-"""Tests for logging safety (B0).
+"""Tests for logging infrastructure (B0~B3).
 
-Covers the three threat classes the file logger must be safe against:
-- memory: long messages are truncated (no unbounded growth)
-- storage: file rotates on size as well as time (runaway cannot balloon a file)
-- security: log-injection escape (JSON single-line), restrictive file/dir perms
+- B0 안전: 메시지 truncate / 시간+크기 회전 / 제한권한 / 인젝션 이스케이프
+- B1: 예외 핸들러 로깅 헬퍼(요청 컨텍스트 + 스택)
+- B2: request_id 컨텍스트 주입(필터·JSON 필드)
+- B3: env 기반 포맷(prod=JSON / local=사람형식) + funcName(위치) 필드
 """
 
 import logging
@@ -19,10 +19,19 @@ from app.core.logger import (
     RequestIdFilter,
     SizeTimedRotatingFileHandler,
     TruncateFilter,
+    _is_prod,
     _resolve_log_dir,
     log_handled_exception,
     request_id_var,
+    setup_logger,
 )
+
+
+def _console_handler(logger: logging.Logger) -> logging.Handler:
+    """콘솔(stdout) StreamHandler 만 골라낸다(FileHandler 서브클래스 제외)."""
+    return next(
+        h for h in logger.handlers if isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler)
+    )
 
 
 def _record(msg: str, args: tuple = ()) -> logging.LogRecord:
@@ -133,3 +142,36 @@ def test_json_formatter_includes_request_id() -> None:
         assert "req-xyz" in out
     finally:
         request_id_var.reset(token)
+
+
+# ── B3: 포맷 정책(env) + funcName(위치) ────────────────────────────────
+def test_is_prod_reads_env(monkeypatch) -> None:
+    monkeypatch.setenv("ENV", "prod")
+    assert _is_prod() is True
+    monkeypatch.setenv("ENV", "local")
+    assert _is_prod() is False
+
+
+def test_json_formatter_includes_func() -> None:
+    """위치 추적용 func 필드가 JSON 에 포함된다."""
+    assert '"func"' in JsonFormatter().format(_record("hi"))
+
+
+def test_setup_logger_prod_uses_json(tmp_path, monkeypatch) -> None:
+    """prod 는 콘솔(stdout)도 JSON 포맷(수집기 파싱)."""
+    monkeypatch.setenv("ENV", "prod")
+    monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
+    logger = setup_logger("test.fmt.prod")
+
+    assert isinstance(_console_handler(logger).formatter, JsonFormatter)
+
+
+def test_setup_logger_local_uses_human(tmp_path, monkeypatch) -> None:
+    """local 은 콘솔 사람형식(직접 읽기 쉬움)."""
+    monkeypatch.setenv("ENV", "local")
+    monkeypatch.setenv("LOG_DIR", str(tmp_path / "logs"))
+    logger = setup_logger("test.fmt.local")
+
+    formatter = _console_handler(logger).formatter
+    assert not isinstance(formatter, JsonFormatter)
+    assert isinstance(formatter, logging.Formatter)
