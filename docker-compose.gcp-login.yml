@@ -1,0 +1,64 @@
+# ─────────────────────────────────────────────────────────────────────
+# GCP e2-micro "로그인까지" 배포용 최소 스택 (Always Free)
+# 흐름: 사용자 -> Cloudflare(api.doseph.com) -> cloudflared 터널
+#       -> fastapi:8000 -> Neon(Postgres, TLS) / Kakao OAuth
+#
+# 상용 docker-compose.prod.yml 대비: postgres(→Neon)·redis·ai-worker·nginx 제거.
+# 로그인 경로는 fastapi + DB(Neon) 만 필요(APScheduler 인메모리, Redis 불요).
+# 인바운드 포트 0개 — cloudflared 아웃바운드 터널이 TLS 종단.
+# ─────────────────────────────────────────────────────────────────────
+
+services:
+  # FastAPI API 서버 — VM 에서 amd64 네이티브 빌드 (app/Dockerfile.prod)
+  # e2-micro(1GB) 대비 워커 2개로 하향(상용 CMD 는 4). Neon TLS 연결은 DB_SSL=true.
+  fastapi:
+    container_name: fastapi
+    build:
+      context: .
+      dockerfile: app/Dockerfile.prod
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+    env_file:
+      - .env
+    environment:
+      LOG_DIR: /app/logs
+    volumes:
+      - ./logs/fastapi:/app/logs
+    networks:
+      - web
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+  # Cloudflare Tunnel — 원격관리(토큰) 방식. 공개 호스트명(api.doseph.com) →
+  # http://fastapi:8000 매핑은 Cloudflare Zero Trust 대시보드에서 설정.
+  # 토큰은 .env 의 TUNNEL_TOKEN 으로 주입(프로세스 인자 노출 방지).
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    networks:
+      - web
+    restart: unless-stopped
+    depends_on:
+      - fastapi
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  web:
+    name: web
+    driver: bridge
